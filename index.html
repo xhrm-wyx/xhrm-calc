@@ -443,7 +443,44 @@ html.exp-off #curOnline,html.exp-off .tool-item[data-tool="ai"]{display:none!imp
 </style>
 </head>
 <body>
-<script>(function(){try{if(window.top!==window.self){window.top.location=window.self.location;}}catch(e){try{document.documentElement.style.display="none";}catch(e2){}}})();</script>
+<script>
+/* 防点击劫持：跳出 iframe；被 sandbox 阻止时用全屏遮罩并要求新标签打开 */
+(function(){
+  var blocked=false;
+  function overlay(){
+    try{
+      if(document.getElementById('frameBlock'))return;
+      var d=document.createElement('div');
+      d.id='frameBlock';
+      d.setAttribute('role','alertdialog');
+      d.style.cssText='position:fixed;left:0;top:0;right:0;bottom:0;z-index:2147483647;background:#0d1117;color:#e6edf3;display:flex;align-items:center;justify-content:center;text-align:center;visibility:visible;padding:24px;font:15px/1.9 system-ui,-apple-system,"Segoe UI",sans-serif;';
+      var href=String(location.href).replace(/[<>"']/g,'');
+      var box=document.createElement('div');
+      box.innerHTML='<div style="font-size:17px;font-weight:600;margin-bottom:8px;">此页面不允许被嵌入显示</div>'+
+        '<div style="opacity:.85;margin-bottom:14px;">请在新标签页中直接打开。</div>';
+      var a=document.createElement('a');
+      a.href=href;a.target='_blank';a.rel='noopener';
+      a.textContent='在新标签页打开';
+      a.style.cssText='display:inline-block;padding:10px 18px;border-radius:10px;background:#238636;color:#fff;text-decoration:none;font-size:14px;';
+      box.appendChild(a);d.appendChild(box);document.body.appendChild(d);
+    }catch(e){}
+  }
+  function bust(){
+    try{
+      if(window.self===window.top)return;
+      blocked=true;
+      try{window.top.location=window.self.location;}catch(eT){}
+      try{if(window.self!==window.top){document.documentElement.style.overflow='hidden';}}catch(e2){}
+      if(document.body)overlay();
+      else document.addEventListener('DOMContentLoaded',overlay);
+    }catch(e){}
+  }
+  bust();
+  window.addEventListener('pageshow',bust);
+  window.addEventListener('load',bust);
+  setInterval(function(){if(!blocked)bust();},3000);
+})();
+</script>
 <div id="meteorBg"></div>
 <canvas id="meteorCanvas"></canvas>
 <div id="errBanner"></div>
