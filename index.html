@@ -19,7 +19,7 @@
 <meta property="og:title" content="理科计算器 · 验证器">
 <meta property="og:description" content="单文件离线理科计算器：计算、绘图、公式库、TOTP、加密云同步。">
 <meta property="og:url" content="https://xhrm-wyx.github.io/xhrm-calc/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-T8etqlAb7fvAC4TtMkddz/Rzd/LiAim+NWR+V6GnY38=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-OLtuP05EBFlibG06Woc9GBhwnmDh3Mzu/tiMwUVjXrI=' 'sha256-tC6JNc2jIqKsFmVflGc+y6C7AuI2fAxaGEeAksKz1RQ=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-T6Ksh2Nmlc83Ngrklt6zdfDdw3rZq82K3BQrscjDZ3c=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-OLtuP05EBFlibG06Woc9GBhwnmDh3Mzu/tiMwUVjXrI=' 'sha256-tC6JNc2jIqKsFmVflGc+y6C7AuI2fAxaGEeAksKz1RQ=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
 <title>理科计算器 · 验证器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -441,6 +441,11 @@ html.exp-off #curOnline,html.exp-off .tool-item[data-tool="ai"]{display:none!imp
 .result-box,.fl-eq,.fl-name,#fmView,#coOut,.res-main,.res-approx{user-select:text;-webkit-user-select:text;}
 @media (prefers-reduced-motion: reduce){#meteorBg,#meteorCanvas{display:none!important;}*{animation-duration:.001ms!important;transition-duration:.001ms!important;}}
 html.no-particles #meteorCanvas{display:none!important;}
+#ptrIndicator{position:fixed;left:50%;top:0;transform:translate(-50%,-64px);z-index:2147483000;width:44px;height:44px;border-radius:50%;background:rgba(20,28,40,.92);border:1px solid rgba(120,140,170,.45);display:flex;align-items:center;justify-content:center;color:#cfe3ff;font-size:18px;box-shadow:0 8px 24px rgba(0,0,0,.35);transition:transform .18s cubic-bezier(.34,1.4,.64,1),opacity .18s;opacity:0;pointer-events:none;will-change:transform}
+#ptrIndicator.show{opacity:1}
+#ptrIndicator.spin svg{animation:ptrspin .8s linear infinite}
+@keyframes ptrspin{to{transform:rotate(360deg)}}
+html{overscroll-behavior-y:contain}
 </style>
 </head>
 <body>
@@ -479,6 +484,59 @@ html.no-particles #meteorCanvas{display:none!important;}
   bust();
   if(window.__noParticles){document.addEventListener('DOMContentLoaded',function(){try{['setAnim','setParticles'].forEach(function(id){var el=document.getElementById(id);var lb=el&&el.closest?el.closest('label'):null;if(lb)lb.style.display='none';});}catch(eH){}});}
   window.addEventListener('pageshow',bust);
+/* 下拉刷新（触屏） */
+(function(){
+  if(typeof TouchEvent==='undefined'&&!('ontouchstart' in window))return;
+  var startY=0,pulling=false,dist=0,ind=null,THRESHOLD=72,MAX=140;
+  function el(){
+    if(ind&&document.body.contains(ind))return ind;
+    ind=document.createElement('div');
+    ind.id='ptrIndicator';
+    ind.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v9"/><path d="M7 11l5 5 5-5"/></svg>';
+    document.body.appendChild(ind);
+    return ind;
+  }
+  function setPos(d){
+    var e=el();
+    e.style.transform='translate(-50%,'+(-64+Math.min(d,MAX))+'px) rotate('+(d*1.6)+'deg)';
+    e.style.opacity=d>4?'1':'0';
+  }
+  function reset(){
+    if(ind){ind.style.transform='translate(-50%,-64px)';ind.style.opacity='0';ind.classList.remove('spin');}
+    pulling=false;dist=0;startY=0;
+  }
+  document.addEventListener('touchstart',function(ev){
+    if(ev.touches.length!==1)return;
+    if(window.scrollY>0||document.documentElement.scrollTop>0)return;
+    var t=ev.target;
+    if(t&&t.closest&&t.closest('canvas,input,textarea,select,button,#meteorCanvas,.save-options-modal,.account-modal,.result-box'))return;
+    startY=ev.touches[0].clientY;pulling=true;dist=0;
+  },{passive:true});
+  document.addEventListener('touchmove',function(ev){
+    if(!pulling)return;
+    var dy=ev.touches[0].clientY-startY;
+    if(dy<=0){ if(ind){ind.style.opacity='0';} dist=0; return; }
+    dist=Math.min(MAX,dy*0.55);
+    setPos(dist);
+    if(dist>12&&ev.cancelable){ try{ev.preventDefault();}catch(e){} }
+  },{passive:false});
+  document.addEventListener('touchend',function(){
+    if(!pulling)return;
+    var d=dist;
+    if(d>=THRESHOLD){
+      window.__ptrTriggered=true;
+      var e=el();
+      e.style.transform='translate(-50%,-8px)';
+      e.style.opacity='1';
+      e.classList.add('spin');
+      setTimeout(function(){ try{location.reload();}catch(err){} },180);
+      pulling=false;dist=0;
+      return;
+    }
+    reset();
+  },{passive:true});
+  document.addEventListener('touchcancel',reset,{passive:true});
+})();
   window.addEventListener('load',bust);
   setInterval(function(){if(!blocked)bust();},3000);
 })();
