@@ -19,7 +19,7 @@
 <meta property="og:title" content="理科计算器 · 验证器">
 <meta property="og:description" content="单文件离线理科计算器：计算、绘图、公式库、TOTP、加密云同步。">
 <meta property="og:url" content="https://xhrm-wyx.github.io/xhrm-calc/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-U/UxRTn0BYf0/h6kZYWesIS0w8O1e53YKSnZ+nyCoGw=' 'sha256-tC6JNc2jIqKsFmVflGc+y6C7AuI2fAxaGEeAksKz1RQ=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-Gsj0Rohp4OYvgDdn9HXQW/eG45vcrP1RofjHwXDIoT4=' 'sha256-tC6JNc2jIqKsFmVflGc+y6C7AuI2fAxaGEeAksKz1RQ=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
 <title>理科计算器 · 验证器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -447,6 +447,12 @@ html.no-particles #modeToggleBtn{display:none!important}
 #ptrIndicator.spin svg{animation:ptrspin .8s linear infinite}
 @keyframes ptrspin{to{transform:rotate(360deg)}}
 html{overscroll-behavior-y:contain}
+#funcPlotWrap:fullscreen{display:flex;flex-direction:column;background:var(--panel-solid);padding:14px;box-sizing:border-box;border-radius:0}
+#funcPlotWrap:fullscreen #funcPlot{flex:1 1 auto;width:100%!important;height:auto!important;min-height:0}
+#funcPlotWrap:fullscreen .quad-plot-hint-zoom{display:none}
+#funcPlotWrap.plot-fs{position:fixed;inset:0;z-index:2147482000;display:flex;flex-direction:column;background:var(--panel-solid);padding:14px;box-sizing:border-box}
+#funcPlotWrap.plot-fs #funcPlot{flex:1 1 auto;width:100%!important;height:auto!important;min-height:0}
+#funcPlotWrap.plot-fs .quad-plot-hint-zoom{display:none}
 </style>
 </head>
 <body>
@@ -823,7 +829,7 @@ html{overscroll-behavior-y:contain}
             <div class="quad-plot-btns">
               <button type="button" class="quad-zoom-btn" id="funcZoomOut" title="缩小">−</button>
               <button type="button" class="quad-zoom-btn reset" id="funcZoomReset" title="重置">⤾ 重置</button>
-              <button type="button" class="quad-zoom-btn" id="funcZoomIn" title="放大">＋</button>
+              <button type="button" class="quad-zoom-btn" id="funcZoomIn" title="放大">＋</button><button type="button" class="quad-zoom-btn" id="funcFullBtn" title="全屏显示">⛶</button>
             </div>
           </div>
           <canvas id="funcPlot"></canvas>
@@ -11642,6 +11648,34 @@ function cAxis(){var t=document.documentElement.getAttribute('data-theme')||'nig
 function cLblBg(){var t=document.documentElement.getAttribute('data-theme')||'night';return (t==='day'||t==='eye')?'rgba(255,255,255,.92)':'rgba(0,0,0,.45)';}
 function cGrid(){var t=document.documentElement.getAttribute('data-theme')||'night';return (t==='day'||t==='eye')?'rgba(60,80,105,.22)':'rgba(150,170,200,.13)';}
 function cPtBg(){var t=document.documentElement.getAttribute('data-theme')||'night';return (t==='day'||t==='eye')?'#16263a':'#fff';}
+function toggleFuncFullscreen(){
+  var wrap=document.getElementById('funcPlotWrap');
+  if(!wrap)return;
+  var fsEl=document.fullscreenElement||document.webkitFullscreenElement;
+  if(fsEl===wrap){
+    if(document.exitFullscreen){try{document.exitFullscreen();}catch(e){}}
+    else if(document.webkitExitFullscreen){try{document.webkitExitFullscreen();}catch(e){}}
+    return;
+  }
+  if(wrap.classList.contains('plot-fs')){
+    wrap.classList.remove('plot-fs'); document.body.style.overflow='';
+    setTimeout(function(){try{drawFuncPlot();}catch(e){}},60);
+    return;
+  }
+  var req=wrap.requestFullscreen||wrap.webkitRequestFullscreen;
+  if(req){
+    try{
+      var r=req.call(wrap);
+      if(r&&r.catch){ r.catch(function(){ wrap.classList.add('plot-fs'); document.body.style.overflow='hidden'; setTimeout(function(){try{drawFuncPlot();}catch(e){}},60); }); }
+      return;
+    }catch(e){}
+  }
+  wrap.classList.add('plot-fs'); document.body.style.overflow='hidden';
+  setTimeout(function(){try{drawFuncPlot();}catch(e){}},60);
+}
+document.addEventListener('fullscreenchange',function(){ try{document.body.style.overflow=(document.fullscreenElement||(document.getElementById('funcPlotWrap')&&document.getElementById('funcPlotWrap').classList.contains('plot-fs')))?'hidden':'';}catch(e){} setTimeout(function(){try{drawFuncPlot();}catch(e){}},90); });
+document.addEventListener('webkitfullscreenchange',function(){ setTimeout(function(){try{drawFuncPlot();}catch(e){}},90); });
+window.toggleFuncFullscreen=toggleFuncFullscreen;
 function drawFuncPlot(){
   if(!funcList||!funcList.length){window.__funcViewRange=null;}
   var canvas=document.getElementById('funcPlot');
@@ -12153,6 +12187,11 @@ function funcAddNew(expr){
   if(btnIn)btnIn.addEventListener('click',function(){funcZoomBy(1.25);});
   if(btnOut)btnOut.addEventListener('click',function(){funcZoomBy(1/1.25);});
   if(btnReset)btnReset.addEventListener('click',funcZoomReset);
+    var btnFull=document.getElementById('funcFullBtn');
+    if(btnFull&&!btnFull.__bound){
+      btnFull.__bound=true;
+      btnFull.addEventListener('click',function(){ toggleFuncFullscreen(); });
+    }
   canvas.addEventListener('wheel',function(e){e.preventDefault();funcZoomBy(e.deltaY<0?1.12:1/1.12);},{passive:false});
   /* 双指捏合 + 单指拖动平移 */
   var initialDist=0,initialZoom=1,pinching=false;
