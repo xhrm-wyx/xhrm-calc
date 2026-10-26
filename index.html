@@ -19,7 +19,7 @@
 <meta property="og:title" content="理科计算器 · 验证器">
 <meta property="og:description" content="单文件离线理科计算器：计算、绘图、公式库、TOTP、加密云同步。">
 <meta property="og:url" content="https://xhrm-wyx.github.io/xhrm-calc/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-T8etqlAb7fvAC4TtMkddz/Rzd/LiAim+NWR+V6GnY38=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-ziLIxGDUChMEHEo0llibozfzzvw+mJtP0lee7r1IJ+g=' 'sha256-tC6JNc2jIqKsFmVflGc+y6C7AuI2fAxaGEeAksKz1RQ=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-T8etqlAb7fvAC4TtMkddz/Rzd/LiAim+NWR+V6GnY38=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-OLtuP05EBFlibG06Woc9GBhwnmDh3Mzu/tiMwUVjXrI=' 'sha256-tC6JNc2jIqKsFmVflGc+y6C7AuI2fAxaGEeAksKz1RQ=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
 <title>理科计算器 · 验证器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -545,6 +545,10 @@ html.no-particles #meteorCanvas{display:none!important;}
      </div>
      <div class="save-options-body" style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
        <div><b>版本 v3.3.4</b> · 单文件离线可用</div>
+       <div style="border:1px solid rgba(255,120,120,.45);background:rgba(255,80,80,.08);border-radius:10px;padding:10px 12px;color:#ffb4b4;line-height:1.75;margin:4px 0;">
+         ⚠️ <b>只打开你自己保存的 HTML 文件。</b>不要打开别人发来的 HTML（<b>加密的也一样</b>）——HTML 是可执行程序，可能携带恶意代码，加密只保护内容不保护执行。<br>
+         要分享数据，请用「保存网页 → 导出数据 (JSON)」，让对方导入 JSON，而不是转发 HTML 文件。
+       </div>
        <div style="opacity:.9;">功能：表达式计算、二次函数 / 函数图像、初高中公式库、实用工具（因式分解 / 数列 / 统计 / 换算 / 摩尔 / 浓度 / AI 解题）、动态验证码、加密保存。</div>
        <div style="font-weight:600;margin-top:6px;">安全与隐私</div>
        <ul style="margin:0;padding-left:18px;line-height:1.8;opacity:.92;">
@@ -624,6 +628,7 @@ html.no-particles #meteorCanvas{display:none!important;}
       <button type="button" class="icon-btn" id="saveOptionsClose" style="width:32px;height:32px;font-size:16px;">×</button>
     </div>
     <div class="save-options-note" id="saveOptionsNote">请选择保存方式：</div>
+      <div class="save-options-note" style="border-color:rgba(255,120,120,.45);color:#ffb4b4;line-height:1.75;">⚠️ <b>只打开你自己保存的文件。</b>不要打开别人发来的 HTML（加密的也一样）——HTML 是程序，可能带恶意代码。要分享数据请用下面的「导出数据 (JSON)」。</div>
     <div class="save-options-list">
       <button type="button" class="save-option" id="saveOptionEncrypt">
         <div class="save-option-icon">🔒</div>
@@ -632,6 +637,21 @@ html.no-particles #meteorCanvas{display:none!important;}
           <div class="save-option-desc">用当前账号密码加密。下次打开需要输入相同的账号密码才能查看验证码和记录。</div>
         </div>
       </button>
+      <button type="button" class="save-option" id="saveOptionExportJson">
+        <div class="save-option-icon">🧾</div>
+        <div class="save-option-info">
+          <div class="save-option-name">导出数据 (JSON) · 推荐分享方式</div>
+          <div class="save-option-desc">只导出设置、计算记录、函数、公式收藏与工具数据，不含验证码账号和密码。对方用「导入数据 (JSON)」即可使用，不需要运行任何文件。</div>
+        </div>
+      </button>
+      <button type="button" class="save-option" id="saveOptionImportJson">
+        <div class="save-option-icon">📥</div>
+        <div class="save-option-info">
+          <div class="save-option-name">导入数据 (JSON)</div>
+          <div class="save-option-desc">只导入你自己（或可信来源）导出的 JSON。不会执行任何脚本，导入前会二次确认。</div>
+        </div>
+      </button>
+      <input type="file" id="importJsonFile" accept=".json,application/json" style="display:none;">
       <button type="button" class="save-option" id="saveOptionPlain">
         <div class="save-option-icon">📄</div>
         <div class="save-option-info">
@@ -13209,6 +13229,42 @@ function renderAccountPanel(){
   if(wb)wb.addEventListener('click',function(){if(!confirm('注销本机账号？\n\n该账号在本机的数据（计算记录、函数、验证码账号、设置等）将一并清除且不可恢复；已保存的加密文件仍可用原账号密码打开。'))return;var _accI=document.getElementById('accUser');var _un=(currentUser&&currentUser.username)||(_accI?_accI.value.trim():'');removeUserFromStorage(_un);logoutUser();setAccountStatus('本机账号已注销','warn');updateAccountBtn();renderAccountPanel();});
 }
 function updateAccountBtn(){var btn=document.getElementById('accountBtn');if(!btn)return;if(currentUser&&(sessionKey||currentPassword)&&(!pendingEncryptedData||isUnlocked)){btn.textContent='🔓';btn.title='已登录：'+currentUser.username;btn.classList.add('logged-in');}else if(pendingEncryptedData&&!isUnlocked){btn.textContent='🔒';btn.title='文件已加密 · 点击登录解锁';btn.classList.remove('logged-in');}else{btn.textContent='👤';btn.title=loadUserFromStorage()?'未登录 · 点击登录':'未注册 · 点击注册';btn.classList.remove('logged-in');}}
+function exportDataJson(){
+  try{
+    var d=collectSaveData({plain:true});
+    d.__format='sci-calc-data-v1';
+    d.exportedAt=new Date().toISOString();
+    try{delete d.accounts;}catch(e){}
+    var s=JSON.stringify(d,null,2);
+    var blob=new Blob([s],{type:'application/json'});
+    var a=document.createElement('a');
+    var dt=new Date();
+    var pad=function(n){return (n<10?'0':'')+n;};
+    a.download='sci-calc-data-'+dt.getFullYear()+pad(dt.getMonth()+1)+pad(dt.getDate())+'.json';
+    a.href=URL.createObjectURL(blob);
+    document.body.appendChild(a);a.click();
+    setTimeout(function(){try{URL.revokeObjectURL(a.href);a.remove();}catch(e){}},1500);
+    alert('已导出数据 JSON（不含验证码账号与密码）。\n\n这个文件只含数据、不含脚本，可以安全分享。');
+  }catch(e){ alert('导出失败：'+(e&&e.message||e)); }
+}
+function importDataJsonFile(file){
+  if(!file)return;
+  if(file.size>8*1024*1024){ alert('文件过大（超过 8 MB），已取消导入。'); return; }
+  var fr=new FileReader();
+  fr.onerror=function(){ alert('读取文件失败。'); };
+  fr.onload=function(){
+    var d=null;
+    try{ d=JSON.parse(String(fr.result)); }catch(e){ alert('不是有效的 JSON 文件。'); return; }
+    if(!d||typeof d!=='object'||Array.isArray(d)){ alert('文件内容不是预期的数据格式。'); return; }
+    var ok=confirm('将从 JSON 导入设置、计算记录、函数与公式收藏（不含验证码账号）。\n\n请确认该文件来自你自己或可信来源。继续？');
+    if(!ok)return;
+    try{ applyData(d); alert('导入完成。'); }
+    catch(e){ alert('导入失败：'+(e&&e.message||e)); }
+  };
+  fr.readAsText(file);
+}
+window.exportDataJson=exportDataJson;
+window.importDataJsonFile=importDataJsonFile;
 function collectSaveData(opts){var theme=document.documentElement.getAttribute('data-theme')||'night';var mode=document.documentElement.getAttribute('data-mode')||'full';var _aiC=null;try{_aiC=JSON.parse(localStorage.getItem(aiCacheKey())||'null');}catch(e){ }var _lq=[];try{_lq=JSON.parse(localStorage.getItem(acctKey('sci-log-q-v1'))||'[]');}catch(e){ }var d={calcHistory:calcHistory,funcList:funcList.map(function(f){return {id:f.id,expr:f.expr,color:f.color,visible:f.visible};}),funcOpts:{showInter:funcShowInter,showAxis:funcShowAxis},theme:theme,mode:mode,totpSettings:{algo:totpAlgo,digits:totpDigits,step:totpStep},totpDefault:{algo:totpAlgo,digits:totpDigits,step:totpStep},settings:window.__settingsData?window.__settingsData():null,formulaFavs:(function(){try{return (typeof flFavSet!=='undefined'&&flFavSet)?Object.assign({},flFavSet):JSON.parse(localStorage.getItem(favKey())||'{}');}catch(e){return null;}})(),formulaRecent:(function(){try{return (typeof flRecent!=='undefined'&&Array.isArray(flRecent))?flRecent.slice():JSON.parse(localStorage.getItem(recentKey())||'[]');}catch(e){return null;}})(),toolVals:(function(){try{return (typeof toolVals!=='undefined'&&toolVals)?Object.assign({},toolVals):JSON.parse(localStorage.getItem(toolValsKey())||'{}');}catch(e){return null;}})(),currencyRates:(CONVERT_DATA&&CONVERT_DATA.currency)?Object.assign({},CONVERT_DATA.currency.units):null,aiLastResult:_aiC,logSearchHistory:_lq,savedAt:Date.now()};if(!(opts&&opts.plain)&&!(pendingEncryptedData&&!isUnlocked))d.accounts=accounts;return d;}
 function prepareSaveClone(){
   var clone=document.documentElement.cloneNode(true);
@@ -14288,6 +14344,25 @@ try{bindTotpSettings();renderList();bindListActions();bindAddForm();bindScanUI()
         saveEncryptedHtml().then(function(){}).catch(function(err){
           alert('保存失败：'+err.message);
         });
+      });
+    }
+    var soExpJson=document.getElementById('saveOptionExportJson');
+    if(soExpJson&&!soExpJson.__bound){
+      soExpJson.__bound=true;
+      soExpJson.addEventListener('click',function(){ closeSaveOptions(); window.exportDataJson(); });
+    }
+    var soImpJson=document.getElementById('saveOptionImportJson');
+    var impFile=document.getElementById('importJsonFile');
+    if(soImpJson&&!soImpJson.__bound){
+      soImpJson.__bound=true;
+      soImpJson.addEventListener('click',function(){ closeSaveOptions(); if(impFile)impFile.click(); });
+    }
+    if(impFile&&!impFile.__bound){
+      impFile.__bound=true;
+      impFile.addEventListener('change',function(){
+        var f=impFile.files&&impFile.files[0];
+        try{ window.importDataJsonFile(f); }catch(e){ alert('导入失败：'+(e&&e.message||e)); }
+        impFile.value='';
       });
     }
     var soPlain=document.getElementById('saveOptionPlain');
