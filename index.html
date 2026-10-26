@@ -19,7 +19,7 @@
 <meta property="og:title" content="理科计算器 · 验证器">
 <meta property="og:description" content="单文件离线理科计算器：计算、绘图、公式库、TOTP、加密云同步。">
 <meta property="og:url" content="https://xhrm-wyx.github.io/xhrm-calc/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-5ZlGUTpjqu/hv7DNuCLAzPzCHS4Q1S+9Nof/q9RnS+g=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-OLtuP05EBFlibG06Woc9GBhwnmDh3Mzu/tiMwUVjXrI=' 'sha256-tC6JNc2jIqKsFmVflGc+y6C7AuI2fAxaGEeAksKz1RQ=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-QLmxEntCr9aZ4WWzOfCxmB6RybseZTxAOvxe0B+tIBI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-vZU/SPS6Pn0Dxg6DY3b6gmS7Bk6IDIHnwlBBVwORIX8=' 'sha256-tC6JNc2jIqKsFmVflGc+y6C7AuI2fAxaGEeAksKz1RQ=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
 <title>理科计算器 · 验证器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -440,7 +440,8 @@ html.exp-off #curOnline,html.exp-off .tool-item[data-tool="ai"]{display:none!imp
 /* 结果与公式允许选中复制 */
 .result-box,.fl-eq,.fl-name,#fmView,#coOut,.res-main,.res-approx{user-select:text;-webkit-user-select:text;}
 @media (prefers-reduced-motion: reduce){#meteorBg,#meteorCanvas{display:none!important;}*{animation-duration:.001ms!important;transition-duration:.001ms!important;}}
-html.no-particles #meteorCanvas{display:none!important;}
+html.no-particles #meteorCanvas{display:none!important}
+html.no-particles #modeToggleBtn{display:none!important}
 #ptrIndicator{position:fixed;left:50%;top:0;transform:translate(-50%,-64px);z-index:2147483000;width:44px;height:44px;border-radius:50%;background:rgba(20,28,40,.92);border:1px solid rgba(120,140,170,.45);display:flex;align-items:center;justify-content:center;color:#cfe3ff;font-size:18px;box-shadow:0 8px 24px rgba(0,0,0,.35);transition:transform .18s cubic-bezier(.34,1.4,.64,1),opacity .18s;opacity:0;pointer-events:none;will-change:transform}
 #ptrIndicator.show{opacity:1}
 #ptrIndicator.spin svg{animation:ptrspin .8s linear infinite}
@@ -452,7 +453,7 @@ html{overscroll-behavior-y:contain}
 <script>
 /* 防点击劫持：跳出 iframe；被 sandbox 阻止时用全屏遮罩并要求新标签打开 */
 (function(){
-  var blocked=false;try{if(/(^|\.)github\.io$/i.test(location.hostname)){window.__noParticles=true;document.documentElement.classList.add('no-particles');}}catch(eNP){}
+  var blocked=false;try{if(/(^|\.)github\.io$/i.test(location.hostname)){window.__noParticles=true;window.__lockLite=true;document.documentElement.classList.add('no-particles');}}catch(eNP){}
   function overlay(){
     try{
       if(document.getElementById('frameBlock'))return;
@@ -11264,7 +11265,7 @@ function setTheme(t){var _pt=document.documentElement.getAttribute('data-theme')
 }
 function cycleTheme(){if(window.__exitFollow){try{window.__exitFollow();}catch(e0){}}var cur=document.documentElement.getAttribute('data-theme')||'night';var idx=THEME_ORDER.indexOf(cur);if(idx<0)idx=1;setTheme(THEME_ORDER[(idx+1)%THEME_ORDER.length]);}
 var MODE_KEY=fKey('sci-calc-mode-v2');
-function setMode(m,byUser){var _pm=document.documentElement.getAttribute('data-mode');var _chg=_pm!==m;document.documentElement.setAttribute('data-mode',m);if(!noPersist&&(!pendingEncryptedData||isUnlocked)){try{localStorage.setItem(MODE_KEY,m);if(byUser)localStorage.setItem('sci-calc-mode-user','1');}catch(e){}}var btn=document.getElementById('modeToggleBtn');if(btn){btn.textContent=m==='lite'?'⚡':'✨';btn.title=m==='lite'?'简易版 · 点击切回完整版':'完整版 · 点击切至简易版';}try{if(m==='lite'){window.__meteorStop&&window.__meteorStop();}else if(window.__bgAnimEnabled!==false&&!document.hidden){window.__meteorStart&&window.__meteorStart();}}catch(eM){}if(_chg){try{window.dispatchEvent(new CustomEvent('modechange',{detail:{mode:m}}));}catch(e){}try{if(window.__lastQuadParams){setTimeout(function(){drawQuadraticPlot(window.__lastQuadParams[0],window.__lastQuadParams[1],window.__lastQuadParams[2]);},50);}}catch(e){}try{if(typeof drawFuncPlot==='function'){setTimeout(drawFuncPlot,50);}}catch(e){}}
+function setMode(m,byUser){if(window.__lockLite)m='lite';var _pm=document.documentElement.getAttribute('data-mode');var _chg=_pm!==m;document.documentElement.setAttribute('data-mode',m);if(!noPersist&&(!pendingEncryptedData||isUnlocked)){try{localStorage.setItem(MODE_KEY,m);if(byUser)localStorage.setItem('sci-calc-mode-user','1');}catch(e){}}var btn=document.getElementById('modeToggleBtn');if(btn){btn.textContent=m==='lite'?'⚡':'✨';btn.title=m==='lite'?'简易版 · 点击切回完整版':'完整版 · 点击切至简易版';}try{if(m==='lite'){window.__meteorStop&&window.__meteorStop();}else if(window.__bgAnimEnabled!==false&&!document.hidden){window.__meteorStart&&window.__meteorStart();}}catch(eM){}if(_chg){try{window.dispatchEvent(new CustomEvent('modechange',{detail:{mode:m}}));}catch(e){}try{if(window.__lastQuadParams){setTimeout(function(){drawQuadraticPlot(window.__lastQuadParams[0],window.__lastQuadParams[1],window.__lastQuadParams[2]);},50);}}catch(e){}try{if(typeof drawFuncPlot==='function'){setTimeout(drawFuncPlot,50);}}catch(e){}}
   /* 模式切换时已在上面 if(_chg) 内安排一次合并重绘，同值调用不再重绘 */
   /* 模式切换合并重绘已上移 if(_chg) 内 */
 }
