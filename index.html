@@ -19,7 +19,7 @@
 <meta property="og:title" content="理科计算器 · 验证器">
 <meta property="og:description" content="单文件离线理科计算器：计算、绘图、公式库、TOTP、加密云同步。">
 <meta property="og:url" content="https://xhrm-wyx.github.io/xhrm-calc/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-L1TnSxoAITeQtxVY4uI8Q8kbMQ1eZsSiYjmsVi36Snw=' 'sha256-yOmSTAVFJ8K9DTbFMgHxd4j1e6Hh3FU9SD4vPeIN0ck=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-L1TnSxoAITeQtxVY4uI8Q8kbMQ1eZsSiYjmsVi36Snw=' 'sha256-rYj/fZbRNnpSrlAwQYYH9cRvByK2YMzkpiGA1nacnHo=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
 <title>理科计算器 · 验证器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -15102,6 +15102,10 @@ function push(silent){
   var c=norm(getCfg());
   if(!cur()||!__hasSecret())return __pushBody(silent);
   if(isOneWay())return Promise.reject(new Error('当前为单向恢复模式：只能从云端恢复，不能上传'));
+  try{
+    var _lf=parseInt(localStorage.getItem(acctKey('sci-sync-push-last-v1'))||'0',10)||0;
+    if(silent&&(Date.now()-_lf)<45000)return Promise.reject(new Error('同步过于频繁，稍后再试'));
+  }catch(eTC){}
   return pushSilentGuard(c).then(function(){ return __pushBody(silent); });
 }
 function __pushBody(silent){
@@ -15125,6 +15129,7 @@ function __pushBody(silent){
         recordDevice('push',res.ts);
       }else{recordDevice('push',stamp);}
       markSynced(stamp);
+      try{localStorage.setItem(acctKey('sci-sync-push-last-v1'),String(Date.now()));localStorage.removeItem(acctKey('sci-sync-backoff-v1'));}catch(eTC2){}
       try{renderDevices();}catch(e){}
       say('已上传 '+new Date().toLocaleTimeString(),true);
       return res;
@@ -15143,7 +15148,10 @@ function __pushBody(silent){
       }
       throw err;
     });
-  }).catch(function(e){say('上传失败：'+(e&&e.message||e),false);throw e;});
+  }).catch(function(e){
+    try{ if(e&&/429|繁忙|rate/i.test(String(e.message||''))){localStorage.setItem(acctKey('sci-sync-backoff-v1'),String(Date.now()+5*60*1000));} }catch(eBK){}
+    say('上传失败：'+(e&&e.message||e),false);throw e;
+  });
 }
 function pull(silent){
   if(__pulling)return Promise.resolve(null);
@@ -15228,6 +15236,7 @@ function __pullInner(silent){
       if(!c.auto)return Promise.resolve(null);
       if(c.provider!=='cf'&&(!c.owner||!c.repo||!c.token))return Promise.resolve(null);
       if(!cur()||!__hasSecret())return Promise.resolve(null);
+      try{ var _bk=parseInt(localStorage.getItem(acctKey('sci-sync-backoff-v1'))||'0',10)||0; if(_bk&&Date.now()<_bk)return Promise.resolve(null); }catch(eBK2){}
       var h='';
       try{ h=dataHash(collectSaveData({plain:true})); }catch(e){ return Promise.resolve(null); }
       var lastH='';try{lastH=localStorage.getItem(acctKey('sci-sync-hash-v1'))||'';}catch(e){}
@@ -15276,7 +15285,7 @@ function __pullInner(silent){
   window.__cfAfterPasswordChange=cfAfterPasswordChange;
   window.__getCfg=function(){try{return norm(getCfg());}catch(e){return {};}};
   window.__setCfgPartial=function(part){try{var o=norm(getCfg());setCfg({owner:String(part.owner||o.owner||''),repo:String(part.repo||o.repo||''),branch:String(part.branch||o.branch||''),path:String(part.path||o.path||''),auto:!!part.auto,token:String(part.token!==undefined?part.token:(o.token||''))});return true;}catch(e){return false;}};
-  window.__syncDebug={dataHash:dataHash,markSynced:markSynced,isPulling:function(){return __pulling;},isOneWay:isOneWay,setOneWay:setOneWay,autoPayload:function(o){__autoPush=true;var r=autoPayload(o);__autoPush=false;return r;},keyLast:function(){return acctKey('sci-sync-last-v1');},keyTs:function(){return acctKey('sci-sync-ts-v1');}};
+  window.__syncDebug={dataHash:dataHash,markSynced:markSynced,isPulling:function(){return __pulling;},isOneWay:isOneWay,setOneWay:setOneWay,autoPayload:function(o){__autoPush=true;var r=autoPayload(o);__autoPush=false;return r;},keyLast:function(){return acctKey('sci-sync-last-v1');},keyTs:function(){return acctKey('sci-sync-ts-v1');},keyPushLast:function(){return acctKey('sci-sync-push-last-v1');},keyBackoff:function(){return acctKey('sci-sync-backoff-v1');}};
   try{ setInterval(function(){ periodicCheck(); }, 120000); }catch(e){}
   document.addEventListener('visibilitychange',function(){
     if(!document.hidden)setTimeout(function(){try{periodicCheck();}catch(e){}},2500);
