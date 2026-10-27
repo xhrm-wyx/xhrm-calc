@@ -19,7 +19,7 @@
 <meta property="og:title" content="理科计算器 · 验证器">
 <meta property="og:description" content="单文件离线理科计算器：计算、绘图、公式库、TOTP、加密云同步。">
 <meta property="og:url" content="https://xhrm-wyx.github.io/xhrm-calc/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-hVMX9k3zq74yFGWQvTKYS89zd4TJ2mpwPV2hU785jcw=' 'sha256-ILCtTgVQHq0TKX2biNeWIhrztr3mLU3Iu/nSP3YUTxI=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-rQ4xaFieMJllSJaVKFQs19nR3KkchIzfNfeUUwhLcBY=' 'sha256-O2jEo7//aRz3IKfPU6qEL2BQxD1N9/yo27JR7CG797I=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
 <title>理科计算器 · 验证器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -13279,6 +13279,32 @@ function verifyPasswordOnly(username,password){
     });
   });
 }
+function exportAccountCode(){
+  try{
+    if(!currentUser||!currentUser.username)return '';
+    var payload={v:1,u:currentUser.username,s:currentUser.salt,it:currentUser.iterations||PBKDF2_ITER};try{var _sc=window.__getCfg?window.__getCfg():null;if(_sc&&(_sc.owner||_sc.repo))payload.sc={owner:_sc.owner||'',repo:_sc.repo||'',branch:_sc.branch||'',path:_sc.path||'',auto:!!_sc.auto};}catch(eSC3){}
+    return 'sci-acct-v1.'+b64uEncode(JSON.stringify(payload));
+  }catch(e){ return ''; }
+}
+function importAccountCode(code,password){
+  return new Promise(function(resolve,reject){
+    try{
+      var raw=String(code||'').trim();
+      if(raw.indexOf('sci-acct-v1.')!==0)throw new Error('凭据码格式不正确');
+      var obj=JSON.parse(b64uDecode(raw.slice(12)));
+      if(!obj||!obj.u||!obj.s)throw new Error('凭据码内容不完整');
+      var u=String(obj.u), salt=String(obj.s), it=parseInt(obj.it,10)||PBKDF2_ITER;
+      if(String(password||'').length<1)throw new Error('请输入该账号的密码');
+      if(loadUserByName(u)){ resolve(loginUser(u,password)); return; }
+      pbkdf2Bits(password+VERIFY_TAG, b64ToBuf(salt), it).then(function(v){
+        var rec={username:u,salt:salt,verifier:bufToB64(v),iterations:it,createdAt:Date.now()};
+        saveUserToStorage(rec);
+        try{if(obj.sc&&typeof obj.sc==='object'&&window.__setCfgPartial){window.__setCfgPartial(obj.sc);}}catch(eSC4){}
+        resolve(loginUser(u,password));
+      }).catch(reject);
+    }catch(e){ reject(e); }
+  });
+}
 function loginUser(username,password){var u=loadUserByName(String(username||'').trim());if(!u)return Promise.reject(new Error('本机没有该账号，请先注册'));if(!checkCryptoSupport())return Promise.reject(new Error('当前环境不支持加密'));var salt=b64ToBuf(u.salt);return pbkdf2Bits(password+VERIFY_TAG,salt,u.iterations||PBKDF2_ITER).then(function(verifier){var _tagged=bufToB64(verifier);if(_tagged!==u.verifier){return pbkdf2Bits(password,salt,u.iterations||PBKDF2_ITER).then(function(v0){if(bufToB64(v0)!==u.verifier)throw new Error('密码错误');try{u.verifier=_tagged;saveUserToStorage(u);}catch(eV){}});}}).then(function(){currentUser=u;currentPassword=password;pendingEncryptedData=null;noPersist=false;window.__pwLocked=false;window.__fileSession=false;window.__encryptedBlob=null;window.__sessionReady=deriveSessionKey(password,u.salt,u.iterations).then(function(k){sessionKey=k;currentPassword=null;}).catch(function(){});try{if(typeof renderList==='function')renderList();}catch(eL){}reloadAcctData();return (window.__sessionReady||Promise.resolve()).then(function(){return u;});});}
 function sameNameNeedsConfirm(name,pw){
   var old=null;
@@ -13325,7 +13351,7 @@ function renderAccountPanel(){
   if(currentUser&&(sessionKey||currentPassword)&&(!pendingEncryptedData||isUnlocked)){
     if(title)title.textContent='👤 账号';
     body.innerHTML='<div class="account-info">'+'<div class="account-info-row"><span class="k">账号</span><span class="v">'+escapeHtml(currentUser.username)+'</span></div>'+'<div class="account-info-row"><span class="k">注册时间</span><span class="v">'+formatTime(currentUser.createdAt)+'</span></div>'+'<div class="account-info-row"><span class="k">数据保护</span><span class="v">已用你的密码加密，别人拿到文件也打不开</span></div>'+'</div>'+'<div class="account-note">保存网页时会用此账号密码加密数据；下次打开加密文件需要输入相同的账号密码才能查看历史记录。</div>'+'<button type="button" class="btn" id="accChangePw" style="width:100%;margin-bottom:8px;">🔑 修改密码</button>'+
-    '<button type="button" class="btn" id="accSync" style="width:100%;margin-bottom:8px;">☁ 云同步</button>'+'<button type="button" class="btn danger" id="accLogout" style="width:100%;margin-bottom:8px;">登出（本机会话）</button>'+'<button type="button" class="btn danger" id="accWipe" style="width:100%;">注销本机账号</button>';
+    '<button type="button" class="btn" id="accSync" style="width:100%;margin-bottom:8px;">☁ 云同步</button>'+'<button type="button" class="btn" id="accExportCode" style="width:100%;margin-bottom:8px;">⇄ 导出登录凭据（去另一站登录）</button>'+'<button type="button" class="btn danger" id="accLogout" style="width:100%;margin-bottom:8px;">登出（本机会话）</button>'+'<button type="button" class="btn danger" id="accWipe" style="width:100%;">注销本机账号</button>';
     var cpBtn=document.getElementById('accChangePw');
     if(cpBtn)cpBtn.addEventListener('click',function(){var cm=document.getElementById('changePwModal');if(cm)cm.classList.add('show');var st=document.getElementById('cpStatus');if(st)st.textContent='';var o=document.getElementById('cpOld');if(o)o.value='';var n1=document.getElementById('cpNew');if(n1)n1.value='';var n2=document.getElementById('cpNew2');if(n2)n2.value='';});
     var lo=document.getElementById('accLogout');
@@ -13362,12 +13388,12 @@ function renderAccountPanel(){
   var others=ulx2.filter(function(x){return x.username!==u.username;});
   var ulHtml='';
   if(others.length){ulHtml='<div class="account-note" style="margin-bottom:6px;">本机账号（点击切换登录）：</div>'+others.map(function(x){return '<button type="button" class="btn sm" data-u="'+escapeHtml(x.username)+'" style="width:100%;margin-bottom:4px;text-align:left;">👤 '+escapeHtml(x.username)+'</button>';}).join('')+'<div style="height:8px;"></div>';}
-  body.innerHTML=ulHtml+'<label class="inp"><span>账号名</span><input type="text" id="accUser" autocomplete="off" spellcheck="false" value="'+escapeHtml(u.username)+'"></label>'+'<label class="inp"><span>密码</span><input type="password" id="accPass" autocomplete="new-password" placeholder="请输入密码"></label>'+'<button type="button" class="btn primary" id="accLogin" style="width:100%;">登录</button>'+'<button type="button" class="btn" id="accGoReg" style="width:100%;margin:8px 0;">＋ 注册新账号</button>'+'<div id="accRegBox" style="display:none;margin:8px 0;"><label class="inp"><span>账号名</span><input type="text" id="accRegUser" autocomplete="off" spellcheck="false" placeholder="用户名"></label><label class="inp"><span>密码（6–128 位）</span><input type="password" id="accRegPass" autocomplete="new-password" placeholder="6–128 位"></label><button type="button" class="btn primary" id="accDoReg" style="width:100%;">注册并登录</button></div>'+'<button type="button" class="btn danger" id="accWipe" style="width:100%;">注销本机账号</button>';
+  body.innerHTML=ulHtml+'<label class="inp"><span>账号名</span><input type="text" id="accUser" autocomplete="off" spellcheck="false" value="'+escapeHtml(u.username)+'"></label>'+'<label class="inp"><span>密码</span><input type="password" id="accPass" autocomplete="new-password" placeholder="请输入密码"></label>'+'<button type="button" class="btn primary" id="accLogin" style="width:100%;">登录</button>'+'<button type="button" class="btn" id="accImportToggle" style="width:100%;margin-top:8px;">⇄ 从另一站导入账号</button>'+'<div id="accImportBox" style="display:none;margin-top:8px;">'+'<label class="inp"><span>凭据码</span><textarea id="accImportCode" rows="2" autocomplete="off" spellcheck="false" placeholder="sci-acct-v1.…" style="width:100%;font-family:monospace;font-size:11.5px;"></textarea></label>'+'<label class="inp"><span>该账号的密码</span><input type="password" id="accImportPass" autocomplete="new-password" placeholder="输入原账号密码"></label>'+'<button type="button" class="btn primary" id="accImportDo" style="width:100%;">导入并登录</button>'+'<div class="account-note" style="font-size:11.5px;">凭据码只含账号名、盐与迭代次数，不含密码。</div>'+'</div>'+'<button type="button" class="btn" id="accGoReg" style="width:100%;margin:8px 0;">＋ 注册新账号</button>'+'<div id="accRegBox" style="display:none;margin:8px 0;"><label class="inp"><span>账号名</span><input type="text" id="accRegUser" autocomplete="off" spellcheck="false" placeholder="用户名"></label><label class="inp"><span>密码（6–128 位）</span><input type="password" id="accRegPass" autocomplete="new-password" placeholder="6–128 位"></label><button type="button" class="btn primary" id="accDoReg" style="width:100%;">注册并登录</button></div>'+'<button type="button" class="btn danger" id="accWipe" style="width:100%;">注销本机账号</button>';
   var ubts=body.querySelectorAll('[data-u]');for(var ui2=0;ui2<ubts.length;ui2++){(function(bt2){bt2.addEventListener('click',function(){var uf=document.getElementById('accUser');if(uf)uf.value=bt2.getAttribute('data-u');var pf2=document.getElementById('accPass');if(pf2)pf2.value='';if(pf2)pf2.focus();});})(ubts[ui2]);}
   var _gr=document.getElementById('accGoReg');if(_gr)_gr.addEventListener('click',function(){var b=document.getElementById('accRegBox');if(b)b.style.display=(b.style.display==='none'?'block':'none');});
   var _dr=document.getElementById('accDoReg');if(_dr)_dr.addEventListener('click',function(){var un=document.getElementById('accRegUser').value.trim();var pw=document.getElementById('accRegPass').value;if(!un||!pw){setAccountStatus('请输入账号名和密码','err');return;}setAccountStatus('正在生成密钥…','');registerUser(un,pw).then(function(){setAccountStatus('✅ 注册成功','ok');updateAccountBtn();closeAccountModal();}).catch(function(e){setAccountStatus(e.message,'err');});});
   var lb=document.getElementById('accLogin');
-  if(lb)lb.addEventListener('click',function(){var uname=document.getElementById('accUser').value.trim();var pwd=document.getElementById('accPass').value;setAccountStatus('正在验证…','');loginUser(uname,pwd).then(function(){setAccountStatus('✅ 登录成功（密码只在这次打开期间临时记住，不会上传）','ok');afterLoginSuccess();}).catch(function(err){setAccountStatus(err.message,'err');});});
+  if(lb)lb.addEventListener('click',function(){var uname=document.getElementById('accUser').value.trim();var pwd=document.getElementById('accPass').value;setAccountStatus('正在验证…','');loginUser(uname,pwd).then(function(){setAccountStatus('✅ 登录成功（密码只在这次打开期间临时记住，不会上传）','ok');afterLoginSuccess();}).catch(function(err){var m=err&&err.message||'';if(m.indexOf('本机没有该账号')>=0){m='本机没有该账号。若你是在另一站注册的，请点下方「⇄ 从另一站导入账号」；否则请先注册。';}setAccountStatus(m,'err');});});
   var wb=document.getElementById('accWipe');
   if(wb)wb.addEventListener('click',function(){if(!confirm('注销本机账号？\n\n该账号在本机的数据（计算记录、函数、验证码账号、设置等）将一并清除且不可恢复；已保存的加密文件仍可用原账号密码打开。'))return;var _accI=document.getElementById('accUser');var _un=(currentUser&&currentUser.username)||(_accI?_accI.value.trim():'');removeUserFromStorage(_un);logoutUser();setAccountStatus('本机账号已注销','warn');updateAccountBtn();renderAccountPanel();});
 }
@@ -13402,6 +13428,40 @@ function sendToOtherSite(){
     if(!w){ alert('新窗口被拦截。请允许弹窗，或改用「导出数据 (JSON)」。'); return; }
   }catch(e){ alert('发送失败：'+(e&&e.message||e)); }
 }
+document.addEventListener('click',function(e){
+  var t=e.target;
+  if(!t||!t.id)return;
+  if(t.id==='accImportToggle'){
+    var box=document.getElementById('accImportBox');
+    if(box)box.style.display=(box.style.display==='none'?'block':'none');
+    return;
+  }
+  if(t.id==='accExportCode'){
+    var code=exportAccountCode();
+    if(!code){ setAccountStatus('请先登录账号','err'); return; }
+    try{
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(code).then(function(){ setAccountStatus('凭据码已复制，去另一站「从另一站导入账号」粘贴','ok'); },function(){ prompt('复制凭据码，到另一站导入：',code); });
+      }else{ prompt('复制凭据码，到另一站导入：',code); }
+    }catch(eX){ prompt('复制凭据码，到另一站导入：',code); }
+    return;
+  }
+  if(t.id==='accImportDo'){
+    var cEl=document.getElementById('accImportCode');
+    var pEl=document.getElementById('accImportPass');
+    var code2=cEl?cEl.value.trim():'';
+    var pass2=pEl?pEl.value:'';
+    if(!code2||!pass2){ setAccountStatus('请填写凭据码与密码','err'); return; }
+    setAccountStatus('正在导入账号…','');
+    importAccountCode(code2,pass2).then(function(){
+      setAccountStatus('✅ 账号已导入并登录','ok');
+      try{ closeAccountModal(); }catch(eC){}
+      try{ updateAccountBtn(); }catch(eU){}
+      try{ afterLoginSuccess(); }catch(eA){}
+    }).catch(function(err){ setAccountStatus(err&&err.message||'导入失败','err'); });
+    return;
+  }
+});
 function handleXferHash(){
   var h=location.hash||'';
   if(h.indexOf('#xfer=')!==0)return;
@@ -14869,6 +14929,8 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
     }catch(e){ return Promise.resolve(null); }
   }
   window.__syncTick=periodicCheck;
+  window.__getCfg=function(){try{return norm(getCfg());}catch(e){return {};}};
+  window.__setCfgPartial=function(part){try{var o=norm(getCfg());setCfg({owner:String(part.owner||o.owner||''),repo:String(part.repo||o.repo||''),branch:String(part.branch||o.branch||''),path:String(part.path||o.path||''),auto:!!part.auto,token:o.token||''});return true;}catch(e){return false;}};
   window.__syncDebug={dataHash:dataHash,markSynced:markSynced,isPulling:function(){return __pulling;},autoPayload:function(o){__autoPush=true;var r=autoPayload(o);__autoPush=false;return r;}};
   try{ setInterval(function(){ periodicCheck(); }, 120000); }catch(e){}
   document.addEventListener('visibilitychange',function(){
