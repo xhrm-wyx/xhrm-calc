@@ -19,7 +19,7 @@
 <meta property="og:title" content="理科计算器 · 验证器">
 <meta property="og:description" content="单文件离线理科计算器：计算、绘图、公式库、TOTP、加密云同步。">
 <meta property="og:url" content="https://xhrm-wyx.github.io/xhrm-calc/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-hVMX9k3zq74yFGWQvTKYS89zd4TJ2mpwPV2hU785jcw=' 'sha256-rI7qSZdLCePRda3q8LXNqrqQyqJrYAqvU9qAx9rxpXk=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-hVMX9k3zq74yFGWQvTKYS89zd4TJ2mpwPV2hU785jcw=' 'sha256-ILCtTgVQHq0TKX2biNeWIhrztr3mLU3Iu/nSP3YUTxI=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
 <title>理科计算器 · 验证器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -14778,38 +14778,59 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
     if(!c.owner||!c.repo||!c.token){if(!silent)say('请先填写仓库与私人令牌',false);return Promise.reject(new Error('未配置'));}
     if(!cur()||!__hasSecret()){if(!silent)say('请先登录账号',false);return Promise.reject(new Error('未登录'));}
     say('正在加密并上传…');
-    var _pl=collectSaveData();_pl.devices=listDevices();return __encForSave(_pl).then(function(blob){
-      blob.updatedAt=Date.now();blob.device=String(navigator.platform||'')+'|'+String(navigator.userAgent||'').slice(0,60);
+    var _pl=collectSaveData();_pl.devices=listDevices();autoPayload(_pl);return __encForSave(_pl).then(function(blob){
+      blob.updatedAt=Date.now();blob.savedAt=blob.savedAt||blob.updatedAt;blob.device=String(navigator.platform||'')+'|'+String(navigator.userAgent||'').slice(0,60);
       var content=b64(JSON.stringify(blob));
       return get(c).then(function(ex){return put(c,content,ex&&ex.sha?ex.sha:null);}).then(function(){
-        try{localStorage.setItem(acctKey('sci-sync-last-v1'),String(blob.updatedAt));}catch(e){}
+        try{localStorage.setItem(acctKey('sci-sync-last-v1'),String(blob.savedAt||blob.updatedAt));}catch(e){}
+        markSynced(blob.savedAt||blob.updatedAt);
         recordDevice('push',blob.updatedAt);renderDevices();
         say('已上传 '+new Date().toLocaleTimeString(),true);
       });
     }).catch(function(e){say('上传失败：'+e.message,false);throw e;});
   }
   function pull(silent){
+    if(__pulling)return Promise.resolve(null);
+    __pulling=true;
+    var _localTheme=null,_localMode=null;
+    try{_localTheme=document.documentElement.getAttribute('data-theme');_localMode=document.documentElement.getAttribute('data-mode');}catch(eLT){}
     var c=norm(getCfg());
     if(!c.owner||!c.repo||!c.token){if(!silent)say('请先填写仓库与私人令牌',false);return Promise.reject(new Error('未配置'));}
     if(!cur()||!__hasSecret()){if(!silent)say('请先登录账号',false);return Promise.reject(new Error('未登录'));}
     say('正在从云端读取…');
     return get(c).then(function(ex){
       if(!ex||!ex.content){say('云端还没有数据，先上传一次',false);return null;}
-      var blob=JSON.parse(unb64(ex.content));try{var _lastSync=parseInt(localStorage.getItem(acctKey('sci-sync-last-v1'))||'0',10)||0;if(_lastSync&&blob.updatedAt&&blob.updatedAt<_lastSync){if(!confirm('云端备份比本机记录更旧（可能被回滚），仍要恢复？'))return null;}}catch(eRB){}
+      var blob=JSON.parse(unb64(ex.content));try{var _lastSync=parseInt(localStorage.getItem(acctKey('sci-sync-last-v1'))||'0',10)||0;var _remoteAt=blob.savedAt||blob.updatedAt||0;if(silent&&blob.accountSalt&&cur()&&blob.accountSalt!==cur().salt){say('账号盐不一致，已跳过自动同步，请手动「从云端恢复」',false);__pulling=false;return null;}if(_lastSync&&_remoteAt&&_remoteAt<_lastSync){if(!confirm('云端备份比本机记录更旧（可能被回滚），仍要恢复？')){__pulling=false;return null;}}}catch(eRB){}
       if(blob.username&&cur()&&blob.username!==cur().username){if(!confirm('云端数据属于账号 '+blob.username+'，继续导入到当前账号？'))return null;}
       return decryptAny(blob).then(function(data){try{mergeDevices(data.devices);recordDevice('pull',Date.now());}catch(eD){}
         applyData(data);
         try{if(data.theme)setTheme(data.theme);}catch(e){}
         try{if(data.mode)setMode(data.mode);}catch(e){}
         try{reloadAcctData();}catch(e){}
-        try{localStorage.setItem(acctKey('sci-sync-last-v1'),String(blob.updatedAt||Date.now()));}catch(e){}
+        try{localStorage.setItem(acctKey('sci-sync-last-v1'),String(blob.savedAt||blob.updatedAt||Date.now()));}catch(e){}
+        if(silent){try{if(_localTheme)setTheme(_localTheme);if(_localMode)setMode(_localMode);}catch(eLT2){}}
+        markSynced(blob.savedAt||blob.updatedAt||Date.now());
+        __pulling=false;
         say('已恢复 '+new Date(blob.updatedAt||Date.now()).toLocaleString(),true);
         return data;
       });
-    }).catch(function(e){say('恢复失败：'+e.message,false);throw e;});
+    }).catch(function(e){__pulling=false;say('恢复失败：'+e.message,false);throw e;});
   }
 
   /* 定期同步：以云端为中继，让主站与镜像的数据在几分钟内收敛 */
+  var __pulling=false, __autoPush=false;
+  function dataHash(d){
+    try{
+      var o={};
+      for(var k in d){ if(!Object.prototype.hasOwnProperty.call(d,k))continue; if(k==='savedAt'||k==='exportedAt'||k==='devices')continue; o[k]=d[k]; }
+      return fnvHash(JSON.stringify(o));
+    }catch(e){ return ''; }
+  }
+  function autoPayload(d){ if(!__autoPush)return d; try{delete d.mode;delete d.theme;delete d.settings;}catch(e){} return d; }
+  function markSynced(ts){
+    try{ localStorage.setItem(acctKey('sci-sync-push-v1'),String(ts||Date.now())); }catch(e){}
+    try{ var h=dataHash(collectSaveData({plain:true})); if(h)localStorage.setItem(acctKey('sci-sync-hash-v1'),h); }catch(e){}
+  }
   function fnvHash(s){
     var h=2166136261>>>0;
     for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=(h*16777619)>>>0;}
@@ -14818,30 +14839,37 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
   function periodicCheck(){
     try{
       if(document.hidden)return Promise.resolve(null);
+      if(__pulling)return Promise.resolve(null);
       var c=norm(getCfg());
       if(!c.auto||!c.owner||!c.repo||!c.token)return Promise.resolve(null);
       if(!cur()||!__hasSecret())return Promise.resolve(null);
+      var h='';
+      try{ h=dataHash(collectSaveData({plain:true})); }catch(e){ return Promise.resolve(null); }
+      var lastH='';try{lastH=localStorage.getItem(acctKey('sci-sync-hash-v1'))||'';}catch(e){}
+      var localChanged=!!(h&&h!==lastH);
       return get(c).then(function(ex){
-        if(!ex||!ex.content)return null;
+        if(!ex||!ex.content){
+          if(localChanged){ __autoPush=true; return push(true).then(function(){__autoPush=false;},function(){__autoPush=false;}); }
+          return null;
+        }
         var blob;try{blob=JSON.parse(unb64(ex.content));}catch(e){return null;}
-        var remoteAt=blob.updatedAt||0;
+        var remoteAt=blob.savedAt||blob.updatedAt||0;
         var lastSync=parseInt(localStorage.getItem(acctKey('sci-sync-last-v1'))||'0',10)||0;
         var lastPush=parseInt(localStorage.getItem(acctKey('sci-sync-push-v1'))||'0',10)||0;
-        if(remoteAt>lastSync&&remoteAt>lastPush){
-          if(blob.username&&cur()&&blob.username!==cur().username)return null;
+        if(localChanged){
+          __autoPush=true;
+          return push(true).then(function(){__autoPush=false;},function(){__autoPush=false;});
+        }
+        if(remoteAt>lastSync||remoteAt>lastPush){
+          if(blob.accountSalt&&cur()&&blob.accountSalt!==cur().salt)return null;
           return pull(true);
         }
-        var h='';
-        try{h=fnvHash(JSON.stringify(collectSaveData({plain:true})));}catch(e){return null;}
-        var lastH='';try{lastH=localStorage.getItem(acctKey('sci-sync-hash-v1'))||'';}catch(e){}
-        if(h!==lastH){
-          return push(true).then(function(){try{localStorage.setItem(acctKey('sci-sync-hash-v1'),h);}catch(e){}});
-        }
         return null;
-      }).catch(function(){return null;});
+      }).catch(function(){__autoPush=false;return null;});
     }catch(e){ return Promise.resolve(null); }
   }
   window.__syncTick=periodicCheck;
+  window.__syncDebug={dataHash:dataHash,markSynced:markSynced,isPulling:function(){return __pulling;},autoPayload:function(o){__autoPush=true;var r=autoPayload(o);__autoPush=false;return r;}};
   try{ setInterval(function(){ periodicCheck(); }, 120000); }catch(e){}
   document.addEventListener('visibilitychange',function(){
     if(!document.hidden)setTimeout(function(){try{periodicCheck();}catch(e){}},2500);
@@ -14849,9 +14877,10 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
   var t=null;
   function schedule(){
     try{
+      if(__pulling)return;
       var c=getCfg();if(!c.auto)return;if(!cur()||!__hasSecret())return;
       if(t)clearTimeout(t);
-      t=setTimeout(function(){t=null;try{push(true).catch(function(){});}catch(e){}},8000);
+      t=setTimeout(function(){t=null;if(__pulling)return;try{__autoPush=true;push(true).catch(function(){}).then(function(){__autoPush=false;},function(){__autoPush=false;});}catch(e){__autoPush=false;}},8000);
     }catch(e){}
   }
   try{
