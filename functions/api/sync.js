@@ -86,9 +86,20 @@ export async function onRequest(context){
       if(baseTs === null) return json({ error: 'conflict', ts: cur.ts, need: 'read-first' }, 409, origin);
       if(Number(cur.ts) !== Number(baseTs)) return json({ error: 'conflict', ts: cur.ts }, 409, origin);
     }
-    const rec = { ahh: ahh, blob: blob, ts: Date.now() };
+    /* 每账号每小时写入配额（同一 KV 记录里顺带计数，不额外写） */
+    const HOUR = 3600 * 1000, WRITE_LIMIT = 120;
+    const now = Date.now();
+    let wr = now, wc = 1;
+    if(cur && (now - Number(cur.wr || 0)) < HOUR){
+      wr = Number(cur.wr);
+      wc = Number(cur.wc || 0) + 1;
+      if(wc > WRITE_LIMIT){
+        return json({ error: 'rate', scope: 'write', limit: WRITE_LIMIT }, 429, origin, { 'Retry-After': '600' });
+      }
+    }
+    const rec = { ahh: ahh, blob: blob, ts: now, wr: wr, wc: wc };
     await env.SCI_KV.put(key, JSON.stringify(rec));
-    return json({ ok: true, ts: rec.ts }, 200, origin);
+    return json({ ok: true, ts: rec.ts, wc: wc }, 200, origin);
   }
 
   if(request.method === 'DELETE'){

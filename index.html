@@ -19,7 +19,7 @@
 <meta property="og:title" content="理科计算器 · 验证器">
 <meta property="og:description" content="单文件离线理科计算器：计算、绘图、公式库、TOTP、加密云同步。">
 <meta property="og:url" content="https://xhrm-wyx.github.io/xhrm-calc/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-L1TnSxoAITeQtxVY4uI8Q8kbMQ1eZsSiYjmsVi36Snw=' 'sha256-e4MALS4YdNRnJ88IcysEgzGJi0z79ggKref68eakKQM=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-L1TnSxoAITeQtxVY4uI8Q8kbMQ1eZsSiYjmsVi36Snw=' 'sha256-yOmSTAVFJ8K9DTbFMgHxd4j1e6Hh3FU9SD4vPeIN0ck=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
 <title>理科计算器 · 验证器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -15090,11 +15090,10 @@ function pushSilentGuard(c){
     try{ b=JSON.parse(unb64(ex.content)); }catch(e){}
     if(b&&b.accountSalt&&cur()){
       if(b.accountSalt!==cur().salt){
-        window.__syncOneWay=true;
+        setOneWay(true);
         say('云端数据属于不同的账号（盐不一致）：当前只能单向恢复，不能上传',false);
         throw new Error('salt-mismatch');
       }
-      window.__syncOneWay=false;
     }
     return null;
   },function(){ return null; });
@@ -15102,7 +15101,7 @@ function pushSilentGuard(c){
 function push(silent){
   var c=norm(getCfg());
   if(!cur()||!__hasSecret())return __pushBody(silent);
-  if(window.__syncOneWay)return Promise.reject(new Error('当前为单向恢复模式：只能从云端恢复，不能上传'));
+  if(isOneWay())return Promise.reject(new Error('当前为单向恢复模式：只能从云端恢复，不能上传'));
   return pushSilentGuard(c).then(function(){ return __pushBody(silent); });
 }
 function __pushBody(silent){
@@ -15165,7 +15164,7 @@ function __pullInner(silent){
       var _lastSync=parseInt(localStorage.getItem(acctKey('sci-sync-last-v1'))||'0',10)||0;
       var _remoteAt=blob.savedAt||blob.updatedAt||0;
       if(silent&&blob.accountSalt&&cur()&&blob.accountSalt!==cur().salt){
-        window.__syncOneWay=true;
+        setOneWay(true);
         say('账号盐不一致：当前只能单向恢复，请点「从云端恢复」并输入密码',false);
         return null;
       }
@@ -15183,6 +15182,7 @@ function __pullInner(silent){
       try{if(data.mode)setMode(data.mode);}catch(e){}
       try{reloadAcctData();}catch(e){}
       if(silent){try{if(_localTheme)setTheme(_localTheme);if(_localMode)setMode(_localMode);}catch(eLT2){}}
+      try{ if(blob.accountSalt&&cur())setOneWay(blob.accountSalt!==cur().salt); }catch(eOW){}
       var _ts=ex._ts||blob.savedAt||blob.updatedAt||Date.now();
       try{localStorage.setItem(acctKey('sci-sync-last-v1'),String(_ts));}catch(e){}
       try{if(ex._ts)localStorage.setItem(acctKey('sci-sync-ts-v1'),String(ex._ts));}catch(e){}
@@ -15193,6 +15193,15 @@ function __pullInner(silent){
   }).catch(function(e){say('恢复失败：'+(e&&e.message||e),false);throw e;});
 }
     /* 定期同步：以云端为中继，让主站与镜像的数据在几分钟内收敛 */
+  function oneWayKey(){ try{ return acctKey('sci-sync-oneway-v1'); }catch(e){ return 'sci-calc-sync-oneway-v1'; } }
+  function setOneWay(v){
+    window.__syncOneWay=!!v;
+    try{ if(v)localStorage.setItem(oneWayKey(),'1'); else localStorage.removeItem(oneWayKey()); }catch(e){}
+  }
+  function isOneWay(){
+    if(window.__syncOneWay)return true;
+    try{ return localStorage.getItem(oneWayKey())==='1'; }catch(e){ return false; }
+  }
   var __pulling=false, __autoPush=false;
   function dataHash(d){
     try{
@@ -15234,7 +15243,7 @@ function __pullInner(silent){
         if(lastSync0){
           /* 本机从未同步过：先拉取，绝不自动覆盖云端 */
           if(blob.accountSalt&&cur()&&blob.accountSalt!==cur().salt){
-            window.__syncOneWay=true;
+            setOneWay(true);
             say('云端已有旧数据（账号盐不一致）：只能单向恢复，请点「从云端恢复」并输入密码',false);
             return null;
           }
@@ -15267,7 +15276,7 @@ function __pullInner(silent){
   window.__cfAfterPasswordChange=cfAfterPasswordChange;
   window.__getCfg=function(){try{return norm(getCfg());}catch(e){return {};}};
   window.__setCfgPartial=function(part){try{var o=norm(getCfg());setCfg({owner:String(part.owner||o.owner||''),repo:String(part.repo||o.repo||''),branch:String(part.branch||o.branch||''),path:String(part.path||o.path||''),auto:!!part.auto,token:String(part.token!==undefined?part.token:(o.token||''))});return true;}catch(e){return false;}};
-  window.__syncDebug={dataHash:dataHash,markSynced:markSynced,isPulling:function(){return __pulling;},autoPayload:function(o){__autoPush=true;var r=autoPayload(o);__autoPush=false;return r;},keyLast:function(){return acctKey('sci-sync-last-v1');},keyTs:function(){return acctKey('sci-sync-ts-v1');}};
+  window.__syncDebug={dataHash:dataHash,markSynced:markSynced,isPulling:function(){return __pulling;},isOneWay:isOneWay,setOneWay:setOneWay,autoPayload:function(o){__autoPush=true;var r=autoPayload(o);__autoPush=false;return r;},keyLast:function(){return acctKey('sci-sync-last-v1');},keyTs:function(){return acctKey('sci-sync-ts-v1');}};
   try{ setInterval(function(){ periodicCheck(); }, 120000); }catch(e){}
   document.addEventListener('visibilitychange',function(){
     if(!document.hidden)setTimeout(function(){try{periodicCheck();}catch(e){}},2500);
@@ -15324,9 +15333,9 @@ function __pullInner(silent){
     if(!n)return;
     var c=norm(getCfg());
     if(c.provider==='cf'){
-      n.innerHTML='当前使用：<b>Cloudflare 中继</b>（无需配置，登录后自动同步）'+(window.__syncOneWay?' · <span style="color:#ffb4b4">单向恢复模式</span>':'');
+      n.innerHTML='当前使用：<b>Cloudflare 中继</b>（无需配置，登录后自动同步）'+(isOneWay()?' · <span style="color:#ffb4b4">单向恢复模式</span>':'');
     }else{
-      n.innerHTML='当前使用：<b>自建仓库</b>（'+escH((c.owner||'')+'/'+(c.repo||''))+'）'+(window.__syncOneWay?' · <span style="color:#ffb4b4">单向恢复模式</span>':'');
+      n.innerHTML='当前使用：<b>自建仓库</b>（'+escH((c.owner||'')+'/'+(c.repo||''))+'）'+(isOneWay()?' · <span style="color:#ffb4b4">单向恢复模式</span>':'');
     }
   }
   function open(){
@@ -15338,7 +15347,7 @@ function __pullInner(silent){
     el('syncAuto').checked=!!c.auto;var _adv=document.getElementById('syncAdv');if(_adv)_adv.style.display=(c.provider==='gitee'&&(!c.owner||!c.token))?'block':'none';
     say('');
     try{updateProviderNote();}catch(ePN){}
-    try{var _pb=document.getElementById('syncPushBtn');if(_pb){_pb.disabled=!!window.__syncOneWay;_pb.title=window.__syncOneWay?'当前只能从云端恢复，不能上传':'';}}catch(ePB){}
+    try{var _pb=document.getElementById('syncPushBtn');if(_pb){_pb.disabled=isOneWay();_pb.title=isOneWay()?'当前只能从云端恢复，不能上传':'';}}catch(ePB){}
     try{renderDevices();}catch(eRD){}
     m.classList.add('show');
   }
