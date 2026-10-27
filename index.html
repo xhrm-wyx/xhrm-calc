@@ -19,7 +19,7 @@
 <meta property="og:title" content="理科计算器 · 验证器">
 <meta property="og:description" content="单文件离线理科计算器：计算、绘图、公式库、TOTP、加密云同步。">
 <meta property="og:url" content="https://xhrm-wyx.github.io/xhrm-calc/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-OkSe2q8bDF1sbOYX7TKMefxUfeX651zQIU/6Jy0MmVE=' 'sha256-j9MlfYkv5DNSe5++/Lb+JuIE0fMlqxKISA26gMEU8ps=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-OkSe2q8bDF1sbOYX7TKMefxUfeX651zQIU/6Jy0MmVE=' 'sha256-mim7WpVyRbKU6o0o6N22IHy33ZP6L9VhtDE90D2CdJQ=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
 <title>理科计算器 · 验证器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -15280,11 +15280,11 @@ function __pullInner(silent){
     d.className='account-modal';d.id='syncModal';
     d.innerHTML='<div class="account-box"><div class="account-header"><div class="account-title">☁ 云同步</div><button type="button" class="icon-btn" id="syncClose" style="width:32px;height:32px;font-size:16px;">×</button></div>'
       +'<div class="account-body" style="padding:4px 16px 16px;">'
-      +'<div class="account-note">数据会先在你的设备上用密码加密，再上传到云端；云端只能看到一串打乱的内容，没有密码打不开。换设备登录同一账号后点「从云端恢复」即可。</div>'
+      +'<div class="account-note" id="syncProviderNote" style="margin-bottom:8px;">当前使用：<b>Cloudflare 中继</b>（无需配置）</div>'       +'<div class="account-note">数据会先在你的设备上用密码加密，再上传到云端；云端只能看到一串打乱的内容，没有密码打不开。换设备登录同一账号后点「从云端恢复」即可。</div>'
       +'<label style="display:flex;align-items:center;gap:8px;margin:12px 0;font-size:12.5px;"><input type="checkbox" id="syncAuto"> 自动同步（登录时自动下载，数据变化后自动上传）</label>'
       +'<div style="display:flex;gap:8px;flex-wrap:wrap;"><button type="button" class="btn primary" id="syncPushBtn" style="flex:1;">上传到云端</button><button type="button" class="btn" id="syncPullBtn" style="flex:1;">从云端恢复</button></div>'
       +'<div class="account-status" id="syncStatus" style="margin-top:8px;"></div><div id="syncDevices" style="margin-top:6px;"></div>'
-      +'<div style="text-align:center;margin-top:12px;"><button type="button" class="btn sm" id="syncAdvToggle" style="font-size:12px;opacity:.85;">详情</button></div>'
+      +'<div style="text-align:center;margin-top:12px;"><button type="button" class="btn sm" id="syncAdvToggle" style="font-size:12px;opacity:.85;">高级（自建仓库）</button></div>'
       +'<div id="syncAdv" style="display:none;margin-top:10px;">'
       +'<label class="field" style="display:block;margin:8px 0;"><span style="font-size:12px;opacity:.8;">存放位置（用户名/仓库名）</span><input id="syncRepo" type="text" placeholder="用户名/仓库名" style="width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--glass-border);background:var(--input-bg);color:var(--text-strong);"></label>'
       +'<label class="field" style="display:block;margin:8px 0;"><span style="font-size:12px;opacity:.8;">线路（一般不用改）</span><input id="syncBranch" type="text" value="master" style="width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--glass-border);background:var(--input-bg);color:var(--text-strong);"></label>'
@@ -15295,17 +15295,27 @@ function __pullInner(silent){
       +'</div></div>';
     document.body.appendChild(d);
     el('syncClose').addEventListener('click',function(){d.classList.remove('show');});
-    var _cfb=el('syncUseCf');if(_cfb)_cfb.addEventListener('click',function(){try{setCfg({provider:'cf',owner:'',repo:'',branch:'',path:'',token:'',auto:true});say('已切换到 Cloudflare 中继，登录后自动同步',true);var rEl=el('syncRepo');if(rEl)rEl.value='';var bEl=el('syncBranch');if(bEl)bEl.value='';var pEl=el('syncPath');if(pEl)pEl.value='';var tEl=el('syncToken');if(tEl)tEl.value='';}catch(e){say('切换失败：'+e.message,false);}});
+    var _cfb=el('syncUseCf');if(_cfb)_cfb.addEventListener('click',function(){try{setCfg({provider:'cf',owner:'',repo:'',branch:'',path:'',token:'',auto:true});say('已切换到 Cloudflare 中继，登录后自动同步',true);try{updateProviderNote();}catch(e){}var rEl=el('syncRepo');if(rEl)rEl.value='';var bEl=el('syncBranch');if(bEl)bEl.value='';var pEl=el('syncPath');if(pEl)pEl.value='';var tEl=el('syncToken');if(tEl)tEl.value='';}catch(e){say('切换失败：'+e.message,false);}});
     var _acb=el('syncAutoCfg');if(_acb)_acb.addEventListener('click',function(){try{autoConfigureSync();}catch(e){say('自动配置失败：'+e.message,false);}});
     el('syncSave').addEventListener('click',function(){
       var c=norm({repo:el('syncRepo').value,branch:el('syncBranch').value,path:el('syncPath').value,token:el('syncToken').value,auto:el('syncAuto').checked});
       if(c.provider!=='cf'&&(!c.owner||!c.repo)){say('仓库格式应为 owner/repo',false);return;}
-      setCfg(c);say('设置已保存',true);
+      setCfg(c);say('设置已保存',true);try{updateProviderNote();}catch(e){}
     });
     el('syncAdvToggle').addEventListener('click',function(){var a=el('syncAdv');if(a)a.style.display=(a.style.display==='none'?'block':'none');});
     el('syncPushBtn').addEventListener('click',function(){try{push(false).catch(function(){});}catch(e){say(e.message,false);}});
     el('syncPullBtn').addEventListener('click',function(){try{pull(false).catch(function(){});}catch(e){say(e.message,false);}});
     return d;
+  }
+  function updateProviderNote(){
+    var n=document.getElementById('syncProviderNote');
+    if(!n)return;
+    var c=norm(getCfg());
+    if(c.provider==='cf'){
+      n.innerHTML='当前使用：<b>Cloudflare 中继</b>（无需配置，登录后自动同步）';
+    }else{
+      n.innerHTML='当前使用：<b>自建仓库</b>（'+escH((c.owner||'')+'/'+(c.repo||''))+'）';
+    }
   }
   function open(){
     var m=modal();var c=norm(getCfg());
@@ -15315,6 +15325,7 @@ function __pullInner(silent){
     el('syncToken').value=c.token||'';
     el('syncAuto').checked=!!c.auto;var _adv=document.getElementById('syncAdv');if(_adv)_adv.style.display=(!c.owner||!c.token)?'block':'none';
     say('');
+    try{updateProviderNote();}catch(ePN){}
     try{renderDevices();}catch(eRD){}
     m.classList.add('show');
   }
