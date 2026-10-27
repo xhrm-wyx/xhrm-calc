@@ -19,7 +19,7 @@
 <meta property="og:title" content="理科计算器 · 验证器">
 <meta property="og:description" content="单文件离线理科计算器：计算、绘图、公式库、TOTP、加密云同步。">
 <meta property="og:url" content="https://xhrm-wyx.github.io/xhrm-calc/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-dQyXrgXo4npSjwyZQJ2rljzInuuMX4NNCqh4axhcFFc=' 'sha256-O2jEo7//aRz3IKfPU6qEL2BQxD1N9/yo27JR7CG797I=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-CdxC4X8whZcwqxV+DUj5NY5SCIDVTTkki52urfmS/w0=' 'sha256-O2jEo7//aRz3IKfPU6qEL2BQxD1N9/yo27JR7CG797I=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
 <title>理科计算器 · 验证器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -13472,22 +13472,22 @@ function renderAccountPanel(){
       var m=err&&err.message||'';
       if(m.indexOf('本机没有该账号')>=0){
         var target=otherSiteUrl();
-        var go=confirm('本站没有该账号。\n\n是否到另一站（'+target+'）用同一账号密码核对，并把数据同步过来？\n密码只在浏览器两个页面之间传递，不经过网络。');
+        var _role=siteRole();var go=confirm(_role.self+'未检索到该账号。\n\n是否到'+_role.other+'（'+target+'）检索同一账号密码，并把数据同步过来？\n密码只在浏览器两个页面之间传递，不经过网络。');
         if(go){
-          setAccountStatus('正在到另一站核对账号…','');
+          setAccountStatus('正在到'+siteRole().other+'检索账号…','');
           tryRemoteAccount(uname,pwd).then(function(ok){
             if(ok){
-              setAccountStatus('✅ 已在另一站核对通过，数据已同步','ok');
+              setAccountStatus('✅ 已在'+siteRole().other+'核对通过，数据已同步','ok');
               try{closeAccountModal();}catch(e1){}
               try{updateAccountBtn();}catch(e2){}
               try{afterLoginSuccess();}catch(e3){}
             }else{
-              setAccountStatus('另一站也没有这个账号，或密码不一致。可点「⇄ 从另一站导入账号」手动导入，或先注册。','err');
+              var _r2=siteRole();setAccountStatus(_r2.other+'也未检索到该账号，或密码不一致。可点「⇄ 从另一站导入账号」手动导入，或先在'+_r2.self+'注册。','err');
             }
           }).catch(function(e4){ setAccountStatus('核对失败：'+((e4&&e4.message)||e4),'err'); });
           return;
         }
-        m='本机没有该账号。若你是在另一站注册的，请点下方「⇄ 从另一站导入账号」；否则请先注册。';
+        var _r3=siteRole();m=_r3.self+'没有该账号。若你是在'+_r3.other+'注册的，请点下方「⇄ 从另一站导入账号」；否则请先注册。';
       }
       setAccountStatus(m,'err');
     });});
@@ -13506,6 +13506,12 @@ function b64uDecode(s){
   var bin=atob(s),bytes=new Uint8Array(bin.length);
   for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
   return new TextDecoder().decode(bytes);
+}
+function siteRole(){
+  var h=location.hostname||'';
+  if(/(^|\.)pages\.dev$/i.test(h))return {self:'主站',other:'副站',selfUrl:'https://xhrm-calc.pages.dev/'};
+  if(/(^|\.)github\.io$/i.test(h))return {self:'副站',other:'主站',selfUrl:'https://xhrm-wyx.github.io/xhrm-calc/'};
+  return {self:'本站',other:'另一站',selfUrl:location.href};
 }
 function otherSiteUrl(){
   var h=location.hostname||'';
