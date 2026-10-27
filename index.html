@@ -19,7 +19,7 @@
 <meta property="og:title" content="理科计算器 · 验证器">
 <meta property="og:description" content="单文件离线理科计算器：计算、绘图、公式库、TOTP、加密云同步。">
 <meta property="og:url" content="https://xhrm-wyx.github.io/xhrm-calc/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-vxGn5M5WBgrVggaXHJDSuZIjZ2WBfnKdfT+8z+Eqppk=' 'sha256-O2jEo7//aRz3IKfPU6qEL2BQxD1N9/yo27JR7CG797I=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-dQyXrgXo4npSjwyZQJ2rljzInuuMX4NNCqh4axhcFFc=' 'sha256-O2jEo7//aRz3IKfPU6qEL2BQxD1N9/yo27JR7CG797I=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
 <title>理科计算器 · 验证器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -13279,6 +13279,81 @@ function verifyPasswordOnly(username,password){
     });
   });
 }
+/* 跨站账号探针：B 站找不到账号时，用弹窗向 A 站验证并取回数据 */
+function probeOtherSite(user,pass){
+  return new Promise(function(resolve){
+    var target=window.__probeUrl||otherSiteUrl();
+    var origin;try{origin=new URL(target).origin;}catch(e){resolve(null);return;}
+    var nonce='n'+Math.random().toString(36).slice(2,10)+Date.now().toString(36);
+    var w=null;
+    try{ w=window.open(target+'#acctprobe='+nonce,'sci-probe','width=460,height=340,menubar=no,toolbar=no,location=no,status=no'); }catch(e){}
+    if(!w){ resolve(null); return; }
+    var done=false,ready=false;
+    function finish(v){
+      if(done)return;done=true;
+      try{removeEventListener('message',onMsg);}catch(e){}
+      try{ if(w&&!w.closed)w.close(); }catch(e){}
+      resolve(v);
+    }
+    function send(){
+      try{ w.postMessage({type:'sci-acct-probe-auth',nonce:nonce,u:user,p:pass},origin); }catch(e){}
+    }
+    function onMsg(ev){
+      if(ev.origin!==origin)return;
+      var d=ev.data;
+      if(!d||d.nonce!==nonce)return;
+      if(d.type==='sci-acct-probe-ready'){ if(!ready){ready=true;send();} return; }
+      if(d.type==='sci-acct-probe'){ finish(d.ok?d:null); }
+    }
+    addEventListener('message',onMsg);
+    setTimeout(function(){ if(!ready)send(); },2500);
+    setTimeout(function(){ finish(null); },15000);
+  });
+}
+function tryRemoteAccount(user,pass){
+  return probeOtherSite(user,pass).then(function(res){
+    if(!res||!res.ok)return null;
+    var salt=String(res.s||''), it=parseInt(res.it,10)||PBKDF2_ITER;
+    if(!salt)return null;
+    return pbkdf2Bits(pass+VERIFY_TAG, b64ToBuf(salt), it).then(function(v){
+      var rec={username:user,salt:salt,verifier:bufToB64(v),iterations:it,createdAt:Date.now()};
+      saveUserToStorage(rec);
+      return loginUser(user,pass);
+    }).then(function(){
+      try{ if(res.payload&&typeof res.payload==='object')applyData(res.payload); }catch(e){}
+      return true;
+    });
+  });
+}
+/* A 站：响应弹窗探针（只校验，不改变本页登录态） */
+function handleAcctProbeHash(){
+  var h=location.hash||'';
+  if(h.indexOf('#acctprobe=')!==0)return false;
+  var nonce=h.slice(11);
+  var allowed=['https://xhrm-calc.pages.dev','https://xhrm-wyx.github.io'];
+  function reply(obj,origin){ try{ if(window.opener)window.opener.postMessage(obj,origin||'*'); }catch(e){} }
+  try{ document.title='验证中…'; }catch(e){}
+  reply({type:'sci-acct-probe-ready',nonce:nonce},'*');
+  addEventListener('message',function(ev){
+    var okOrigin=allowed.indexOf(ev.origin)>=0||/^http:\/\/(127\.0\.0\.1|localhost):\d+$/.test(ev.origin||'');
+    if(!okOrigin)return;
+    var d=ev.data;
+    if(!d||d.type!=='sci-acct-probe-auth'||d.nonce!==nonce)return;
+    var u=String(d.u||''),p=String(d.p||'');
+    loginUser(u,p).then(function(){
+      var rec=loadUserByName(u)||{};
+      var payload=null;
+      try{ payload=collectSaveData({plain:true}); delete payload.accounts; }catch(e){}
+      reply({type:'sci-acct-probe',nonce:nonce,ok:true,u:u,s:rec.salt,it:rec.iterations||PBKDF2_ITER,payload:payload},ev.origin);
+      setTimeout(function(){try{logoutUser();}catch(eL){}try{window.close();}catch(e){}},150);
+    }).catch(function(){
+      reply({type:'sci-acct-probe',nonce:nonce,ok:false},ev.origin);
+      setTimeout(function(){try{window.close();}catch(e){}},120);
+    });
+  });
+  try{ history.replaceState(null,'',location.pathname+location.search); }catch(e){}
+  return true;
+}
 function exportAccountCode(){
   try{
     if(!currentUser||!currentUser.username)return '';
@@ -13393,7 +13468,29 @@ function renderAccountPanel(){
   var _gr=document.getElementById('accGoReg');if(_gr)_gr.addEventListener('click',function(){var b=document.getElementById('accRegBox');if(b)b.style.display=(b.style.display==='none'?'block':'none');});
   var _dr=document.getElementById('accDoReg');if(_dr)_dr.addEventListener('click',function(){var un=document.getElementById('accRegUser').value.trim();var pw=document.getElementById('accRegPass').value;if(!un||!pw){setAccountStatus('请输入账号名和密码','err');return;}setAccountStatus('正在生成密钥…','');registerUser(un,pw).then(function(){setAccountStatus('✅ 注册成功','ok');updateAccountBtn();closeAccountModal();}).catch(function(e){setAccountStatus(e.message,'err');});});
   var lb=document.getElementById('accLogin');
-  if(lb)lb.addEventListener('click',function(){var uname=document.getElementById('accUser').value.trim();var pwd=document.getElementById('accPass').value;setAccountStatus('正在验证…','');loginUser(uname,pwd).then(function(){setAccountStatus('✅ 登录成功（密码只在这次打开期间临时记住，不会上传）','ok');afterLoginSuccess();}).catch(function(err){var m=err&&err.message||'';if(m.indexOf('本机没有该账号')>=0){m='本机没有该账号。若你是在另一站注册的，请点下方「⇄ 从另一站导入账号」；否则请先注册。';}setAccountStatus(m,'err');});});
+  if(lb)lb.addEventListener('click',function(){var uname=document.getElementById('accUser').value.trim();var pwd=document.getElementById('accPass').value;setAccountStatus('正在验证…','');loginUser(uname,pwd).then(function(){setAccountStatus('✅ 登录成功（密码只在这次打开期间临时记住，不会上传）','ok');afterLoginSuccess();}).catch(function(err){
+      var m=err&&err.message||'';
+      if(m.indexOf('本机没有该账号')>=0){
+        var target=otherSiteUrl();
+        var go=confirm('本站没有该账号。\n\n是否到另一站（'+target+'）用同一账号密码核对，并把数据同步过来？\n密码只在浏览器两个页面之间传递，不经过网络。');
+        if(go){
+          setAccountStatus('正在到另一站核对账号…','');
+          tryRemoteAccount(uname,pwd).then(function(ok){
+            if(ok){
+              setAccountStatus('✅ 已在另一站核对通过，数据已同步','ok');
+              try{closeAccountModal();}catch(e1){}
+              try{updateAccountBtn();}catch(e2){}
+              try{afterLoginSuccess();}catch(e3){}
+            }else{
+              setAccountStatus('另一站也没有这个账号，或密码不一致。可点「⇄ 从另一站导入账号」手动导入，或先注册。','err');
+            }
+          }).catch(function(e4){ setAccountStatus('核对失败：'+((e4&&e4.message)||e4),'err'); });
+          return;
+        }
+        m='本机没有该账号。若你是在另一站注册的，请点下方「⇄ 从另一站导入账号」；否则请先注册。';
+      }
+      setAccountStatus(m,'err');
+    });});
   var wb=document.getElementById('accWipe');
   if(wb)wb.addEventListener('click',function(){if(!confirm('注销本机账号？\n\n该账号在本机的数据（计算记录、函数、验证码账号、设置等）将一并清除且不可恢复；已保存的加密文件仍可用原账号密码打开。'))return;var _accI=document.getElementById('accUser');var _un=(currentUser&&currentUser.username)||(_accI?_accI.value.trim():'');removeUserFromStorage(_un);logoutUser();setAccountStatus('本机账号已注销','warn');updateAccountBtn();renderAccountPanel();});
 }
@@ -13604,7 +13701,7 @@ function bootstrap(){
   if(window.__hmacSelfTestFail){try{if(typeof showErr==='function')showErr('⚠ 验证码自检未通过，验证码可能不准确；建议刷新重试');}catch(e){}}
   if(!window.crypto||!window.crypto.subtle){var warn=document.getElementById('cryptoWarn');if(warn)warn.style.display='block';}
   try{var physEl=document.getElementById('panel-phys');var chemEl=document.getElementById('panel-chem');if(physEl)renderPanel(physEl,PHYS_GROUPS);if(chemEl)renderPanel(chemEl,CHEM_GROUPS);if(physEl)bindPanel(physEl,PHYS_GROUPS);if(chemEl)bindPanel(chemEl,CHEM_GROUPS);}catch(e){console.error(e);showErr('面板初始化失败：'+e.message);}
-  try{var _bRest=(!pendingEncryptedData||isUnlocked);var _bCfg=null;if(_bRest){try{var _bCr=localStorage.getItem(settingsKey());if(_bCr){_bCfg=JSON.parse(_bCr);}}catch(e0){}}var cur=document.documentElement.getAttribute('data-theme')||'night';if(_bRest&&_bCfg&&_bCfg.followSystem===true){if(window.__bindFollow){try{window.__bindFollow();}catch(eB){}}}else if(_bRest){var _t0='';try{_t0=localStorage.getItem(THEME_KEY)||'';}catch(e1){}if(_t0)cur=_t0;setTheme(cur);}else{setTheme(cur);}var cycleBtn=document.getElementById('themeCycleBtn');if(cycleBtn&&!cycleBtn.__bound){cycleBtn.__bound=true;var _tCycle=null;cycleBtn.addEventListener('click',function(){clearTimeout(_tCycle);_tCycle=setTimeout(function(){if(window.__exitFollow){try{window.__exitFollow();}catch(e0){}}cycleTheme();},250);});cycleBtn.addEventListener('dblclick',function(){clearTimeout(_tCycle);var hc=document.documentElement.getAttribute('data-contrast')==='high';var nh=!hc;document.documentElement.setAttribute('data-contrast',nh?'high':'normal');var cb=document.getElementById('setHighContrast');if(cb)cb.checked=nh;if(!noPersist&&(!pendingEncryptedData||isUnlocked)){try{var sp={};try{sp=JSON.parse(localStorage.getItem(settingsKey())||'{}');}catch(e1){}sp.highContrast=nh;localStorage.setItem(settingsKey(),JSON.stringify(sp));}catch(e2){}}try{if(window.__bgAnimEnabled){window.__meteorStart&&window.__meteorStart();}}catch(e3){}});}var savedMode=document.documentElement.getAttribute('data-mode')||'lite';if(_bRest){var _m0='';try{_m0=localStorage.getItem(MODE_KEY)||'';}catch(e2){}if(_m0)savedMode=_m0;}var _forceLite=false;try{var _userChose=localStorage.getItem('sci-calc-mode-user')==='1';var _mobile=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent||'');try{if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)_mobile=true;}catch(eRM){}try{if(navigator.connection&&navigator.connection.saveData)_mobile=true;}catch(eSD){}if(!_userChose&&(window.__lowPerf||_mobile)){savedMode='lite';_forceLite=true;}}catch(eF){}setMode(savedMode);if(_forceLite){try{var _tst=document.createElement('div');_tst.textContent='已进入省电模式（点右上角 ⚡ 可切换）';_tst.style.cssText='position:fixed;left:50%;top:64px;transform:translateX(-50%);z-index:99999;background:rgba(20,28,40,.95);color:#e6edf3;border:1px solid rgba(120,140,170,.4);border-radius:12px;padding:10px 16px;font-size:13px;';document.body.appendChild(_tst);setTimeout(function(){try{document.body.removeChild(_tst);}catch(e){}},3200);}catch(eT){}}var modeBtn=document.getElementById('modeToggleBtn');if(modeBtn&&!modeBtn.__bound){modeBtn.__bound=true;modeBtn.addEventListener('click',toggleMode);}setTimeout(function(){try{handleXferHash();}catch(eX){}},260);}catch(e){console.error(e);}
+  try{var _bRest=(!pendingEncryptedData||isUnlocked);var _bCfg=null;if(_bRest){try{var _bCr=localStorage.getItem(settingsKey());if(_bCr){_bCfg=JSON.parse(_bCr);}}catch(e0){}}var cur=document.documentElement.getAttribute('data-theme')||'night';if(_bRest&&_bCfg&&_bCfg.followSystem===true){if(window.__bindFollow){try{window.__bindFollow();}catch(eB){}}}else if(_bRest){var _t0='';try{_t0=localStorage.getItem(THEME_KEY)||'';}catch(e1){}if(_t0)cur=_t0;setTheme(cur);}else{setTheme(cur);}var cycleBtn=document.getElementById('themeCycleBtn');if(cycleBtn&&!cycleBtn.__bound){cycleBtn.__bound=true;var _tCycle=null;cycleBtn.addEventListener('click',function(){clearTimeout(_tCycle);_tCycle=setTimeout(function(){if(window.__exitFollow){try{window.__exitFollow();}catch(e0){}}cycleTheme();},250);});cycleBtn.addEventListener('dblclick',function(){clearTimeout(_tCycle);var hc=document.documentElement.getAttribute('data-contrast')==='high';var nh=!hc;document.documentElement.setAttribute('data-contrast',nh?'high':'normal');var cb=document.getElementById('setHighContrast');if(cb)cb.checked=nh;if(!noPersist&&(!pendingEncryptedData||isUnlocked)){try{var sp={};try{sp=JSON.parse(localStorage.getItem(settingsKey())||'{}');}catch(e1){}sp.highContrast=nh;localStorage.setItem(settingsKey(),JSON.stringify(sp));}catch(e2){}}try{if(window.__bgAnimEnabled){window.__meteorStart&&window.__meteorStart();}}catch(e3){}});}var savedMode=document.documentElement.getAttribute('data-mode')||'lite';if(_bRest){var _m0='';try{_m0=localStorage.getItem(MODE_KEY)||'';}catch(e2){}if(_m0)savedMode=_m0;}var _forceLite=false;try{var _userChose=localStorage.getItem('sci-calc-mode-user')==='1';var _mobile=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent||'');try{if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)_mobile=true;}catch(eRM){}try{if(navigator.connection&&navigator.connection.saveData)_mobile=true;}catch(eSD){}if(!_userChose&&(window.__lowPerf||_mobile)){savedMode='lite';_forceLite=true;}}catch(eF){}setMode(savedMode);if(_forceLite){try{var _tst=document.createElement('div');_tst.textContent='已进入省电模式（点右上角 ⚡ 可切换）';_tst.style.cssText='position:fixed;left:50%;top:64px;transform:translateX(-50%);z-index:99999;background:rgba(20,28,40,.95);color:#e6edf3;border:1px solid rgba(120,140,170,.4);border-radius:12px;padding:10px 16px;font-size:13px;';document.body.appendChild(_tst);setTimeout(function(){try{document.body.removeChild(_tst);}catch(e){}},3200);}catch(eT){}}var modeBtn=document.getElementById('modeToggleBtn');if(modeBtn&&!modeBtn.__bound){modeBtn.__bound=true;modeBtn.addEventListener('click',toggleMode);}setTimeout(function(){try{handleXferHash();}catch(eX){}},260);setTimeout(function(){try{if(!handleAcctProbeHash()){} }catch(eAP){}},200);}catch(e){console.error(e);}
   try{var tabs=document.querySelectorAll('.tab');for(var j=0;j<tabs.length;j++){(function(tab){tab.addEventListener('click',function(){var allTabs=document.querySelectorAll('.tab');for(var a=0;a<allTabs.length;a++)allTabs[a].classList.remove('active');var allPanels=document.querySelectorAll('.panel');for(var b=0;b<allPanels.length;b++)allPanels[b].classList.remove('active');tab.classList.add('active');var p=document.getElementById('panel-'+tab.getAttribute('data-tab'));if(p)p.classList.add('active');var content=document.querySelector('.app-content');if(content)content.scrollTop=0;if(tab.getAttribute('data-tab')==='totp')renderList();if(tab.getAttribute('data-tab')==='math'){scheduleFuncDraw();if(window.__lastQuadParams){setTimeout(function(){drawQuadraticPlot(window.__lastQuadParams[0],window.__lastQuadParams[1],window.__lastQuadParams[2]);},30);}}});})(tabs[j]);}}catch(e){console.error(e);}
   try{
     var input=document.getElementById('exprInput');var resEl=document.getElementById('exprResult');attachNormalizer(input);
