@@ -19,7 +19,7 @@
 <meta property="og:title" content="理科计算器 · 验证器">
 <meta property="og:description" content="单文件离线理科计算器：计算、绘图、公式库、TOTP、加密云同步。">
 <meta property="og:url" content="https://xhrm-wyx.github.io/xhrm-calc/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-S5uSxhRaTXMG4KgSKadcVnIR82XRLR0zIumICnhs5e8=' 'sha256-kgCLjhNtawto1TjQBWwyjfpkZBfqv1Xs/zj2zPiTqWs=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-OkSe2q8bDF1sbOYX7TKMefxUfeX651zQIU/6Jy0MmVE=' 'sha256-6Mixyvzmx2hT6CyMiIWs2CfafyUikoZWSNKBipveBlA=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
 <title>理科计算器 · 验证器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -13279,7 +13279,7 @@ function validateUsername(name){
 }
 window.validateUsername=validateUsername;
 function registerUser(username,password){username=String(username||'').trim();var _uv=validateUsername(username);if(_uv)return Promise.reject(new Error(_uv));if(String(password||'').length<6)return Promise.reject(new Error('密码至少 6 位'));if(/^(123456|1234567|12345678|123456789|1234567890|111111|000000|666666|888888|abc123|a123456|123456a|qwerty|qwerty123|1qaz2wsx|zxcvbnm|password|passw0rd|admin|iloveyou|woaini|5201314|asdfgh|654321|112233)$/i.test(String(password||'')))return Promise.reject(new Error('这个密码太常见，很容易被猜到，请换一个'));if(String(password||'').length>128)return Promise.reject(new Error('密码最多 128 位'));if(!checkCryptoSupport())return Promise.reject(new Error('当前环境不支持加密，请使用 HTTPS 打开'));try{var _ulx0=JSON.parse(localStorage.getItem(fKey('sci-users-v1'))||'[]');if(_ulx0.some(function(x){return x.username===username;}))return Promise.reject(new Error('账号已存在，请直接登录'));}catch(e8){}var salt=crypto.getRandomValues(new Uint8Array(16));return pbkdf2Bits(password+VERIFY_TAG,salt,PBKDF2_ITER).then(function(verifier){var u={username:username,salt:bufToB64(salt),verifier:bufToB64(verifier),iterations:PBKDF2_ITER,createdAt:Date.now()};saveUserToStorage(u);try{var ulx=JSON.parse(localStorage.getItem(fKey('sci-users-v1'))||'[]');if(!ulx.some(function(x){return x.username===u.username;})){ulx.push({username:u.username,createdAt:u.createdAt});localStorage.setItem(fKey('sci-users-v1'),JSON.stringify(ulx));}}catch(e9){}currentUser=u;currentPassword=password;pendingEncryptedData=null;noPersist=false;window.__pwLocked=false;window.__fileSession=false;window.__encryptedBlob=null;window.__sessionReady=deriveSessionKey(password,u.salt,u.iterations).then(function(k){sessionKey=k;try{warmSyncKey(currentPassword,currentUser&&currentUser.username);}catch(eW){}currentPassword=null;}).catch(function(){});try{if(typeof renderList==='function')renderList();}catch(eL){}reloadAcctData();return (window.__sessionReady||Promise.resolve()).then(function(){return u;});});}
-function changePassword(oldPw,newPw){if(!currentUser)return Promise.reject(new Error('请先登录'));if(!checkCryptoSupport())return Promise.reject(new Error('当前环境不支持加密'));if(String(newPw||'').length<6)return Promise.reject(new Error('新密码至少 6 位'));if(/^(123456|1234567|12345678|123456789|1234567890|111111|000000|666666|888888|abc123|a123456|123456a|qwerty|qwerty123|1qaz2wsx|zxcvbnm|password|passw0rd|admin|iloveyou|woaini|5201314|asdfgh|654321|112233)$/i.test(String(newPw||'')))return Promise.reject(new Error('这个密码太常见，很容易被猜到，请换一个'));if(String(newPw||'').length>128)return Promise.reject(new Error('新密码最多 128 位'));var salt0=currentUser.salt?b64ToBuf(currentUser.salt):new Uint8Array(16);return pbkdf2Bits(oldPw+VERIFY_TAG,salt0,currentUser.iterations||PBKDF2_ITER).then(function(v0){var _okOld=bufToB64(v0)===currentUser.verifier;if(!_okOld){return pbkdf2Bits(oldPw,salt0,currentUser.iterations||PBKDF2_ITER).then(function(vOld){if(bufToB64(vOld)!==currentUser.verifier)throw new Error('旧密码不正确');});}var salt=crypto.getRandomValues(new Uint8Array(16));return pbkdf2Bits(newPw+VERIFY_TAG,salt,PBKDF2_ITER).then(function(v1){currentUser.salt=bufToB64(salt);currentUser.verifier=bufToB64(v1);currentUser.iterations=PBKDF2_ITER;saveUserToStorage(currentUser);currentPassword=newPw;sessionKey=null;window.__sessionReady=deriveSessionKey(newPw,currentUser.salt,currentUser.iterations).then(function(k){sessionKey=k;try{warmSyncKey(currentPassword,currentUser&&currentUser.username);}catch(eW){}currentPassword=null;}).catch(function(){});if(pendingEncryptedData){try{return (window.__sessionReady||Promise.resolve()).then(function(){return __encForSave(collectSaveData());}).then(function(nb){pendingEncryptedData=nb;return currentUser;});}catch(e9b){}}return currentUser;});});}
+function changePassword(oldPw,newPw){var _oldSyncKey=window.__syncKeyHex;if(!currentUser)return Promise.reject(new Error('请先登录'));if(!checkCryptoSupport())return Promise.reject(new Error('当前环境不支持加密'));if(String(newPw||'').length<6)return Promise.reject(new Error('新密码至少 6 位'));if(/^(123456|1234567|12345678|123456789|1234567890|111111|000000|666666|888888|abc123|a123456|123456a|qwerty|qwerty123|1qaz2wsx|zxcvbnm|password|passw0rd|admin|iloveyou|woaini|5201314|asdfgh|654321|112233)$/i.test(String(newPw||'')))return Promise.reject(new Error('这个密码太常见，很容易被猜到，请换一个'));if(String(newPw||'').length>128)return Promise.reject(new Error('新密码最多 128 位'));var salt0=currentUser.salt?b64ToBuf(currentUser.salt):new Uint8Array(16);return pbkdf2Bits(oldPw+VERIFY_TAG,salt0,currentUser.iterations||PBKDF2_ITER).then(function(v0){var _okOld=bufToB64(v0)===currentUser.verifier;if(!_okOld){return pbkdf2Bits(oldPw,salt0,currentUser.iterations||PBKDF2_ITER).then(function(vOld){if(bufToB64(vOld)!==currentUser.verifier)throw new Error('旧密码不正确');});}var salt=crypto.getRandomValues(new Uint8Array(16));return pbkdf2Bits(newPw+VERIFY_TAG,salt,PBKDF2_ITER).then(function(v1){currentUser.salt=bufToB64(salt);currentUser.verifier=bufToB64(v1);currentUser.iterations=PBKDF2_ITER;saveUserToStorage(currentUser);currentPassword=newPw;sessionKey=null;window.__syncKeyHex=null;window.__sessionReady=deriveSessionKey(newPw,currentUser.salt,currentUser.iterations).then(function(k){sessionKey=k;try{warmSyncKey(currentPassword,currentUser&&currentUser.username);}catch(eW){}currentPassword=null;try{window.__cfAfterPasswordChange(_oldSyncKey).catch(function(){});}catch(ePc){}}).catch(function(){});if(pendingEncryptedData){try{return (window.__sessionReady||Promise.resolve()).then(function(){return __encForSave(collectSaveData());}).then(function(nb){pendingEncryptedData=nb;return currentUser;});}catch(e9b){}}return currentUser;});});}
 function verifyPasswordOnly(username,password){
   var u=loadUserByName(String(username||'').trim());
   if(!u)return Promise.reject(new Error('本机没有该账号'));
@@ -15009,6 +15009,34 @@ function cfIds(){
     return Promise.all([cfSha256('id|'+hex),cfSha256('ah|'+hex)]).then(function(a){return {id:a[0],ah:a[1]};});
   });
 }
+function cfIdsFor(hex){
+  return Promise.all([cfSha256('id|'+hex),cfSha256('ah|'+hex)]).then(function(a){return {id:a[0],ah:a[1]};});
+}
+function cfDropIdentity(hex){
+  return cfIdsFor(hex).then(function(k){
+    return fetch(CF_SYNC_URL+'?id='+k.id,{method:'DELETE',headers:{Authorization:'Bearer '+k.ah}}).then(function(r){
+      if(r.status===404)return true;
+      if(!r.ok)throw new Error('清理失败 HTTP '+r.status);
+      return true;
+    });
+  });
+}
+function cfAfterPasswordChange(oldKeyHex){
+  var tries=0;
+  function waitKey(){
+    if(window.__syncKeyHex)return Promise.resolve(window.__syncKeyHex);
+    if(tries++>=16)return Promise.reject(new Error('同步密钥未就绪'));
+    return new Promise(function(res){setTimeout(res,300);}).then(waitKey);
+  }
+  return waitKey().then(function(newHex){
+    return push(true).then(function(){
+      if(oldKeyHex&&oldKeyHex!==newHex){
+        return cfDropIdentity(oldKeyHex).then(function(){return true;}).catch(function(){return false;});
+      }
+      return true;
+    });
+  });
+}
 function cfGet(){
   return cfIds().then(function(k){
     return fetch(CF_SYNC_URL+'?id='+k.id,{cache:'no-store',headers:{Authorization:'Bearer '+k.ah}}).then(function(r){
@@ -15189,6 +15217,9 @@ function __pullInner(silent){
   window.__cfGet=cfGet;
   window.__cfIds=cfIds;
   window.__cfPut=cfPut;
+  window.__cfIdsFor=cfIdsFor;
+  window.__cfDropIdentity=cfDropIdentity;
+  window.__cfAfterPasswordChange=cfAfterPasswordChange;
   window.__getCfg=function(){try{return norm(getCfg());}catch(e){return {};}};
   window.__setCfgPartial=function(part){try{var o=norm(getCfg());setCfg({owner:String(part.owner||o.owner||''),repo:String(part.repo||o.repo||''),branch:String(part.branch||o.branch||''),path:String(part.path||o.path||''),auto:!!part.auto,token:o.token||''});return true;}catch(e){return false;}};
   window.__syncDebug={dataHash:dataHash,markSynced:markSynced,isPulling:function(){return __pulling;},autoPayload:function(o){__autoPush=true;var r=autoPayload(o);__autoPush=false;return r;}};

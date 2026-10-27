@@ -16,7 +16,7 @@ function cors(origin){
   const ok = ALLOWED.includes(origin) || /^http:\/\/(127\.0\.0\.1|localhost):\d+$/.test(origin || '');
   return {
     'Access-Control-Allow-Origin': ok ? origin : ALLOWED[0],
-    'Access-Control-Allow-Methods': 'GET,PUT,OPTIONS',
+    'Access-Control-Allow-Methods': 'GET,PUT,DELETE,OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type,Authorization',
     'Access-Control-Max-Age': '86400',
     'Cache-Control': 'no-store',
@@ -89,6 +89,18 @@ export async function onRequest(context){
     const rec = { ahh: ahh, blob: blob, ts: Date.now() };
     await env.SCI_KV.put(key, JSON.stringify(rec));
     return json({ ok: true, ts: rec.ts }, 200, origin);
+  }
+
+  if(request.method === 'DELETE'){
+    const id = (url.searchParams.get('id') || '').toLowerCase();
+    if(!HEX64.test(id)) return json({ error: 'bad id' }, 400, origin);
+    if(!HEX64.test(auth)) return json({ error: 'no auth' }, 401, origin);
+    const key = 'b:' + id;
+    const rec = await env.SCI_KV.get(key, 'json');
+    if(!rec) return json({ ok: true, missing: true }, 200, origin);
+    if(rec.ahh !== await sha256hex(auth)) return json({ error: 'auth' }, 403, origin);
+    await env.SCI_KV.delete(key);
+    return json({ ok: true }, 200, origin);
   }
 
   return json({ error: 'method' }, 405, origin);
