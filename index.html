@@ -19,7 +19,7 @@
 <meta property="og:title" content="理科计算器 · 验证器">
 <meta property="og:description" content="单文件离线理科计算器：计算、绘图、公式库、TOTP、加密云同步。">
 <meta property="og:url" content="https://xhrm-wyx.github.io/xhrm-calc/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-Oi7LJtgJtp9GYsHJnD8rVfH5N6rHGf78ZmFzMIoNl0I=' 'sha256-oY2L+qQ3sktMV37yykbO8OKzgexJ/GwAMjHbqF+iFqc=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-Oi7LJtgJtp9GYsHJnD8rVfH5N6rHGf78ZmFzMIoNl0I=' 'sha256-VGDlqOU042xd3FSrLZc3jfpTaB2C9ymCoPi/OkanO7I=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
 <title>理科计算器 · 验证器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -14974,7 +14974,7 @@ function autoConfigureSync(){
     }).then(function(info){
       var branch=String((info&&info.default_branch)||'master');
       var path='sci-sync/'+repo+'.json';
-      setCfg({owner:login,repo:repo,branch:branch,path:path,token:token,auto:true});
+      setCfg({provider:'gitee',owner:login,repo:repo,branch:branch,path:path,token:token,auto:true});
       var rEl=document.getElementById('syncRepo'),bEl=document.getElementById('syncBranch'),pEl=document.getElementById('syncPath'),aEl=document.getElementById('syncAuto');
       if(rEl)rEl.value=login+'/'+repo;
       if(bEl)bEl.value=branch;
@@ -14987,19 +14987,48 @@ function autoConfigureSync(){
 window.repoNameFor=repoNameFor;
 function b64(s){var b=new TextEncoder().encode(s),o='';for(var i=0;i<b.length;i++)o+=String.fromCharCode(b[i]);return btoa(o);}
   function unb64(s){s=String(s).replace(/\s+/g,'');var bin=atob(s),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new TextDecoder().decode(u);}
-  function api(c){return 'https://gitee.com/api/v5/repos/'+encodeURIComponent(c.owner)+'/'+encodeURIComponent(c.repo)+'/contents/'+String(c.path||'').split('/').map(encodeURIComponent).join('/');}
+  var CF_SYNC_URL='https://xhrm-calc.pages.dev/api/sync';
+function cfHex(buf){var b=new Uint8Array(buf),s='';for(var i=0;i<b.length;i++)s+=('0'+b[i].toString(16)).slice(-2);return s;}
+function cfSha256(str){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(str)).then(cfHex);}
+function cfAuthHex(){
+  if(!sessionKey)return Promise.reject(new Error('未登录'));
+  return crypto.subtle.deriveBits({name:'HKDF',hash:'SHA-256',salt:new Uint8Array(16),info:new TextEncoder().encode('sci-sync-auth')},sessionKey,256).then(cfHex);
+}
+function cfIds(){
+  var u=cur()&&cur().username, s=cur()&&cur().salt;
+  if(!u||!s)return Promise.reject(new Error('未登录'));
+  return Promise.all([cfSha256(u+'|'+s),cfAuthHex()]).then(function(a){return {id:a[0],ah:a[1]};});
+}
+function cfGet(){
+  return cfIds().then(function(k){
+    return fetch(CF_SYNC_URL+'?id='+k.id+'&ah='+k.ah,{cache:'no-store'}).then(function(r){
+      if(r.status===404)return null;
+      if(!r.ok)throw new Error('读取失败 HTTP '+r.status);
+      return r.json();
+    }).then(function(j){ return j?{content:j.blob,sha:null,_ts:j.ts}:null; });
+  });
+}
+function cfPut(content){
+  return cfIds().then(function(k){
+    return fetch(CF_SYNC_URL,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:k.id,ah:k.ah,blob:content})}).then(function(r){
+      if(!r.ok)return r.text().then(function(t){throw new Error('上传失败 HTTP '+r.status+' '+String(t).slice(0,120));});
+      return r.json();
+    });
+  });
+}
+function api(c){return 'https://gitee.com/api/v5/repos/'+encodeURIComponent(c.owner)+'/'+encodeURIComponent(c.repo)+'/contents/'+String(c.path||'').split('/').map(encodeURIComponent).join('/');}
   function norm(c){
     c=c||{};
     var repo=String(c.repo||'').trim(), i=repo.indexOf('/');
     var owner=String(c.owner||'').trim();
     if(i>0){owner=repo.slice(0,i).trim();repo=repo.slice(i+1).trim();}
-    return {owner:owner,repo:repo,branch:String(c.branch||'master').trim()||'master',path:(String(c.path||'').trim()==='sci-sync/user.json'?'':String(c.path||'').trim())||defPath(),token:String(c.token||'').trim(),auto:!!c.auto};
+    var _tok=String(c.token||'').trim();var _prov=String(c.provider||'').trim()||((owner&&repo&&_tok)?'gitee':'cf');return {provider:_prov,owner:owner,repo:repo,branch:String(c.branch||'master').trim()||'master',path:(String(c.path||'').trim()==='sci-sync/user.json'?'':String(c.path||'').trim())||defPath(),token:_tok,auto:(c.auto===undefined?(_prov==='cf'):!!c.auto)};
   }
-  function get(c){return fetch(api(c)+'?ref='+encodeURIComponent(c.branch)+'&access_token='+encodeURIComponent(c.token),{cache:'no-store'}).then(function(r){if(r.status===404)return null;if(!r.ok)throw new Error('读取失败 HTTP '+r.status);return r.json();});}
-  function put(c,content,sha){var p=new URLSearchParams();p.set('access_token',c.token);p.set('content',content);p.set('message','sync '+new Date().toISOString());p.set('branch',c.branch);if(sha)p.set('sha',sha);var method=sha?'PUT':'POST';return fetch(api(c),{method:method,headers:{'Content-Type':'application/x-www-form-urlencoded'},body:p.toString()}).then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error('上传失败 HTTP '+r.status+' '+String(t).slice(0,120));});return r.json();});}
+  function get(c){if(c&&c.provider==='cf')return cfGet();return fetch(api(c)+'?ref='+encodeURIComponent(c.branch)+'&access_token='+encodeURIComponent(c.token),{cache:'no-store'}).then(function(r){if(r.status===404)return null;if(!r.ok)throw new Error('读取失败 HTTP '+r.status);return r.json();});}
+  function put(c,content,sha){if(c&&c.provider==='cf')return cfPut(content);var p=new URLSearchParams();p.set('access_token',c.token);p.set('content',content);p.set('message','sync '+new Date().toISOString());p.set('branch',c.branch);if(sha)p.set('sha',sha);var method=sha?'PUT':'POST';return fetch(api(c),{method:method,headers:{'Content-Type':'application/x-www-form-urlencoded'},body:p.toString()}).then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error('上传失败 HTTP '+r.status+' '+String(t).slice(0,120));});return r.json();});}
   function push(silent){
     var c=norm(getCfg());
-    if(!c.owner||!c.repo||!c.token){if(!silent)say('请先填写仓库与私人令牌',false);return Promise.reject(new Error('未配置'));}
+    if(c.provider!=='cf'&&(!c.owner||!c.repo||!c.token)){if(!silent)say('请先填写仓库与私人令牌',false);return Promise.reject(new Error('未配置'));}
     if(!cur()||!__hasSecret()){if(!silent)say('请先登录账号',false);return Promise.reject(new Error('未登录'));}
     say('正在加密并上传…');
     var _pl=collectSaveData();_pl.devices=listDevices();autoPayload(_pl);return __encForSave(_pl).then(function(blob){
@@ -15019,7 +15048,7 @@ function b64(s){var b=new TextEncoder().encode(s),o='';for(var i=0;i<b.length;i+
     var _localTheme=null,_localMode=null;
     try{_localTheme=document.documentElement.getAttribute('data-theme');_localMode=document.documentElement.getAttribute('data-mode');}catch(eLT){}
     var c=norm(getCfg());
-    if(!c.owner||!c.repo||!c.token){if(!silent)say('请先填写仓库与私人令牌',false);return Promise.reject(new Error('未配置'));}
+    if(c.provider!=='cf'&&(!c.owner||!c.repo||!c.token)){if(!silent)say('请先填写仓库与私人令牌',false);return Promise.reject(new Error('未配置'));}
     if(!cur()||!__hasSecret()){if(!silent)say('请先登录账号',false);return Promise.reject(new Error('未登录'));}
     say('正在从云端读取…');
     return get(c).then(function(ex){
@@ -15065,7 +15094,7 @@ function b64(s){var b=new TextEncoder().encode(s),o='';for(var i=0;i<b.length;i+
       if(document.hidden)return Promise.resolve(null);
       if(__pulling)return Promise.resolve(null);
       var c=norm(getCfg());
-      if(!c.auto||!c.owner||!c.repo||!c.token)return Promise.resolve(null);
+      if(!c.auto)return Promise.resolve(null);if(c.provider!=='cf'&&(!c.owner||!c.repo||!c.token))return Promise.resolve(null);
       if(!cur()||!__hasSecret())return Promise.resolve(null);
       var h='';
       try{ h=dataHash(collectSaveData({plain:true})); }catch(e){ return Promise.resolve(null); }
@@ -15093,6 +15122,9 @@ function b64(s){var b=new TextEncoder().encode(s),o='';for(var i=0;i<b.length;i+
     }catch(e){ return Promise.resolve(null); }
   }
   window.__syncTick=periodicCheck;
+  window.__syncPush=function(){return push(false);};
+  window.__syncPull=function(){return pull(false);};
+  window.__cfGet=cfGet;
   window.__getCfg=function(){try{return norm(getCfg());}catch(e){return {};}};
   window.__setCfgPartial=function(part){try{var o=norm(getCfg());setCfg({owner:String(part.owner||o.owner||''),repo:String(part.repo||o.repo||''),branch:String(part.branch||o.branch||''),path:String(part.path||o.path||''),auto:!!part.auto,token:o.token||''});return true;}catch(e){return false;}};
   window.__syncDebug={dataHash:dataHash,markSynced:markSynced,isPulling:function(){return __pulling;},autoPayload:function(o){__autoPush=true;var r=autoPayload(o);__autoPush=false;return r;}};
@@ -15130,15 +15162,16 @@ function b64(s){var b=new TextEncoder().encode(s),o='';for(var i=0;i<b.length;i+
       +'<label class="field" style="display:block;margin:8px 0;"><span style="font-size:12px;opacity:.8;">线路（一般不用改）</span><input id="syncBranch" type="text" value="master" style="width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--glass-border);background:var(--input-bg);color:var(--text-strong);"></label>'
       +'<label class="field" style="display:block;margin:8px 0;"><span style="font-size:12px;opacity:.8;">文件名 / 存放位置</span><input id="syncPath" type="text" style="width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--glass-border);background:var(--input-bg);color:var(--text-strong);"></label>'
       +'<label class="field" style="display:block;margin:8px 0;"><span style="font-size:12px;opacity:.8;">访问口令（只保存在这台设备）</span><input id="syncToken" type="password" autocomplete="off" style="width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--glass-border);background:var(--input-bg);color:var(--text-strong);"></label>'
-      +'<button type="button" class="btn primary" id="syncAutoCfg" style="width:100%;margin-bottom:8px;">⚡ 用访问令牌自动配置</button>'+'<button type="button" class="btn" id="syncSave" style="width:100%;">保存设置</button>'
+      +'<button type="button" class="btn" id="syncUseCf" style="width:100%;margin-bottom:8px;">☁ 使用 Cloudflare 中继（推荐，无需配置）</button>' +'<button type="button" class="btn primary" id="syncAutoCfg" style="width:100%;margin-bottom:8px;">⚡ 用访问令牌自动配置</button>'+'<button type="button" class="btn" id="syncSave" style="width:100%;">保存设置</button>'
       +'</div>'
       +'</div></div>';
     document.body.appendChild(d);
     el('syncClose').addEventListener('click',function(){d.classList.remove('show');});
+    var _cfb=el('syncUseCf');if(_cfb)_cfb.addEventListener('click',function(){try{setCfg({provider:'cf',owner:'',repo:'',branch:'',path:'',token:'',auto:true});say('已切换到 Cloudflare 中继，登录后自动同步',true);var rEl=el('syncRepo');if(rEl)rEl.value='';var bEl=el('syncBranch');if(bEl)bEl.value='';var pEl=el('syncPath');if(pEl)pEl.value='';var tEl=el('syncToken');if(tEl)tEl.value='';}catch(e){say('切换失败：'+e.message,false);}});
     var _acb=el('syncAutoCfg');if(_acb)_acb.addEventListener('click',function(){try{autoConfigureSync();}catch(e){say('自动配置失败：'+e.message,false);}});
     el('syncSave').addEventListener('click',function(){
       var c=norm({repo:el('syncRepo').value,branch:el('syncBranch').value,path:el('syncPath').value,token:el('syncToken').value,auto:el('syncAuto').checked});
-      if(!c.owner||!c.repo){say('仓库格式应为 owner/repo',false);return;}
+      if(c.provider!=='cf'&&(!c.owner||!c.repo)){say('仓库格式应为 owner/repo',false);return;}
       setCfg(c);say('设置已保存',true);
     });
     el('syncAdvToggle').addEventListener('click',function(){var a=el('syncAdv');if(a)a.style.display=(a.style.display==='none'?'block':'none');});
