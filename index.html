@@ -19,7 +19,7 @@
 <meta property="og:title" content="理科计算器 · 验证器">
 <meta property="og:description" content="单文件离线理科计算器：计算、绘图、公式库、TOTP、加密云同步。">
 <meta property="og:url" content="https://xhrm-wyx.github.io/xhrm-calc/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-S5uSxhRaTXMG4KgSKadcVnIR82XRLR0zIumICnhs5e8=' 'sha256-duyXcg0lYTpDcyfqPuIDaE9x8YqSC4Qq03FIwuFwgTA=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-S5uSxhRaTXMG4KgSKadcVnIR82XRLR0zIumICnhs5e8=' 'sha256-kgCLjhNtawto1TjQBWwyjfpkZBfqv1Xs/zj2zPiTqWs=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
 <title>理科计算器 · 验证器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -15187,6 +15187,8 @@ function __pullInner(silent){
   window.__syncPush=function(){return push(false);};
   window.__syncPull=function(){return pull(false);};
   window.__cfGet=cfGet;
+  window.__cfIds=cfIds;
+  window.__cfPut=cfPut;
   window.__getCfg=function(){try{return norm(getCfg());}catch(e){return {};}};
   window.__setCfgPartial=function(part){try{var o=norm(getCfg());setCfg({owner:String(part.owner||o.owner||''),repo:String(part.repo||o.repo||''),branch:String(part.branch||o.branch||''),path:String(part.path||o.path||''),auto:!!part.auto,token:o.token||''});return true;}catch(e){return false;}};
   window.__syncDebug={dataHash:dataHash,markSynced:markSynced,isPulling:function(){return __pulling;},autoPayload:function(o){__autoPush=true;var r=autoPayload(o);__autoPush=false;return r;}};
