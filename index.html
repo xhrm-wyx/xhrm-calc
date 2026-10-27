@@ -19,7 +19,7 @@
 <meta property="og:title" content="理科计算器 · 验证器">
 <meta property="og:description" content="单文件离线理科计算器：计算、绘图、公式库、TOTP、加密云同步。">
 <meta property="og:url" content="https://xhrm-wyx.github.io/xhrm-calc/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-OkSe2q8bDF1sbOYX7TKMefxUfeX651zQIU/6Jy0MmVE=' 'sha256-6Mixyvzmx2hT6CyMiIWs2CfafyUikoZWSNKBipveBlA=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-OkSe2q8bDF1sbOYX7TKMefxUfeX651zQIU/6Jy0MmVE=' 'sha256-j9MlfYkv5DNSe5++/Lb+JuIE0fMlqxKISA26gMEU8ps=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
 <title>理科计算器 · 验证器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -15080,13 +15080,35 @@ function api(c){return 'https://gitee.com/api/v5/repos/'+encodeURIComponent(c.ow
     return {content:b64(JSON.stringify(blob)),stamp:(blob.savedAt||blob.updatedAt)};
   });
 }
+function __lastSyncTs(){try{return parseInt(localStorage.getItem(acctKey('sci-sync-last-v1'))||'0',10)||0;}catch(e){return 0;}}
+function __serverTs(){try{var v=parseInt(localStorage.getItem(acctKey('sci-sync-ts-v1'))||'',10);return isNaN(v)?null:v;}catch(e){return null;}}
+function pushSilentGuard(c){
+  if(!c||c.provider!=='cf')return Promise.resolve(null);
+  return get(c).then(function(ex){
+    if(!ex||!ex.content)return null;
+    var b=null;
+    try{ b=JSON.parse(unb64(ex.content)); }catch(e){}
+    if(b&&b.accountSalt&&cur()&&b.accountSalt!==cur().salt){
+      say('云端数据属于不同的账号（盐不一致），已跳过自动上传',false);
+      throw new Error('salt-mismatch');
+    }
+    return null;
+  },function(){ return null; });
+}
 function push(silent){
+  var c=norm(getCfg());
+  if(!silent||!cur()||!__hasSecret())return __pushBody(silent);
+  return pushSilentGuard(c).then(function(){ return __pushBody(silent); });
+}
+function __pushBody(silent){
   var c=norm(getCfg());
   if(c.provider!=='cf'&&(!c.owner||!c.repo||!c.token)){if(!silent)say('请先填写仓库与私人令牌',false);return Promise.reject(new Error('未配置'));}
   if(!cur()||!__hasSecret()){if(!silent)say('请先登录账号',false);return Promise.reject(new Error('未登录'));}
+  if(silent&&c.provider==='cf'&&__lastSyncTs()===0){
+    return Promise.reject(new Error('首次同步需先下载云端数据'));
+  }
   say('正在加密并上传…');
-  var baseTs=null;
-  try{ var _bts=parseInt(localStorage.getItem(acctKey('sci-sync-ts-v1'))||'',10); if(!isNaN(_bts))baseTs=_bts; }catch(e){}
+  var baseTs=__serverTs();
   var retried=false;
   function attempt(stamp,content,bt){
     return put(c,content,null,bt).then(function(res){
@@ -15107,7 +15129,7 @@ function push(silent){
         say('检测到其他设备已更新，正在合并…');
         return pull(true).then(function(){
           return __buildSyncContent().then(function(b2){
-            return attempt(b2.stamp,b2.content,null);
+            return attempt(b2.stamp,b2.content,__serverTs());
           });
         });
       }
@@ -15184,20 +15206,31 @@ function __pullInner(silent){
       if(document.hidden)return Promise.resolve(null);
       if(__pulling)return Promise.resolve(null);
       var c=norm(getCfg());
-      if(!c.auto)return Promise.resolve(null);if(c.provider!=='cf'&&(!c.owner||!c.repo||!c.token))return Promise.resolve(null);
+      if(!c.auto)return Promise.resolve(null);
+      if(c.provider!=='cf'&&(!c.owner||!c.repo||!c.token))return Promise.resolve(null);
       if(!cur()||!__hasSecret())return Promise.resolve(null);
       var h='';
       try{ h=dataHash(collectSaveData({plain:true})); }catch(e){ return Promise.resolve(null); }
       var lastH='';try{lastH=localStorage.getItem(acctKey('sci-sync-hash-v1'))||'';}catch(e){}
       var localChanged=!!(h&&h!==lastH);
+      var lastSync0=__lastSyncTs()===0;
       return get(c).then(function(ex){
         if(!ex||!ex.content){
+          /* 云端为空：首次同步允许上传（否则永远同步不上去） */
           if(localChanged){ __autoPush=true; return push(true).then(function(){__autoPush=false;},function(){__autoPush=false;}); }
           return null;
         }
         var blob;try{blob=JSON.parse(unb64(ex.content));}catch(e){return null;}
+        if(lastSync0){
+          /* 本机从未同步过：先拉取，绝不自动覆盖云端 */
+          if(blob.accountSalt&&cur()&&blob.accountSalt!==cur().salt){
+            say('云端已有旧数据（账号盐不一致），已跳过自动同步，请手动「从云端恢复」',false);
+            return null;
+          }
+          return pull(true);
+        }
         var remoteAt=blob.savedAt||blob.updatedAt||0;
-        var lastSync=parseInt(localStorage.getItem(acctKey('sci-sync-last-v1'))||'0',10)||0;
+        var lastSync=__lastSyncTs();
         var lastPush=parseInt(localStorage.getItem(acctKey('sci-sync-push-v1'))||'0',10)||0;
         if(localChanged){
           __autoPush=true;

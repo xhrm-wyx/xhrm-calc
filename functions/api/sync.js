@@ -82,9 +82,9 @@ export async function onRequest(context){
     const ahh = await sha256hex(auth);
     if(cur){
       if(cur.ahh !== ahh) return json({ error: 'auth' }, 403, origin);
-      if(baseTs !== null && Number(cur.ts) !== Number(baseTs)){
-        return json({ error: 'conflict', ts: cur.ts }, 409, origin);
-      }
+      /* 已存在记录却未携带 baseTs：说明客户端没见过当前版本，强制先读 */
+      if(baseTs === null) return json({ error: 'conflict', ts: cur.ts, need: 'read-first' }, 409, origin);
+      if(Number(cur.ts) !== Number(baseTs)) return json({ error: 'conflict', ts: cur.ts }, 409, origin);
     }
     const rec = { ahh: ahh, blob: blob, ts: Date.now() };
     await env.SCI_KV.put(key, JSON.stringify(rec));
