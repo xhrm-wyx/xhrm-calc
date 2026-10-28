@@ -453,6 +453,19 @@ html{overscroll-behavior-y:contain}
 #funcPlotWrap.plot-fs{position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:2147482000;display:flex;flex-direction:column;background:var(--panel-solid);padding:14px;box-sizing:border-box;margin:0;border-radius:0}
 #funcPlotWrap.plot-fs #funcPlot{flex:1 1 auto;width:100%!important;height:auto!important;min-height:0}
 #funcPlotWrap.plot-fs .quad-plot-hint-zoom{display:none}
+/* 夜间模式下主按钮：深色文字，保证对比度（白字在亮蓝上只有约 2.2:1） */
+html[data-theme="night"] .btn.primary,
+html[data-theme="night"] .btn.primary:hover,
+html[data-theme="night"] .btn.primary:active{color:#08131f !important;font-weight:600;}
+html[data-theme="night"] .btn.primary:disabled{color:#08131f !important;opacity:.55;}
+
+/* 夜间模式：顶部图标按钮加底色与描边，避免深色背景上看不清 */
+html[data-theme="night"] .app-bar .icon-btn{
+  background:rgba(255,255,255,.10);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.28);
+  color:#f2f7ff;
+}
+html[data-theme="night"] .app-bar .icon-btn:hover{background:rgba(255,255,255,.18);}
 </style>
 </head>
 <body>
