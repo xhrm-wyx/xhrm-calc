@@ -19,7 +19,7 @@
 <meta property="og:title" content="理科计算器 · 验证器">
 <meta property="og:description" content="单文件离线理科计算器：计算、绘图、公式库、TOTP、加密云同步。">
 <meta property="og:url" content="https://xhrm-wyx.github.io/xhrm-calc/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-C4gyjrZ/3w+YFAHhYu3QhFmIAGoYWgvthK7zhHaanfA=' 'sha256-vDiHGFttrZ/CWht0Y1fpEWPsb8rIIDNCRpOax2rVzdQ=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-ARdoFDRkDjaHXzlMhoJU881J0D9y1GPspDR+rjyiYkI=' 'sha256-vDiHGFttrZ/CWht0Y1fpEWPsb8rIIDNCRpOax2rVzdQ=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
 <title>理科计算器 · 验证器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -829,7 +829,7 @@ html{overscroll-behavior-y:contain}
             <div class="quad-plot-btns">
               <button type="button" class="quad-zoom-btn" id="funcZoomOut" title="缩小">−</button>
               <button type="button" class="quad-zoom-btn reset" id="funcZoomReset" title="重置">⤾ 重置</button>
-              <button type="button" class="quad-zoom-btn" id="funcZoomIn" title="放大">＋</button><button type="button" class="quad-zoom-btn" id="funcFullBtn" title="全屏显示">⛶</button>
+              <button type="button" class="quad-zoom-btn" id="funcZoomIn" title="放大">＋</button><button type="button" class="quad-zoom-btn" id="funcFullBtn" title="全屏显示">⛶</button><button type="button" class="quad-zoom-btn" id="funcExportBtn" title="导出图片">⤓</button>
             </div>
           </div>
           <canvas id="funcPlot"></canvas>
@@ -11648,6 +11648,32 @@ function cAxis(){var t=document.documentElement.getAttribute('data-theme')||'nig
 function cLblBg(){var t=document.documentElement.getAttribute('data-theme')||'night';return (t==='day'||t==='eye')?'rgba(255,255,255,.92)':'rgba(0,0,0,.45)';}
 function cGrid(){var t=document.documentElement.getAttribute('data-theme')||'night';return (t==='day'||t==='eye')?'rgba(60,80,105,.22)':'rgba(150,170,200,.13)';}
 function cPtBg(){var t=document.documentElement.getAttribute('data-theme')||'night';return (t==='day'||t==='eye')?'#16263a':'#fff';}
+function exportFuncPlotPNG(){
+  var cv=document.getElementById('funcPlot');
+  if(!cv)return;
+  var w=cv.width||cv.clientWidth, h=cv.height||cv.clientHeight;
+  if(!w||!h){ alert('图像还没有绘制'); return; }
+  var scale=2;
+  var out=document.createElement('canvas');
+  out.width=Math.round(w*scale); out.height=Math.round(h*scale);
+  var ctx=out.getContext('2d');
+  var bg='';
+  try{ bg=getComputedStyle(document.documentElement).getPropertyValue('--panel-solid').trim(); }catch(e){}
+  ctx.fillStyle=bg||'#0d1117';
+  ctx.fillRect(0,0,out.width,out.height);
+  try{ ctx.drawImage(cv,0,0,out.width,out.height); }catch(e){ alert('导出失败：'+e.message); return; }
+  var pad=function(n){return (n<10?'0':'')+n;};
+  var d=new Date();
+  var name='函数图像-'+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'-'+pad(d.getHours())+pad(d.getMinutes())+'.png';
+  out.toBlob(function(blob){
+    if(!blob){ alert('导出失败'); return; }
+    var a=document.createElement('a');
+    a.download=name;
+    a.href=URL.createObjectURL(blob);
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ try{URL.revokeObjectURL(a.href);a.remove();}catch(e){} },1500);
+  },'image/png');
+}
 function toggleFuncFullscreen(){
   var wrap=document.getElementById('funcPlotWrap');
   if(!wrap)return;
@@ -12219,6 +12245,11 @@ function funcAddNew(expr){
     if(btnFull&&!btnFull.__bound){
       btnFull.__bound=true;
       btnFull.addEventListener('click',function(){ toggleFuncFullscreen(); });
+    }
+    var btnExport=document.getElementById('funcExportBtn');
+    if(btnExport&&!btnExport.__bound){
+      btnExport.__bound=true;
+      btnExport.addEventListener('click',function(){ try{exportFuncPlotPNG();}catch(e){alert('导出失败：'+e.message);} });
     }
   canvas.addEventListener('wheel',function(e){e.preventDefault();funcZoomBy(e.deltaY<0?1.12:1/1.12);},{passive:false});
   /* 双指捏合 + 单指拖动平移 */
