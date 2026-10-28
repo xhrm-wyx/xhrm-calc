@@ -19,7 +19,7 @@
 <meta property="og:title" content="理科计算器 · 验证器">
 <meta property="og:description" content="单文件离线理科计算器：计算、绘图、公式库、TOTP、加密云同步。">
 <meta property="og:url" content="https://xhrm-wyx.github.io/xhrm-calc/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-ARdoFDRkDjaHXzlMhoJU881J0D9y1GPspDR+rjyiYkI=' 'sha256-vDiHGFttrZ/CWht0Y1fpEWPsb8rIIDNCRpOax2rVzdQ=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-s/IxuOsw2q1eBXm/1GatAwXRYAg6JST1hpkfuh2BAgQ=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-zD0ry6JYlFVnSazq+pmSzuS2C487YDL7Cd+NNVplfZE=' 'sha256-vDiHGFttrZ/CWht0Y1fpEWPsb8rIIDNCRpOax2rVzdQ=' 'sha256-8fitrxNAui5Q7Nz/QF08gHvzziegCxafJ5lMQW+vJ4k=' 'sha256-DCDr1evCwyx5IqSKxIqwrYPi8xURc9TG94yCjGqVDag=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
 <title>理科计算器 · 验证器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -853,7 +853,7 @@ html{overscroll-behavior-y:contain}
             <div class="quad-plot-btns">
               <button type="button" class="quad-zoom-btn" id="quadZoomOut" title="缩小">−</button>
               <button type="button" class="quad-zoom-btn reset" id="quadZoomReset" title="重置">⤾ 重置</button>
-              <button type="button" class="quad-zoom-btn" id="quadZoomIn" title="放大">＋</button>
+              <button type="button" class="quad-zoom-btn" id="quadZoomIn" title="放大">＋</button><button type="button" class="quad-zoom-btn" id="quadExportBtn" title="导出图片">⤓</button>
             </div>
           </div>
           <canvas id="quadPlot"></canvas>
@@ -11407,6 +11407,8 @@ function drawQuadraticPlot(a,b,c){
   if(btnIn)btnIn.addEventListener('click',function(){quadZoomBy(1.25);});
   if(btnOut)btnOut.addEventListener('click',function(){quadZoomBy(1/1.25);});
   if(btnReset)btnReset.addEventListener('click',quadZoomReset);
+  var _qb=document.getElementById('quadExportBtn');
+  if(_qb&&!_qb.__bound){_qb.__bound=true;_qb.addEventListener('click',function(){try{exportQuadPlotPNG();}catch(e){alert('导出失败：'+e.message);}});}
   canvas.addEventListener('wheel',function(e){e.preventDefault();quadZoomBy(e.deltaY<0?1.12:1/1.12);},{passive:false});
   var initialDist=0,initialZoom=1,pinching=false;
   function getDist(t1,t2){var dx=t1.clientX-t2.clientX;var dy=t1.clientY-t2.clientY;return Math.sqrt(dx*dx+dy*dy);}
@@ -11648,8 +11650,8 @@ function cAxis(){var t=document.documentElement.getAttribute('data-theme')||'nig
 function cLblBg(){var t=document.documentElement.getAttribute('data-theme')||'night';return (t==='day'||t==='eye')?'rgba(255,255,255,.92)':'rgba(0,0,0,.45)';}
 function cGrid(){var t=document.documentElement.getAttribute('data-theme')||'night';return (t==='day'||t==='eye')?'rgba(60,80,105,.22)':'rgba(150,170,200,.13)';}
 function cPtBg(){var t=document.documentElement.getAttribute('data-theme')||'night';return (t==='day'||t==='eye')?'#16263a':'#fff';}
-function exportFuncPlotPNG(){
-  var cv=document.getElementById('funcPlot');
+function exportCanvasPNG(cvId,prefix){
+  var cv=document.getElementById(cvId);
   if(!cv)return;
   var w=cv.width||cv.clientWidth, h=cv.height||cv.clientHeight;
   if(!w||!h){ alert('图像还没有绘制'); return; }
@@ -11664,7 +11666,7 @@ function exportFuncPlotPNG(){
   try{ ctx.drawImage(cv,0,0,out.width,out.height); }catch(e){ alert('导出失败：'+e.message); return; }
   var pad=function(n){return (n<10?'0':'')+n;};
   var d=new Date();
-  var name='函数图像-'+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'-'+pad(d.getHours())+pad(d.getMinutes())+'.png';
+  var name=(prefix||'图像')+'-'+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'-'+pad(d.getHours())+pad(d.getMinutes())+'.png';
   out.toBlob(function(blob){
     if(!blob){ alert('导出失败'); return; }
     var a=document.createElement('a');
@@ -11674,6 +11676,8 @@ function exportFuncPlotPNG(){
     setTimeout(function(){ try{URL.revokeObjectURL(a.href);a.remove();}catch(e){} },1500);
   },'image/png');
 }
+function exportFuncPlotPNG(){ exportCanvasPNG('funcPlot','函数图像'); }
+function exportQuadPlotPNG(){ exportCanvasPNG('quadPlot','二次函数图像'); }
 function toggleFuncFullscreen(){
   var wrap=document.getElementById('funcPlotWrap');
   if(!wrap)return;
@@ -16153,6 +16157,38 @@ function __pullInner(silent){
   }
   var _raf=null;
   function schedDraw(){if(_raf)return;_raf=requestAnimationFrame(function(){_raf=null;try{draw();}catch(e){try{console.error(e);}catch(e2){}}});}
+function apFmtNum(v){ var r=Math.round(v*1000)/1000; return String(r); }
+function apRange(){
+  var x0=nv('apXmin'),x1=nv('apXmax');
+  if(!isFinite(x0)||!isFinite(x1)||x1<=x0){x0=-10;x1=10;}
+  var y0=nv('apYmin'),y1=nv('apYmax');
+  var hasY=isFinite(y0)&&isFinite(y1)&&y1>y0;
+  return {x0:x0,x1:x1,y0:y0,y1:y1,hasY:hasY};
+}
+function apSetRange(r){
+  var a=$('apXmin'),b=$('apXmax'),c=$('apYmin'),d=$('apYmax');
+  if(a)a.value=apFmtNum(r.x0); if(b)b.value=apFmtNum(r.x1);
+  if(r.hasY&&c&&d){ c.value=apFmtNum(r.y0); d.value=apFmtNum(r.y1); }
+  draw();
+}
+function apZoomBy(f){
+  var r=apRange(), cx=(r.x0+r.x1)/2, hw=(r.x1-r.x0)/2/f;
+  var nr={x0:cx-hw,x1:cx+hw,y0:r.y0,y1:r.y1,hasY:r.hasY};
+  if(r.hasY){ var cy=(r.y0+r.y1)/2, hh=(r.y1-r.y0)/2/f; nr.y0=cy-hh; nr.y1=cy+hh; }
+  apSetRange(nr);
+}
+function apReset(){
+  var a=$('apXmin'),b=$('apXmax'),c=$('apYmin'),d=$('apYmax');
+  if(a)a.value='-10'; if(b)b.value='10'; if(c)c.value=''; if(d)d.value='';
+  draw();
+}
+function apPanBy(dx,dy){
+  var r=apRange(), W=640, H=420;
+  var ddx=dx/W*(r.x1-r.x0);
+  var nr={x0:r.x0-ddx,x1:r.x1-ddx,y0:r.y0,y1:r.y1,hasY:r.hasY};
+  if(r.hasY){ var ddy=dy/H*(r.y1-r.y0); nr.y0=r.y0+ddy; nr.y1=r.y1+ddy; }
+  apSetRange(nr);
+}
   function draw(){
     var cv=$('apCanvas');if(!cv)return;
     var dpr=Math.min(window.devicePixelRatio||1,2.5);
@@ -16329,9 +16365,9 @@ function __pullInner(silent){
       '<div style="display:flex;align-items:center;gap:6px;margin-top:4px;"><span>a</span><input type="range" id="apA" min="-5" max="5" step="0.1" value="1" style="flex:1;"><span id="apAv">1</span></div>'+
       '<div style="display:flex;align-items:center;gap:6px;margin-top:4px;"><span>b</span><input type="range" id="apB" min="-5" max="5" step="0.1" value="0" style="flex:1;"><span id="apBv">0</span></div>'+
       '<div style="display:flex;align-items:center;gap:6px;margin-top:4px;"><span>c</span><input type="range" id="apC" min="-5" max="5" step="0.1" value="0" style="flex:1;"><span id="apCv">0</span></div></div>'+
-      '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;"><button type="button" class="btn primary" id="apDraw">绘制</button><button type="button" class="btn sm" id="apAdd">添加为图层</button><button type="button" class="btn sm" id="apPng">导出 PNG</button><button type="button" class="btn sm" id="apSvg">导出 SVG</button><button type="button" class="btn sm" id="apTableBtn">值表</button><button type="button" class="btn sm" id="apCsv">导出 CSV</button></div>'+
+      '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;"><button type="button" class="btn primary" id="apDraw">绘制</button><button type="button" class="btn sm" id="apAdd">添加为图层</button><button type="button" class="btn sm" id="apZoomOut" title="缩小">−</button><button type="button" class="btn sm" id="apZoomReset" title="重置视图">⤾</button><button type="button" class="btn sm" id="apZoomIn" title="放大">＋</button><button type="button" class="btn sm" id="apPng">导出 PNG</button><button type="button" class="btn sm" id="apSvg">导出 SVG</button><button type="button" class="btn sm" id="apTableBtn">值表</button><button type="button" class="btn sm" id="apCsv">导出 CSV</button></div>'+
       '<canvas id="apCanvas" width="640" height="420" style="width:100%;max-width:640px;display:block;margin:8px auto;border-radius:10px;"></canvas>'+
-      '<div id="apHint"></div><div id="apStatus" class="hint"></div>'+
+      '<div class="hint" style="font-size:11.5px;">💡 滚轮缩放、拖动平移，也可以用 − / ＋ / ⤾ 按钮</div><div id="apHint"></div><div id="apStatus" class="hint"></div>'+
       '<div style="margin-top:10px;"><div class="hint">图层（可排序/隐藏/删除）</div><div id="apLayers"></div></div>'+
       '<div id="apTable" style="margin-top:10px;"></div></div>';
   },bind:function(){
@@ -16349,6 +16385,19 @@ function __pullInner(silent){
     });
     $('apDraw').addEventListener('click',draw);
     $('apAdd').addEventListener('click',addLayer);
+    var _zo=document.getElementById('apZoomOut'),_zi=document.getElementById('apZoomIn'),_zr=document.getElementById('apZoomReset');
+    if(_zo)_zo.addEventListener('click',function(){try{apZoomBy(1/1.25);}catch(e){}});
+    if(_zi)_zi.addEventListener('click',function(){try{apZoomBy(1.25);}catch(e){}});
+    if(_zr)_zr.addEventListener('click',function(){try{apReset();}catch(e){}});
+    (function(){
+      var cv=document.getElementById('apCanvas'); if(!cv||cv.__zp)return; cv.__zp=true;
+      cv.addEventListener('wheel',function(e){e.preventDefault();try{apZoomBy(e.deltaY<0?1.12:1/1.12);}catch(err){}},{passive:false});
+      var drag=null;
+      cv.addEventListener('pointerdown',function(e){drag={x:e.clientX,y:e.clientY};try{cv.setPointerCapture(e.pointerId);}catch(err){}});
+      cv.addEventListener('pointermove',function(e){if(!drag)return;var dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag={x:e.clientX,y:e.clientY};try{apPanBy(dx,dy);}catch(err){}});
+      cv.addEventListener('pointerup',function(){drag=null;});
+      cv.addEventListener('pointercancel',function(){drag=null;});
+    })();
     $('apPng').addEventListener('click',exportPng);
     $('apSvg').addEventListener('click',exportSvg);
         $('apCsv').addEventListener('click',function(){
