@@ -86,9 +86,14 @@ export async function onRequest(context){
       if(baseTs === null) return json({ error: 'conflict', ts: cur.ts, need: 'read-first' }, 409, origin);
       if(Number(cur.ts) !== Number(baseTs)) return json({ error: 'conflict', ts: cur.ts }, 409, origin);
     }
+    /* 每账号最小写入间隔：同一记录里带 ts，客户端必须先读后写，能有效挡住连发 */
+    const now = Date.now();
+    const MIN_GAP_MS = 2000;
+    if(cur && (now - Number(cur.ts || 0)) < MIN_GAP_MS){
+      return json({ error: 'rate', scope: 'gap', gapMs: MIN_GAP_MS }, 429, origin, { 'Retry-After': '2' });
+    }
     /* 每账号每小时写入配额（同一 KV 记录里顺带计数，不额外写） */
     const HOUR = 3600 * 1000, WRITE_LIMIT = 120;
-    const now = Date.now();
     let wr = now, wc = 1;
     if(cur && (now - Number(cur.wr || 0)) < HOUR){
       wr = Number(cur.wr);
