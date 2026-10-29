@@ -19,7 +19,7 @@
 <meta property="og:title" content="理科计算器 · 验证器">
 <meta property="og:description" content="单文件离线理科计算器：计算、绘图、公式库、TOTP、加密云同步。">
 <meta property="og:url" content="https://xhrm-wyx.github.io/xhrm-calc/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-1FXv2e6IJlCmwAHtnBrtogctjnU9sJejNd+q1eJ/nLo=' 'sha256-vDiHGFttrZ/CWht0Y1fpEWPsb8rIIDNCRpOax2rVzdQ=' 'sha256-0sLNWyoQQ+Pn0HpCa9rRjGcfHouCs/dHwNIEfvQvqv0=' 'sha256-DCDr1evCwyx5IqSKxIqwrYPi8xURc9TG94yCjGqVDag=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-1FXv2e6IJlCmwAHtnBrtogctjnU9sJejNd+q1eJ/nLo=' 'sha256-vDiHGFttrZ/CWht0Y1fpEWPsb8rIIDNCRpOax2rVzdQ=' 'sha256-0sLNWyoQQ+Pn0HpCa9rRjGcfHouCs/dHwNIEfvQvqv0=' 'sha256-DCDr1evCwyx5IqSKxIqwrYPi8xURc9TG94yCjGqVDag=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ=' 'sha256-dnBpYXf55heGmdRKdyG5ITM1sDms1USkTAtoIAfuEz4='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
 <title>理科计算器 · 验证器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -17157,6 +17157,314 @@ function apPanBy(dx,dy){
     var a=document.querySelector('.tool-item[data-tool="ai"] .tool-name');if(a)a.textContent='AI 解题（需联网）';
   }
   if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',relabel);}else{setTimeout(relabel,0);}
+})();
+</script>
+<script>
+/* ===== 计算过程（所有理科工具通用） ===== */
+(function(){
+  function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function fmt(v){
+    if(!isFinite(v))return String(v);
+    var a=Math.abs(v);
+    if(a!==0&&(a<1e-6||a>=1e12))return v.toExponential(6);
+    return String(Math.round(v*1e10)/1e10);
+  }
+  function showProcess(title,steps){
+    var m=document.getElementById('procModal');
+    if(!m){
+      m=document.createElement('div'); m.className='account-modal'; m.id='procModal';
+      m.innerHTML='<div class="account-box" style="max-width:560px;"><div class="account-header"><div class="account-title" id="procTitle">过程</div><button type="button" class="icon-btn" id="procClose" style="width:32px;height:32px;font-size:16px;">×</button></div><div class="account-body" id="procBody" style="max-height:62vh;overflow:auto;"></div></div>';
+      document.body.appendChild(m);
+      m.addEventListener('click',function(e){if(e.target===m)m.classList.remove('show');});
+      document.getElementById('procClose').addEventListener('click',function(){m.classList.remove('show');});
+    }
+    document.getElementById('procTitle').textContent=title||'过程';
+    var h='';
+    for(var i=0;i<steps.length;i++){
+      var line=steps[i];
+      var isNote=/^(工具|输入|公式|结果|说明)[:：]/.test(line)||/^=/.test(line)===false&&i===0;
+      h+='<div style="font-family:Consolas,Menlo,monospace;font-size:13px;line-height:1.95;padding:2px 0;white-space:pre-wrap;word-break:break-word;color:'+(i===0?'var(--text-strong)':'var(--text)')+';">'+esc(line)+'</div>';
+    }
+    document.getElementById('procBody').innerHTML=h;
+    m.classList.add('show');
+  }
+  window.showProcess=showProcess;
+
+  /* 主计算器：逐级化简 */
+  function evalSub(s){
+    try{
+      if(typeof window.compileFuncExpr!=='function')return null;
+      var r=window.compileFuncExpr(String(s));
+      if(r&&typeof r.fn==='function'){
+        var v=r.fn(0);
+        if(typeof v==='number'&&isFinite(v))return v;
+      }
+    }catch(e){}
+    return null;
+  }
+  function buildCalcSteps(raw){
+    var cur=String(raw||'').trim();
+    var steps=[]; if(!cur)return ['（空表达式）'];
+    steps.push(cur);
+    var guard=0;
+    function push(s){ if(steps[steps.length-1]!==s)steps.push(s); }
+    // 1) 函数
+    while(guard++<40){
+      var m=/[a-zA-Z_][a-zA-Z0-9_]*\s*\([^()]*\)/.exec(cur);
+      if(!m)break;
+      var v=evalSub(m[0]);
+      if(v===null)break;
+      cur=cur.slice(0,m.index)+fmt(v)+cur.slice(m.index+m[0].length);
+      push(cur);
+    }
+    // 2) 括号（由内向外）
+    guard=0;
+    while(guard++<40){
+      var m2=/\(([^()]*)\)/.exec(cur);
+      if(!m2)break;
+      var v2=evalSub(m2[1]);
+      if(v2===null)break;
+      cur=cur.slice(0,m2.index)+fmt(v2)+cur.slice(m2.index+m2[0].length);
+      push(cur);
+    }
+    // 3) 乘方
+    guard=0;
+    while(guard++<20){
+      var m3=/(-?\d+(?:\.\d+)?(?:e[+-]?\d+)?)\s*\^\s*(-?\d+(?:\.\d+)?)/i.exec(cur);
+      if(!m3)break;
+      var v3=evalSub(m3[1]+'^'+m3[2]);
+      if(v3===null)break;
+      cur=cur.slice(0,m3.index)+fmt(v3)+cur.slice(m3.index+m3[0].length);
+      push(cur);
+    }
+    // 4) 乘除（从左到右，一次一个）
+    guard=0;
+    while(guard++<20){
+      var m4=/(-?\d+(?:\.\d+)?)\s*([*\/])\s*(-?\d+(?:\.\d+)?)/.exec(cur);
+      if(!m4)break;
+      var v4=evalSub(m4[1]+m4[2]+m4[3]);
+      if(v4===null)break;
+      cur=cur.slice(0,m4.index)+fmt(v4)+cur.slice(m4.index+m4[0].length);
+      push(cur);
+    }
+    // 5) 加减
+    guard=0;
+    while(guard++<20){
+      var m5=/(-?\d+(?:\.\d+)?)\s*([+\-])\s*(\d+(?:\.\d+)?)/.exec(cur);
+      if(!m5)break;
+      var v5=evalSub(m5[1]+m5[2]+m5[3]);
+      if(v5===null)break;
+      cur=cur.slice(0,m5.index)+fmt(v5)+cur.slice(m5.index+m5[0].length);
+      push(cur);
+    }
+    if(steps.length===1){
+      var vv=evalSub(cur);
+      if(vv!==null)steps.push('= '+fmt(vv));
+    }else{
+      steps[steps.length-1]='= '+fmt(parseFloat(cur));
+    }
+    return steps;
+  }
+  window.__buildCalcSteps=buildCalcSteps;
+
+  /* 工具公式表 */
+  var FORMULAS={
+    quad:'ax² + bx + c = 0 → x = ( −b ± √(b²−4ac) ) / (2a)，判别式 Δ = b²−4ac',
+    factor:'提取公因式 / 公式法（平方差、完全平方）/ 十字相乘，最后展开校验',
+    prime:'从 2 开始试除到 √n；能整除则记录因子并把 n 除以该因子，重复直到 n=1',
+    linsys:'二元一次方程组：消元（代入或加减），求出一个未知数后回代',
+    matrix:'行列式按行/列展开；逆矩阵用增广矩阵高斯消元 [A|E] → [E|A⁻¹]',
+    complex:'(a+bi)(c+di) = (ac−bd) + (ad+bc)i；模长 |z| = √(a²+b²)',
+    stats:'均值 x̄ = Σx / n；方差 = Σ(x−x̄)² / n；标准差 = √方差',
+    dist:'正态：z = (x−μ)/σ 再查表；二项：C(n,k)p^k(1−p)^(n−k)；泊松：e^(−λ)λ^k/k!',
+    regress:'最小二乘：斜率 b = Σ(x−x̄)(y−ȳ) / Σ(x−x̄)²，截距 a = ȳ − b·x̄',
+    seq:'等差：aₙ = a₁+(n−1)d，Sₙ = n(a₁+aₙ)/2；等比：aₙ = a₁q^(n−1)',
+    angle:'单位圆上 sin θ = y，cos θ = x，tan θ = y/x；特殊角用 30°/45°/60° 三角形推导',
+    calculus:'导数用差商极限；定积分用 Simpson 公式：h/3·[f₀+4f₁+2f₂+…+fₙ]',
+    ineq:'移项 → 因式分解 → 求根 → 用数轴分区间判断符号',
+    radix:'十进制转其他进制：除基取余，逆序排列；其他进制转十进制：按权展开求和',
+    units:'目标值 = 原值 × 换算因子',
+    units2:'目标值 = 原值 × 换算因子',
+    phys:'按物理公式代入：先统一单位，再代入计算，最后带单位',
+    mol:'n = m / M；c = n / V；标况气体 V = n × 22.4 L',
+    conc:'溶质质量分数 = 溶质质量 / 溶液质量 × 100%；物质的量浓度 c = n / V',
+    finance:'复利 A = P(1+r/n)^(nt)；等额本息月供 = P·i(1+i)^N / ((1+i)^N−1)',
+    loan:'等额本息：月供 = P·i(1+i)^N/((1+i)^N−1)；等额本金：每月本金 P/N + 剩余本金×i',
+    tax:'应纳税额 = 应纳税所得额 × 税率 − 速算扣除数',
+    bmi:'BMI = 体重(kg) / 身高(m)²',
+    health:'按对应健康公式代入身高/体重/年龄/性别计算',
+    date:'按日期差：先算整天数，再按 365/366 换算年、按月长换算月',
+    comb:'C(n,k) = n!/(k!(n−k)!)；A(n,k) = n!/(n−k)!',
+    rand:'在 [min,max] 内按均匀分布取值；可指定种子复现',
+    relative:'按称谓关系图逐层推导（父母/子女/配偶/兄弟姐妹）',
+    chinese:'按天干地支与生肖周期（60 甲子 / 12 生肖）取模计算'
+  };
+  function toolName(scope){
+    var el=scope&&scope.querySelector?scope.querySelector('.card-title'):null;
+    var t=el?String(el.textContent||'').trim():'';
+    return t||'计算工具';
+  }
+  function collectInputs(scope){
+    var out=[];
+    if(!scope)return out;
+    var labs=scope.querySelectorAll('label.inp,.field');
+    for(var i=0;i<labs.length&&out.length<8;i++){
+      var lab=labs[i];
+      var sp=lab.querySelector('span');
+      var inp=lab.querySelector('input,select,textarea');
+      if(!inp)continue;
+      var name=sp?String(sp.textContent||'').trim():('输入'+(i+1));
+      var val=String(inp.value||'').trim();
+      if(val)out.push(name+' = '+val);
+    }
+    return out;
+  }
+  function showProcessFor(toolId,resultEl,scopeOpt){
+    var scope=scopeOpt||document.getElementById('toolContent')||document;
+    var title=toolName(scope);
+    var steps=[];
+    var inputs=collectInputs(scope);
+    function textOf(el){
+      if(!el)return '';
+      var c=el.cloneNode(true);
+      var sups=c.querySelectorAll?c.querySelectorAll('sup'):[];
+      for(var si=0;si<sups.length;si++){ sups[si].textContent='^'+sups[si].textContent; }
+      return String(c.textContent||'').replace(/\s+/g,' ').trim();
+    }
+    var result='';
+    if(resultEl){
+      var parts=[];
+      var sel=resultEl.querySelectorAll?resultEl.querySelectorAll('.res-main,.res-approx,.res-note'):[];
+      for(var pi=0;pi<sel.length;pi++)parts.push(textOf(sel[pi]));
+      result=parts.join('　').replace(/\s+/g,' ').trim();
+      if(!result)result=textOf(resultEl).slice(0,300);
+    }
+    steps.push('工具：'+title);
+    if(inputs.length)steps.push('输入：'+inputs.join('；'));
+    var f=FORMULAS[toolId]||'按该工具的公式代入已知量，逐步计算得到结果';
+    steps.push('公式：'+f);
+    if(toolId==='quad'){
+      var a=parseFloat((document.getElementById('qa')||{}).value);
+      var b=parseFloat((document.getElementById('qb')||{}).value);
+      var c=parseFloat((document.getElementById('qc')||{}).value);
+      if(isFinite(a)&&isFinite(b)&&isFinite(c)){
+        steps.push('代入：a = '+a+'，b = '+b+'，c = '+c);
+        var d=b*b-4*a*c;
+        steps.push('判别式：Δ = b² − 4ac = '+fmt(b)+'² − 4×'+fmt(a)+'×'+fmt(c)+' = '+fmt(d));
+        if(a!==0){
+          if(d>0){var r1=(-b+Math.sqrt(d))/(2*a),r2=(-b-Math.sqrt(d))/(2*a);steps.push('x₁ = (−b + √Δ)/(2a) = '+fmt(r1));steps.push('x₂ = (−b − √Δ)/(2a) = '+fmt(r2));}
+          else if(d===0){steps.push('Δ = 0，重根 x = −b/(2a) = '+fmt(-b/(2*a)));}
+          else{steps.push('Δ < 0，无实根（复数根：x = (−b ± i√|Δ|)/(2a)）');}
+        }
+      }
+    }
+    if(toolId==='stats'){
+      var raw=(document.getElementById('statsInput')||{}).value||'';
+      var nums=String(raw).split(/[,，\s]+/).map(parseFloat).filter(function(v){return isFinite(v);});
+      if(nums.length){
+        var sum=nums.reduce(function(a,b){return a+b;},0);
+        steps.push('求和：Σx = '+fmt(sum)+'（共 '+nums.length+' 个数）');
+        steps.push('均值：x̄ = Σx / n = '+fmt(sum)+' / '+nums.length+' = '+fmt(sum/nums.length));
+        var mean=sum/nums.length;
+        var vsum=nums.reduce(function(a,b){return a+(b-mean)*(b-mean);},0);
+        steps.push('偏差平方和：Σ(x−x̄)² = '+fmt(vsum));
+        steps.push('方差 = '+fmt(vsum/nums.length)+'；标准差 = '+fmt(Math.sqrt(vsum/nums.length)));
+      }
+    }
+    if(toolId==='prime'){
+      var pn=NaN;
+      for(var _ii=0;_ii<inputs.length;_ii++){ var _mm=/n\s*=\s*(-?\d+)/.exec(inputs[_ii]); if(_mm){pn=parseInt(_mm[1],10);break;} }
+      if(!isFinite(pn))pn=parseFloat((document.getElementById('primeN')||{}).value);
+      if(isFinite(pn)&&pn>1&&pn<1e9){
+        var n2=Math.floor(pn), fs=[], d2=2;
+        while(d2*d2<=n2&&fs.length<40){ if(n2%d2===0){fs.push(d2);n2/=d2;} else d2++; }
+        if(n2>1)fs.push(n2);
+        steps.push('试除过程：依次用 2,3,5,… 试除，得到因子 '+fs.join(' × '));
+      }
+    }
+    if(toolId==='factor'){
+      steps.push('方法：先看公因式，再试平方差 a²−b²=(a+b)(a−b)、完全平方 a²±2ab+b²=(a±b)²、十字相乘');
+    }
+    steps.push('结果：'+(result||'（无输出）'));
+    steps.push('说明：以上为该工具的推导主线，数值细节以界面结果为准。');
+    showProcess(title+' · 过程', steps);
+  }
+  window.__showProcessFor=showProcessFor;
+
+  /* 注入按钮：主计算器结果 */
+  function addBtn(box,onClick){
+    if(!box)return;
+    if(box.querySelector&&box.querySelector('.proc-btn'))return;
+    var b=document.createElement('button');
+    b.type='button'; b.className='btn sm proc-btn'; b.textContent='过程';
+    b.style.marginTop='6px';
+    b.addEventListener('click',onClick);
+    box.appendChild(b);
+  }
+  function watchResult(box,onChange){
+    if(!box||box.__procWatch)return;
+    box.__procWatch=true;
+    var ob=new MutationObserver(function(){ if(String(box.textContent||'').trim().length>1) onChange(); });
+    ob.observe(box,{childList:true,subtree:true,characterData:true});
+  }
+  function hookCalc(){
+    var out=document.getElementById('exprResult');
+    if(!out)return;
+    watchResult(out,function(){
+      addBtn(out,function(){
+        var expr=(document.getElementById('exprInput')||{}).value||'';
+        showProcess('计算过程', buildCalcSteps(expr));
+      });
+    });
+  }
+  /* 注入按钮：工具结果框 */
+  var TOOL_NAMES={quad:'一元二次方程',factor:'因式分解',prime:'质因数分解',stats:'统计',matrix:'矩阵',linsys:'二元一次方程组',complex:'复数',dist:'分布',regress:'回归',seq:'数列',angle:'单位圆/特殊角',calculus:'微积分',ineq:'不等式',radix:'进制',units:'单位换算',units2:'更多单位',phys:'物理',mol:'摩尔',conc:'浓度',finance:'财务',loan:'房贷',tax:'个税',bmi:'BMI',health:'健康',date:'日期',comb:'排列组合',rand:'随机数',relative:'称呼',chinese:'干支/生肖'};
+  window.__procTool='';
+  var _open=window.openTool;
+  if(typeof _open==='function'){
+    window.openTool=function(id){
+      window.__procTool=id||'';
+      var r=_open.apply(this,arguments);
+      setTimeout(scanTool,400);
+      return r;
+    };
+  }
+  function scanTool(){
+    var scope=document.getElementById('toolContent');
+    if(!scope)return;
+    var boxes=scope.querySelectorAll('.result-box,[id$="Result"],[id$="Out"]');
+    for(var i=0;i<boxes.length;i++){
+      (function(box){
+        if(!box)return;
+        if(box.closest&&box.closest('button'))return;
+        if(box.tagName==='BUTTON')return;
+        if(box.querySelector&&box.querySelector('.proc-btn'))return;
+        if(String(box.textContent||'').trim().length<1)return;
+        addBtn(box,function(){ showProcessFor(window.__procTool,box); });
+      })(boxes[i]);
+    }
+  }
+  document.addEventListener('click',function(e){
+    var t=e.target;
+    var card=t&&t.closest?t.closest('[data-tool]'):null;
+    if(card){ window.__procTool=card.getAttribute('data-tool')||''; setTimeout(scanTool,300); }
+  },true);
+  var toolScope=document.getElementById('toolContent');
+  if(toolScope){
+    var ob2=new MutationObserver(function(){ setTimeout(scanTool,120); });
+    ob2.observe(toolScope,{childList:true,subtree:true});
+  }
+  hookCalc();
+  (function(){
+    var q=document.getElementById('quadResult');
+    if(!q)return;
+    watchResult(q,function(){
+      var card=q.closest?q.closest('.card'):null;
+      addBtn(q,function(){ showProcessFor('quad',q,card||document); });
+    });
+  })();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){hookCalc();setTimeout(scanTool,600);});
+  else setTimeout(scanTool,600);
 })();
 </script>
 </body>
