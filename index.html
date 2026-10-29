@@ -19,7 +19,7 @@
 <meta property="og:title" content="理科计算器 · 验证器">
 <meta property="og:description" content="单文件离线理科计算器：计算、绘图、公式库、TOTP、加密云同步。">
 <meta property="og:url" content="https://xhrm-wyx.github.io/xhrm-calc/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-1FXv2e6IJlCmwAHtnBrtogctjnU9sJejNd+q1eJ/nLo=' 'sha256-vDiHGFttrZ/CWht0Y1fpEWPsb8rIIDNCRpOax2rVzdQ=' 'sha256-0sLNWyoQQ+Pn0HpCa9rRjGcfHouCs/dHwNIEfvQvqv0=' 'sha256-DCDr1evCwyx5IqSKxIqwrYPi8xURc9TG94yCjGqVDag=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ=' 'sha256-dnBpYXf55heGmdRKdyG5ITM1sDms1USkTAtoIAfuEz4='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-1FXv2e6IJlCmwAHtnBrtogctjnU9sJejNd+q1eJ/nLo=' 'sha256-vDiHGFttrZ/CWht0Y1fpEWPsb8rIIDNCRpOax2rVzdQ=' 'sha256-0sLNWyoQQ+Pn0HpCa9rRjGcfHouCs/dHwNIEfvQvqv0=' 'sha256-DCDr1evCwyx5IqSKxIqwrYPi8xURc9TG94yCjGqVDag=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ=' 'sha256-SrX9ysbSDwpNRX5trgRjjK5Jgux2ze07V1jbLPQdSfs=' 'sha256-jRcxlcG/Zeh5uCVWNv1BeM+mAjOXgTe0aBjW8bQ1Nrk='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
 <title>理科计算器 · 验证器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -17440,7 +17440,7 @@ function apPanBy(dx,dy){
         if(box.tagName==='BUTTON')return;
         if(box.querySelector&&box.querySelector('.proc-btn'))return;
         if(String(box.textContent||'').trim().length<1)return;
-        addBtn(box,function(){ showProcessFor(window.__procTool,box); });
+        addBtn(box,function(){ window.__showProcessFor(window.__procTool,box); });
       })(boxes[i]);
     }
   }
@@ -17460,11 +17460,545 @@ function apPanBy(dx,dy){
     if(!q)return;
     watchResult(q,function(){
       var card=q.closest?q.closest('.card'):null;
-      addBtn(q,function(){ showProcessFor('quad',q,card||document); });
+      addBtn(q,function(){ window.__showProcessFor('quad',q,card||document); });
     });
   })();
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){hookCalc();setTimeout(scanTool,600);});
   else setTimeout(scanTool,600);
+})();
+</script>
+<script>
+/* ===== 各工具的过程推导（v2） ===== */
+(function(){
+  function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function fmt(v){
+    if(typeof v==='string')return v;
+    if(!isFinite(v))return String(v);
+    var a=Math.abs(v);
+    if(a!==0&&(a<1e-6||a>=1e12))return v.toExponential(6);
+    return String(Math.round(v*1e10)/1e10);
+  }
+  function num(id){var e=document.getElementById(id);if(!e)return NaN;var v=parseFloat(String(e.value).trim());return isFinite(v)?v:NaN;}
+  function txt(id){var e=document.getElementById(id);return e?String(e.value||'').trim():'';}
+  function sel(id){var e=document.getElementById(id);return e?String(e.value||''):'';}
+  function P(name,fn){PROC[name]=fn;}
+  var PROC={};
+
+  P('factor',function(){
+    var a=num('factorA'),b=num('factorB'),c=num('factorC');
+    if(!isFinite(a)||!isFinite(b)||!isFinite(c))return null;
+    var out=[];
+    out.push('待分解：'+fmt(a)+'x² + '+fmt(b)+'x + '+fmt(c));
+    out.push('十字相乘：先算 ac = '+fmt(a)+'×'+fmt(c)+' = '+fmt(a*c)+'，再找 p、q 使 p+q = b = '+fmt(b)+'，pq = ac = '+fmt(a*c));
+    var ac=a*c,p=null,q=null;
+    if(ac!==0){
+      var lim=Math.abs(ac),i;
+      for(i=-lim;i<=lim;i++){ if(i===0)continue; if(ac%i===0){ var j=ac/i; if(i+j===b){p=i;q=j;break;} } }
+    } else { p=0;q=b; }
+    if(p!==null){
+      out.push('找到 p = '+fmt(p)+'，q = '+fmt(q)+'：'+fmt(p)+' + '+fmt(q)+' = '+fmt(b)+'，'+fmt(p)+'×'+fmt(q)+' = '+fmt(ac));
+      out.push('拆分中间项：'+fmt(a)+'x² + '+fmt(p)+'x + '+fmt(q)+'x + '+fmt(c));
+      out.push('分组提取公因式，合并后得到因式分解结果（见下方结果）');
+    }
+    var D=b*b-4*a*c;
+    out.push('判别式校验：Δ = b² − 4ac = '+fmt(b)+'² − 4×'+fmt(a)+'×'+fmt(c)+' = '+fmt(D));
+    if(a!==0){
+      if(D>=0){
+        var r1=(-b+Math.sqrt(D))/(2*a),r2=(-b-Math.sqrt(D))/(2*a);
+        out.push('求根：x₁ = ('+fmt(-b)+' + √'+fmt(D)+') / '+fmt(2*a)+' ≈ '+fmt(r1));
+        out.push('　　　x₂ = ('+fmt(-b)+' − √'+fmt(D)+') / '+fmt(2*a)+' ≈ '+fmt(r2));
+      } else out.push('Δ < 0，在实数范围内不能分解');
+    }
+    return out;
+  });
+
+  P('sys2',function(){
+    var a1=num('sysA1'),b1=num('sysB1'),c1=num('sysC1'),a2=num('sysA2'),b2=num('sysB2'),c2=num('sysC2');
+    if([a1,b1,c1,a2,b2,c2].some(function(v){return !isFinite(v);}))return null;
+    var out=[];
+    out.push('方程组：'+fmt(a1)+'x + '+fmt(b1)+'y = '+fmt(c1)+'　；　'+fmt(a2)+'x + '+fmt(b2)+'y = '+fmt(c2));
+    var D=a1*b2-a2*b1;
+    out.push('系数行列式：D = a₁b₂ − a₂b₁ = '+fmt(a1)+'×'+fmt(b2)+' − '+fmt(a2)+'×'+fmt(b1)+' = '+fmt(D));
+    if(D===0){ out.push('D = 0，方程组无唯一解（平行或重合）'); return out; }
+    var Dx=c1*b2-c2*b1, Dy=a1*c2-a2*c1;
+    out.push('Dx = c₁b₂ − c₂b₁ = '+fmt(c1)+'×'+fmt(b2)+' − '+fmt(c2)+'×'+fmt(b1)+' = '+fmt(Dx));
+    out.push('Dy = a₁c₂ − a₂c₁ = '+fmt(a1)+'×'+fmt(c2)+' − '+fmt(a2)+'×'+fmt(c1)+' = '+fmt(Dy));
+    out.push('x = Dx / D = '+fmt(Dx)+' / '+fmt(D)+' = '+fmt(Dx/D));
+    out.push('y = Dy / D = '+fmt(Dy)+' / '+fmt(D)+' = '+fmt(Dy/D));
+    return out;
+  });
+
+  P('seq',function(){
+    var t=sel('seqType'),a1=num('seqA1'),d=num('seqD'),n=num('seqN');
+    if(!isFinite(a1)||!isFinite(d)||!isFinite(n)||n<1)return null;
+    var out=[];
+    if(t==='geo'){
+      out.push('等比数列：a₁ = '+fmt(a1)+'，公比 q = '+fmt(d)+'，n = '+fmt(n));
+      out.push('通项：aₙ = a₁·q^(n−1) = '+fmt(a1)+'×'+fmt(d)+'^'+fmt(n-1)+' = '+fmt(a1*Math.pow(d,n-1)));
+      if(d===1)out.push('q = 1，Sₙ = n·a₁ = '+fmt(n*a1));
+      else out.push('求和：Sₙ = a₁(1−qⁿ)/(1−q) = '+fmt(a1)+'×(1−'+fmt(d)+'^'+fmt(n)+')/(1−'+fmt(d)+') = '+fmt(a1*(1-Math.pow(d,n))/(1-d)));
+    } else {
+      out.push('等差数列：a₁ = '+fmt(a1)+'，公差 d = '+fmt(d)+'，n = '+fmt(n));
+      out.push('通项：aₙ = a₁ + (n−1)d = '+fmt(a1)+' + ('+fmt(n)+'−1)×'+fmt(d)+' = '+fmt(a1+(n-1)*d));
+      out.push('求和：Sₙ = n(a₁+aₙ)/2 = '+fmt(n)+'×('+fmt(a1)+'+'+fmt(a1+(n-1)*d)+')/2 = '+fmt(n*(a1+(a1+(n-1)*d))/2));
+    }
+    return out;
+  });
+
+  P('comb',function(){
+    var n=num('combN'),k=num('combK');
+    if(!isFinite(n)||!isFinite(k)||n<0||k<0||k>n)return null;
+    var out=[];
+    out.push('从 '+fmt(n)+' 个中取 '+fmt(k)+' 个');
+    var nume=1,i;
+    for(i=0;i<k;i++)nume*=(n-i);
+    var den=1;
+    for(i=2;i<=k;i++)den*=i;
+    out.push('排列数：P(n,k) = n×(n−1)×…×(n−k+1) = '+fmt(nume));
+    out.push('分母：k! = '+fmt(den));
+    out.push('组合数：C(n,k) = P(n,k) / k! = '+fmt(nume)+' / '+fmt(den)+' = '+fmt(nume/den));
+    return out;
+  });
+
+  P('angle',function(){
+    var dir=sel('angleDir'),v=num('angleVal');
+    if(!isFinite(v))return null;
+    var out=[];
+    if(dir==='deg'){
+      var rad=v*Math.PI/180;
+      out.push('角度 → 弧度：'+fmt(v)+'° × π/180 = '+fmt(rad)+' rad');
+      out.push('sin '+fmt(v)+'° = '+fmt(Math.sin(rad)));
+      out.push('cos '+fmt(v)+'° = '+fmt(Math.cos(rad)));
+      out.push('tan '+fmt(v)+'° = '+fmt(Math.tan(rad)));
+    } else if(dir==='rad'){
+      out.push('弧度 → 角度：'+fmt(v)+' × 180/π = '+fmt(v*180/Math.PI)+'°');
+      out.push('sin = '+fmt(Math.sin(v))+'，cos = '+fmt(Math.cos(v))+'，tan = '+fmt(Math.tan(v)));
+    } else {
+      var f=dir==='asin'?Math.asin:dir==='acos'?Math.acos:Math.atan;
+      out.push(dir+'('+fmt(v)+') = '+fmt(f(v))+' rad');
+      out.push('换算成角度：× 180/π = '+fmt(f(v)*180/Math.PI)+'°');
+    }
+    return out;
+  });
+
+  P('bmi',function(){
+    var h=num('bmiHeight'),w=num('bmiWeight');
+    if(!isFinite(h)||!isFinite(w))return null;
+    var out=[];
+    var m=h>3?h/100:h;
+    out.push('身高换算：'+fmt(h)+(h>3?' cm = ':' m = ')+fmt(m)+' m');
+    out.push('BMI = 体重 / 身高² = '+fmt(w)+' / '+fmt(m)+'² = '+fmt(w)+' / '+fmt(m*m));
+    var bmi=w/(m*m);
+    out.push('BMI = '+fmt(bmi));
+    var cat=bmi<18.5?'偏瘦':bmi<24?'正常':bmi<28?'超重':'肥胖';
+    out.push('对照中国标准：'+cat+'（18.5–23.9 正常）');
+    return out;
+  });
+
+  P('loan',function(){
+    var P0=num('loanAmount'),rate=num('loanRate'),years=num('loanYears');
+    if(!isFinite(P0)||!isFinite(rate)||!isFinite(years))return null;
+    var out=[],i=rate/100/12,N=Math.round(years*12);
+    out.push('贷款 '+fmt(P0)+' 元，年利率 '+fmt(rate)+'%，期限 '+fmt(years)+' 年（'+N+' 期）');
+    out.push('月利率 i = '+fmt(rate)+'% / 12 = '+fmt(i));
+    if(sel('loanType')==='equalPrincipal'){
+      var prin=P0/N, firstInt=P0*i;
+      out.push('等额本金：每月本金 = '+fmt(P0)+' / '+N+' = '+fmt(prin));
+      out.push('首月利息 = 本金 × i = '+fmt(P0)+'×'+fmt(i)+' = '+fmt(firstInt));
+      out.push('首月还款 = '+fmt(prin)+' + '+fmt(firstInt)+' = '+fmt(prin+firstInt));
+      out.push('总利息 = 本金×i×(N+1)/2 = '+fmt(P0*i*(N+1)/2));
+    } else {
+      var f=Math.pow(1+i,N);
+      var m=P0*i*f/(f-1);
+      out.push('等额本息：月供 = P·i(1+i)^N / ((1+i)^N−1)');
+      out.push('(1+i)^N = '+fmt(f));
+      out.push('月供 = '+fmt(P0)+'×'+fmt(i)+'×'+fmt(f)+' / ('+fmt(f)+'−1) = '+fmt(m));
+      out.push('总还款 = '+fmt(m)+'×'+N+' = '+fmt(m*N)+'，总利息 = '+fmt(m*N-P0));
+    }
+    return out;
+  });
+
+  P('tax',function(){
+    var inc=num('taxIncome'),ded=num('taxDeduction'),ins=num('taxInsurance');
+    if(!isFinite(inc))return null;
+    var out=[];
+    ded=isFinite(ded)?ded:0; ins=isFinite(ins)?ins:0;
+    out.push('税前收入 '+fmt(inc)+' 元，专项扣除 '+fmt(ded)+'，五险一金 '+fmt(ins));
+    var taxable=inc-5000-ded-ins;
+    out.push('应纳税所得额 = '+fmt(inc)+' − 5000 − '+fmt(ded)+' − '+fmt(ins)+' = '+fmt(taxable));
+    if(taxable<=0){ out.push('应纳税所得额 ≤ 0，无需缴税'); return out; }
+    var brackets=[[3000,0.03,0],[12000,0.1,210],[25000,0.2,1410],[35000,0.25,2660],[55000,0.3,4410],[80000,0.35,7160],[Infinity,0.45,15160]];
+    for(var i=0;i<brackets.length;i++){
+      if(taxable<=brackets[i][0]){
+        out.push('适用税率 '+ (brackets[i][1]*100) +'%，速算扣除数 '+brackets[i][2]);
+        out.push('税额 = '+fmt(taxable)+'×'+brackets[i][1]+' − '+brackets[i][2]+' = '+fmt(taxable*brackets[i][1]-brackets[i][2]));
+        break;
+      }
+    }
+    return out;
+  });
+
+  P('date',function(){
+    var mode=sel('dateMode'),a=txt('dateA'),b=txt('dateB');
+    var out=[];
+    var d1=new Date(a),d2=new Date(b);
+    if(isNaN(d1.getTime()))return null;
+    if(mode==='add'){
+      var n=parseInt(b,10);
+      if(!isFinite(n))return null;
+      out.push('基准日期：'+a);
+      out.push('推算：'+a+' '+(n>=0?'+':'')+n+' 天');
+      var r=new Date(d1.getTime()+n*86400000);
+      out.push('结果日期：'+r.toISOString().slice(0,10));
+    } else {
+      if(isNaN(d2.getTime()))return null;
+      var days=Math.round((d2-d1)/86400000);
+      out.push('日期 1：'+a+'　日期 2：'+b);
+      out.push('相差天数 = ('+b+' − '+a+') / 1 天 = '+days+' 天');
+      out.push('约合 '+fmt(days/7)+' 周，'+fmt(days/30.44)+' 个月，'+fmt(days/365.25)+' 年');
+    }
+    return out;
+  });
+
+  P('conc',function(){
+    var mode=sel('concMode'),a=num('concA'),b=num('concB');
+    if(!isFinite(a)||!isFinite(b))return null;
+    var out=[];
+    if(mode==='molar'){
+      var c=a/b;
+      out.push('物质的量浓度 c = n / V = '+fmt(a)+' mol / '+fmt(b)+' L');
+      out.push('c = '+fmt(c)+' mol/L');
+    } else {
+      var w=a/b*100;
+      out.push('质量分数 w = 溶质 / 溶液 × 100% = '+fmt(a)+' / '+fmt(b)+' × 100%');
+      out.push('w = '+fmt(w)+'%');
+      out.push('溶质 '+fmt(a)+' g，溶剂 '+(isFinite(b-a)?fmt(b-a):'—')+' g');
+    }
+    return out;
+  });
+
+  P('complex',function(){
+    function parse(s){
+      s=String(s||'').replace(/\s+/g,'').replace(/i/g,'i');
+      var m=/^([+-]?\d+(?:\.\d+)?)?([+-]\d+(?:\.\d+)?)?i$/.exec(s);
+      if(m)return {a:parseFloat(m[1]||'0')||0,b:parseFloat(m[2]||'1')||0};
+      m=/^([+-]?\d+(?:\.\d+)?)$/.exec(s);
+      if(m)return {a:parseFloat(m[1]),b:0};
+      return null;
+    }
+    var z1=parse(txt('czA')),z2=parse(txt('czB'));
+    if(!z1||!z2)return null;
+    var op=window.__czOp||'add',out=[];
+    out.push('z₁ = '+fmt(z1.a)+' + '+fmt(z1.b)+'i　z₂ = '+fmt(z2.a)+' + '+fmt(z2.b)+'i');
+    if(op==='mul'){
+      out.push('乘法：实部 = ac − bd = '+fmt(z1.a)+'×'+fmt(z2.a)+' − '+fmt(z1.b)+'×'+fmt(z2.b)+' = '+fmt(z1.a*z2.a-z1.b*z2.b));
+      out.push('　　　虚部 = ad + bc = '+fmt(z1.a)+'×'+fmt(z2.b)+' + '+fmt(z1.b)+'×'+fmt(z2.a)+' = '+fmt(z1.a*z2.b+z1.b*z2.a));
+    } else if(op==='div'){
+      var den=z2.a*z2.a+z2.b*z2.b;
+      out.push('除法：分子分母同乘 z₂ 的共轭，分母 = c²+d² = '+fmt(den));
+      out.push('实部 = ('+fmt(z1.a*z2.a+z1.b*z2.b)+') / '+fmt(den)+' = '+fmt((z1.a*z2.a+z1.b*z2.b)/den));
+      out.push('虚部 = ('+fmt(z1.b*z2.a-z1.a*z2.b)+') / '+fmt(den)+' = '+fmt((z1.b*z2.a-z1.a*z2.b)/den));
+    } else if(op==='mod'){
+      out.push('模长 |z₁| = √(a²+b²) = √('+fmt(z1.a*z1.a)+' + '+fmt(z1.b*z1.b)+') = '+fmt(Math.sqrt(z1.a*z1.a+z1.b*z1.b)));
+      out.push('辐角 arg(z₁) = atan2(b,a) = '+fmt(Math.atan2(z1.b,z1.a)*180/Math.PI)+'°');
+    } else {
+      var sg=op==='sub'?-1:1;
+      out.push((op==='sub'?'减法':'加法')+'：实部 = '+fmt(z1.a)+' '+(sg>0?'+':'−')+' '+fmt(z2.a)+' = '+fmt(z1.a+sg*z2.a));
+      out.push('　　　虚部 = '+fmt(z1.b)+' '+(sg>0?'+':'−')+' '+fmt(z2.b)+' = '+fmt(z1.b+sg*z2.b));
+    }
+    return out;
+  });
+  document.addEventListener('click',function(e){
+    var t=e.target&&e.target.closest?e.target.closest('[data-cz]'):null;
+    if(t)window.__czOp=t.getAttribute('data-cz');
+  },true);
+
+  P('matrix',function(){
+    var n=parseInt(sel('mxSize'),10)||3;
+    var ins=document.querySelectorAll('#mxA input');
+    if(!ins.length)return null;
+    var A=[],i,j;
+    for(i=0;i<n;i++){ A.push([]); for(j=0;j<n;j++){ A[i].push(parseFloat(ins[i*n+j].value)||0); } }
+    function det(m){
+      var s=m.length;
+      if(s===1)return m[0][0];
+      if(s===2)return m[0][0]*m[1][1]-m[0][1]*m[1][0];
+      var r=0;
+      for(var c=0;c<s;c++){
+        var sub=[];
+        for(var x=1;x<s;x++){ var row=[]; for(var y=0;y<s;y++){ if(y!==c)row.push(m[x][y]); } sub.push(row); }
+        r+=((c%2)?-1:1)*m[0][c]*det(sub);
+      }
+      return r;
+    }
+    var out=['阶数：'+n+'×'+n];
+    if(n===2){
+      out.push('det(A) = a₁₁a₂₂ − a₁₂a₂₁ = '+fmt(A[0][0])+'×'+fmt(A[1][1])+' − '+fmt(A[0][1])+'×'+fmt(A[1][0])+' = '+fmt(det(A)));
+    } else {
+      out.push('按第一行展开：det(A) = Σ (−1)^(1+j) · a₁ⱼ · M₁ⱼ');
+      for(var c=0;c<n;c++){
+        var sub=[];
+        for(var x=1;x<n;x++){ var row=[]; for(var y=0;y<n;y++){ if(y!==c)row.push(A[x][y]); } sub.push(row); }
+        out.push('　j='+(c+1)+'：符号 '+((c%2)?'−':'+')+'，a = '+fmt(A[0][c])+'，余子式 = '+fmt(det(sub))+' → 项 = '+fmt(((c%2)?-1:1)*A[0][c]*det(sub)));
+      }
+      out.push('det(A) = '+fmt(det(A)));
+    }
+    return out;
+  });
+
+  P('ineq',function(){
+    var a=num('iqA'),b=num('iqB'),c=num('iqC');
+    if(!isFinite(a)||!isFinite(b)||!isFinite(c))return null;
+    var out=[];
+    out.push('不等式：'+fmt(a)+'x² + '+fmt(b)+'x + '+fmt(c)+'　'+sel('iqSign'));
+    var D=b*b-4*a*c;
+    out.push('判别式：Δ = '+fmt(b)+'² − 4×'+fmt(a)+'×'+fmt(c)+' = '+fmt(D));
+    if(D<0){ out.push('Δ < 0，二次式与 x 轴无交点，符号由 a 决定'); return out; }
+    var r1=(-b-Math.sqrt(D))/(2*a), r2=(-b+Math.sqrt(D))/(2*a);
+    if(r1>r2){ var t=r1;r1=r2;r2=t; }
+    out.push('根：x₁ = '+fmt(r1)+'，x₂ = '+fmt(r2));
+    out.push('数轴分三段：(−∞,'+fmt(r1)+')、('+fmt(r1)+','+fmt(r2)+')、('+fmt(r2)+',+∞)');
+    out.push('a '+(a>0?'> 0，抛物线开口向上':a<0?'< 0，抛物线开口向下':'= 0')+'，据此判断各区间符号后取解集');
+    return out;
+  });
+
+  P('calculus',function(){
+    var f=txt('clF'),x=num('clX'),a=num('clA'),b=num('clB');
+    var out=[];
+    if(!f)return null;
+    var fn=null;
+    try{ var c=window.compileFuncExpr(f); if(c&&c.fn)fn=c.fn; }catch(e){}
+    if(!fn)return null;
+    out.push('函数：f(x) = '+f);
+    if(isFinite(x)){
+      var h=1e-5, fp=(fn(x+h)-fn(x-h))/(2*h);
+      out.push('在 x = '+fmt(x)+' 处用中心差商求导：');
+      out.push('f(x+h) = '+fmt(fn(x+h))+'，f(x−h) = '+fmt(fn(x-h))+'，h = '+fmt(h));
+      out.push('f′(x) ≈ [f(x+h) − f(x−h)] / (2h) = '+fmt(fp));
+    }
+    if(isFinite(a)&&isFinite(b)&&b>a){
+      var N=4,hh=(b-a)/N,s=0,vals=[];
+      for(var i=0;i<=N;i++){ var xi=a+i*hh; vals.push(fn(xi)); }
+      s=vals[0]+vals[N];
+      for(var i2=1;i2<N;i2++) s+=(i2%2?4:2)*vals[i2];
+      var integ=s*hh/3;
+      out.push('积分区间 ['+fmt(a)+', '+fmt(b)+']，n = '+N+'，h = '+fmt(hh));
+      out.push('节点值：'+vals.map(function(v){return fmt(v);}).join('，'));
+      out.push('Simpson：S = h/3 × [f₀+4f₁+2f₂+4f₃+f₄] = '+fmt(integ));
+    }
+    return out;
+  });
+
+  P('phys',function(){
+    var eq=(document.getElementById('physEq')||{}).textContent||'';
+    var out=[];
+    if(eq)out.push('公式：'+eq);
+    var scope=document.getElementById('toolContent');
+    var labs=scope?scope.querySelectorAll('label.inp'):[];
+    for(var i=0;i<labs.length;i++){
+      var sp=labs[i].querySelector('span'),inp=labs[i].querySelector('input');
+      if(sp&&inp&&String(inp.value).trim())out.push('　'+String(sp.textContent).trim()+' = '+String(inp.value).trim());
+    }
+    out.push('按公式代入已知量，解出未知量（结果见下方）');
+    return out;
+  });
+
+  P('dist',function(){
+    var t=sel('dsType'),x=num('dsX'),mu=num('dsMu'),sd=num('dsSd'),n=num('dsN'),k=num('dsK'),p=num('dsP');
+    var out=[];
+    if(t==='norm'||t==='normal'||t===''){
+      if(!isFinite(x)||!isFinite(mu)||!isFinite(sd)||sd<=0)return null;
+      var z=(x-mu)/sd;
+      out.push('正态分布：μ = '+fmt(mu)+'，σ = '+fmt(sd)+'，x = '+fmt(x));
+      out.push('标准化：z = (x − μ) / σ = ('+fmt(x)+' − '+fmt(mu)+') / '+fmt(sd)+' = '+fmt(z));
+      out.push('查标准正态表得 P(Z ≤ z)（结果见下方）');
+    } else if(t==='binom'){
+      if(!isFinite(n)||!isFinite(k)||!isFinite(p))return null;
+      out.push('二项分布：n = '+fmt(n)+'，k = '+fmt(k)+'，p = '+fmt(p));
+      var C=1; for(var i=0;i<k;i++)C=C*(n-i)/(i+1);
+      out.push('C(n,k) = '+fmt(C));
+      out.push('P = C(n,k)·p^k·(1−p)^(n−k) = '+fmt(C*pow(p,k)*pow(1-p,n-k)));
+    } else {
+      if(!isFinite(k)||!isFinite(mu))return null;
+      out.push('泊松分布：λ = '+fmt(mu)+'，k = '+fmt(k));
+      out.push('P = e^(−λ)·λ^k / k! = '+fmt(Math.exp(-mu)*pow(mu,k)/fact(k)));
+    }
+    return out;
+  });
+  function pow(a,b){return Math.pow(a,b);}
+  function fact(n){var r=1;for(var i=2;i<=n;i++)r*=i;return r;}
+
+  P('regress',function(){
+    var raw=txt('rgData');
+    if(!raw)return null;
+    var pts=[];
+    raw.split(/\n+/).forEach(function(line){
+      var p=line.split(/[,，\s]+/).map(parseFloat);
+      if(p.length>=2&&isFinite(p[0])&&isFinite(p[1]))pts.push(p);
+    });
+    if(pts.length<2)return null;
+    var sx=0,sy=0,sxy=0,sxx=0,i;
+    for(i=0;i<pts.length;i++){sx+=pts[i][0];sy+=pts[i][1];sxy+=pts[i][0]*pts[i][1];sxx+=pts[i][0]*pts[i][0];}
+    var n=pts.length, mx=sx/n, my=sy/n;
+    var b=(n*sxy-sx*sy)/(n*sxx-sx*sx), a=my-b*mx;
+    var out=['数据点 '+n+' 个'];
+    out.push('Σx = '+fmt(sx)+'，Σy = '+fmt(sy)+'，Σxy = '+fmt(sxy)+'，Σx² = '+fmt(sxx));
+    out.push('x̄ = '+fmt(mx)+'，ȳ = '+fmt(my));
+    out.push('斜率 b = (nΣxy − ΣxΣy) / (nΣx² − (Σx)²) = '+fmt(b));
+    out.push('截距 a = ȳ − b·x̄ = '+fmt(a));
+    var ss=0,st=0;
+    for(i=0;i<pts.length;i++){ var pred=a+b*pts[i][0]; ss+=(pts[i][1]-pred)*(pts[i][1]-pred); st+=(pts[i][1]-my)*(pts[i][1]-my); }
+    out.push('残差平方和 = '+fmt(ss)+'，决定系数 R² = '+fmt(1-ss/st));
+    return out;
+  });
+
+  P('mol',function(){
+    var f=txt('molInput');
+    if(!f)return null;
+    var out=['化学式：'+f];
+    var mass={'H':1,'C':12,'N':14,'O':16,'Na':23,'Mg':24,'Al':27,'Si':28,'P':31,'S':32,'Cl':35.5,'K':39,'Ca':40,'Fe':56,'Cu':64,'Zn':65,'Ag':108,'Ba':137};
+    var re=/([A-Z][a-z]?)(\d*)/g,m,total=0,parts=[];
+    while((m=re.exec(f))){ if(!m[1])continue; var cnt=m[2]?parseInt(m[2],10):1; var am=mass[m[1]]; if(!am)continue; total+=am*cnt; parts.push(m[1]+'×'+cnt+'='+fmt(am*cnt)); }
+    if(!total)return null;
+    out.push('各部分质量：'+parts.join('，'));
+    out.push('相对分子质量 M = '+fmt(total));
+    return out;
+  });
+
+  /* 单位换算（长度/重量/面积/体积/时间/速度/货币） */
+  function unitProc(){
+    var v=num('convVal'),from=sel('convFrom'),to=sel('convTo');
+    var resEl=document.getElementById('convResult');
+    var resTxt=resEl?String(resEl.textContent||''):'';
+    var m=/(-?\d+(?:\.\d+)?(?:e[+-]?\d+)?)/i.exec(resTxt.replace(/,/g,''));
+    if(!isFinite(v)||!m)return null;
+    var r=parseFloat(m[1]);
+    var out=[];
+    out.push('换算：'+fmt(v)+' '+from+' → '+to);
+    if(v!==0){
+      var k=r/v;
+      out.push('换算因子 k = 结果 / 原值 = '+fmt(r)+' / '+fmt(v)+' = '+fmt(k));
+      out.push('即 1 '+from+' = '+fmt(k)+' '+to);
+    }
+    out.push('代入：'+fmt(v)+' × k = '+fmt(r)+' '+to);
+    return out;
+  }
+  ['length','weight','area','volume','time','speed','currency'].forEach(function(id){P(id,unitProc);});
+
+  P('temp',function(){
+    var v=num('convVal'),from=sel('convFrom'),to=sel('convTo');
+    if(!isFinite(v))return null;
+    var out=['换算：'+fmt(v)+' '+from+' → '+to];
+    function toC(x,u){ if(u==='C')return x; if(u==='F')return (x-32)*5/9; if(u==='K')return x-273.15; return x; }
+    var c=toC(v,from);
+    out.push('先统一到摄氏度：C = '+fmt(c));
+    if(to==='F')out.push('C → F：F = C × 9/5 + 32 = '+fmt(c*9/5+32));
+    else if(to==='K')out.push('C → K：K = C + 273.15 = '+fmt(c+273.15));
+    else out.push('结果：'+fmt(c)+' °C');
+    return out;
+  });
+
+  P('rand',function(){
+    var scope=document.getElementById('toolContent');
+    var ins=scope?scope.querySelectorAll('input'):[];
+    var vals=[];
+    for(var i=0;i<ins.length;i++){ if(String(ins[i].value).trim())vals.push(fmt(parseFloat(ins[i].value))); }
+    var out=['随机区间与个数：'+(vals.join('，')||'—')];
+    out.push('每个数在 [min, max) 上均匀取值：x = min + (max − min) × r，r ∈ [0,1)');
+    out.push('若设置了种子，则用同一伪随机序列，保证可复现');
+    return out;
+  });
+
+  P('chinese',function(){
+    var n=num('chineseNum');
+    if(!isFinite(n))return null;
+    var out=['年份/序号：'+fmt(n)];
+    out.push('天干：index = (n − 4) mod 10 → 甲乙丙丁戊己庚辛壬癸');
+    out.push('地支：index = (n − 4) mod 12 → 子丑寅卯辰巳午未申酉戌亥');
+    out.push('生肖：index = (n − 4) mod 12');
+    out.push('('+fmt(n)+' − 4) mod 10 = '+((n-4)%10+10)%10+'，( '+fmt(n)+' − 4) mod 12 = '+((n-4)%12+12)%12);
+    return out;
+  });
+
+  P('resistor',function(){
+    var r1=num('rs1'),r2=num('rs2'),r3=num('rs3'),r4=num('rs4');
+    var rs=[r1,r2,r3,r4].filter(function(v){return isFinite(v)&&v>0;});
+    if(!rs.length)return null;
+    var out=['电阻：'+rs.map(function(v){return fmt(v)+' Ω';}).join('，')];
+    var sum=rs.reduce(function(a,b){return a+b;},0);
+    out.push('串联：R = R₁ + R₂ + … = '+fmt(sum)+' Ω');
+    var inv=rs.reduce(function(a,b){return a+1/b;},0);
+    out.push('并联：1/R = Σ(1/Rᵢ) = '+fmt(inv)+' → R = '+fmt(1/inv)+' Ω');
+    return out;
+  });
+
+  P('finance',function(){
+    var pv=num('fiP'),rate=num('fiR'),years=num('fiY'),n=num('fiN');
+    if(!isFinite(pv)||!isFinite(rate)||!isFinite(years))return null;
+    var out=[];
+    var r=rate/100, nper=isFinite(n)&&n>0?n:12;
+    out.push('本金 '+fmt(pv)+'，年利率 '+fmt(rate)+'%，期限 '+fmt(years)+' 年，每年计息 '+fmt(nper)+' 次');
+    var A=pv*Math.pow(1+r/nper,nper*years);
+    out.push('复利终值：A = P(1 + r/n)^(nt) = '+fmt(pv)+'×(1 + '+fmt(r/nper)+')^('+fmt(nper*years)+') = '+fmt(A));
+    out.push('利息 = A − P = '+fmt(A-pv));
+    return out;
+  });
+
+  P('health',function(){
+    var h=num('heH'),w=num('heW'),age=num('heA');
+    if(!isFinite(h)||!isFinite(w))return null;
+    var out=[];
+    var m=h>3?h/100:h;
+    out.push('身高 '+fmt(h)+'，体重 '+fmt(w)+'，年龄 '+(isFinite(age)?fmt(age):'—'));
+    out.push('BMI = '+fmt(w)+' / '+fmt(m)+'² = '+fmt(w/(m*m)));
+    if(isFinite(age)){
+      var bmr=10*w+6.25*h-5*age+5;
+      out.push('基础代谢（Mifflin-St Jeor 男性口径）：BMR = 10W + 6.25H − 5A + 5 = '+fmt(bmr)+' kcal');
+      out.push('女性口径：BMR = 10W + 6.25H − 5A − 161 = '+fmt(10*w+6.25*h-5*age-161)+' kcal');
+    }
+    return out;
+  });
+
+  P('bitop',function(){
+    var a=parseInt(txt('boA'),10),b=parseInt(txt('boB'),10);
+    if(!isFinite(a)||!isFinite(b))return null;
+    var out=['十进制：A = '+a+'，B = '+b];
+    out.push('二进制：A = '+a.toString(2)+'，B = '+b.toString(2));
+    out.push('按位与 A&B = '+(a&b)+'，按位或 A|B = '+(a|b)+'，异或 A^B = '+(a^b));
+    out.push('左移/右移按位移位相当于 ×2ⁿ / ÷2ⁿ');
+    return out;
+  });
+
+  P('color',function(){
+    var r=num('coR'),g=num('coG'),b=num('coB');
+    if(!isFinite(r)||!isFinite(g)||!isFinite(b))return null;
+    function hx(v){ var s=Math.max(0,Math.min(255,Math.round(v))).toString(16).toUpperCase(); return s.length<2?'0'+s:s; }
+    var out=['RGB('+fmt(r)+', '+fmt(g)+', '+fmt(b)+')'];
+    out.push('十六进制：# = '+hx(r)+hx(g)+hx(b));
+    out.push('亮度（感知）≈ 0.299R + 0.587G + 0.114B = '+fmt(0.299*r+0.587*g+0.114*b));
+    return out;
+  });
+
+  var orig=window.__showProcessFor;
+  window.__showProcessFor=function(toolId,resultEl,scopeOpt){
+    var fn=PROC[toolId];
+    if(!fn)return orig(toolId,resultEl,scopeOpt);
+    var scope=scopeOpt||document.getElementById('toolContent')||document;
+    var titleEl=scope.querySelector?scope.querySelector('.card-title'):null;
+    var title=titleEl?String(titleEl.textContent||'').trim():'计算过程';
+    var steps=[];
+    try{
+      var extra=fn();
+      if(extra&&extra.length){
+        steps.push('工具：'+title);
+        steps=steps.concat(extra);
+        steps.push('以上为推导主线，最终数值以界面结果为准。');
+        if(window.showProcess)window.showProcess(title+' · 过程',steps);
+        return;
+      }
+    }catch(e){}
+    return orig(toolId,resultEl,scopeOpt);
+  };
 })();
 </script>
 </body>
