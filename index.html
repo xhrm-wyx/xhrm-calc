@@ -19,7 +19,7 @@
 <meta property="og:title" content="理科计算器 · 验证器">
 <meta property="og:description" content="单文件离线理科计算器：计算、绘图、公式库、TOTP、加密云同步。">
 <meta property="og:url" content="https://xhrm-wyx.github.io/xhrm-calc/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-VYQCyGSIbvhQLkxKKeqs4hbCCL5EpIyaFjou68pTnfM=' 'sha256-R4hDcHdXrS+ww3yEuAB+M3SB4F8VyC/OWY17hGtZ37A=' 'sha256-0sLNWyoQQ+Pn0HpCa9rRjGcfHouCs/dHwNIEfvQvqv0=' 'sha256-DCDr1evCwyx5IqSKxIqwrYPi8xURc9TG94yCjGqVDag=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ=' 'sha256-SrX9ysbSDwpNRX5trgRjjK5Jgux2ze07V1jbLPQdSfs=' 'sha256-jRcxlcG/Zeh5uCVWNv1BeM+mAjOXgTe0aBjW8bQ1Nrk='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-VYQCyGSIbvhQLkxKKeqs4hbCCL5EpIyaFjou68pTnfM=' 'sha256-QslXuymXqHRKCeFovs6w/2XaDiA6SlGAc3QNNaY8n5M=' 'sha256-0sLNWyoQQ+Pn0HpCa9rRjGcfHouCs/dHwNIEfvQvqv0=' 'sha256-DCDr1evCwyx5IqSKxIqwrYPi8xURc9TG94yCjGqVDag=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ=' 'sha256-SrX9ysbSDwpNRX5trgRjjK5Jgux2ze07V1jbLPQdSfs=' 'sha256-jRcxlcG/Zeh5uCVWNv1BeM+mAjOXgTe0aBjW8bQ1Nrk='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
 <title>理科计算器 · 验证器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -15175,7 +15175,7 @@ function api(c){return 'https://gitee.com/api/v5/repos/'+encodeURIComponent(c.ow
   function get(c){if(c&&c.provider==='cf')return cfGet();return fetch(api(c)+'?ref='+encodeURIComponent(c.branch)+'&access_token='+encodeURIComponent(c.token),{cache:'no-store'}).then(function(r){if(r.status===404)return null;if(!r.ok)throw new Error('读取失败 HTTP '+r.status);return r.json();});}
   function put(c,content,sha,baseTs){if(c&&c.provider==='cf')return cfPut(content,baseTs);var p=new URLSearchParams();p.set('access_token',c.token);p.set('content',content);p.set('message','sync '+new Date().toISOString());p.set('branch',c.branch);if(sha)p.set('sha',sha);var method=sha?'PUT':'POST';return fetch(api(c),{method:method,headers:{'Content-Type':'application/x-www-form-urlencoded'},body:p.toString()}).then(function(r){if(r.status===409){var _ce=new Error('conflict');_ce.code='conflict';throw _ce;}if(!r.ok)return r.text().then(function(t){throw new Error('上传失败 HTTP '+r.status+' '+String(t).slice(0,120));});return r.json();});}
   function __buildSyncContent(){
-  var _pl=collectSaveData();try{delete _pl.accounts;delete _pl.syncCfg;}catch(eSP){}_pl.devices=listDevices();autoPayload(_pl);
+  var _pl=collectSaveData();try{delete _pl.syncCfg;}catch(eSP){}_pl.devices=listDevices();autoPayload(_pl);
   return __encForSave(_pl).then(function(blob){
     blob.updatedAt=Date.now();
     blob.savedAt=blob.savedAt||blob.updatedAt;
@@ -15212,7 +15212,8 @@ function push(silent){
   }
   try{
     var _lf=parseInt(localStorage.getItem(acctKey('sci-sync-push-last-v1'))||'0',10)||0;
-    if(silent&&(Date.now()-_lf)<45000)return Promise.reject(new Error('同步过于频繁，稍后再试'));
+    var _np=false; try{ _np=localStorage.getItem(acctKey('sci-sync-needpush-v1'))==='1'; }catch(eNPx){}
+    if(silent&&!_np&&(Date.now()-_lf)<45000)return Promise.reject(new Error('同步过于频繁，稍后再试'));
   }catch(eTC){}
   return pushSilentGuard(c).then(function(){ return __pushBody(silent); });
 }
@@ -15237,6 +15238,7 @@ function __pushBody(silent){
         recordDevice('push',res.ts);
       }else{recordDevice('push',stamp);}
       markSynced(stamp);
+      try{localStorage.removeItem(acctKey('sci-sync-needpush-v1'));}catch(eNP3){}
       try{localStorage.setItem(acctKey('sci-sync-push-last-v1'),String(Date.now()));localStorage.removeItem(acctKey('sci-sync-backoff-v1'));}catch(eTC2){}
       try{renderDevices();}catch(e){}
       try{updateSyncInfo();}catch(eSI2){}
@@ -15296,7 +15298,7 @@ function __pullInner(silent){
         if(!confirm('云端数据属于账号 '+blob.username+'，继续导入到当前账号？'))return null;
       }
       return decryptAny(blob).then(function(data){
-        try{ if(data){ delete data.accounts; delete data.syncCfg; } }catch(eStrip2){}
+        try{ if(data){ delete data.syncCfg; } }catch(eStrip2){}
         try{mergeDevices(data.devices);recordDevice('pull',Date.now());}catch(eD){}
         applyData(data);
         try{if(data.theme)setTheme(data.theme);}catch(e){}
@@ -15337,7 +15339,7 @@ function __pullInner(silent){
   function autoPayload(d){ if(!__autoPush)return d; try{delete d.mode;delete d.theme;delete d.settings;}catch(e){} return d; }
   function markSynced(ts){
     try{ localStorage.setItem(acctKey('sci-sync-push-v1'),String(ts||Date.now())); }catch(e){}
-    try{ var h=dataHash(collectSaveData({plain:true})); if(h)localStorage.setItem(acctKey('sci-sync-hash-v1'),h); }catch(e){}
+    try{ var h=dataHash(collectSaveData()); if(h)localStorage.setItem(acctKey('sci-sync-hash-v1'),h); }catch(e){}
   }
   function fnvHash(s){
     var h=2166136261>>>0;
@@ -15354,9 +15356,10 @@ function __pullInner(silent){
       if(!cur()||!__hasSecret())return Promise.resolve(null);
       try{ var _bk=parseInt(localStorage.getItem(acctKey('sci-sync-backoff-v1'))||'0',10)||0; if(_bk&&Date.now()<_bk)return Promise.resolve(null); }catch(eBK2){}
       var h='';
-      try{ h=dataHash(collectSaveData({plain:true})); }catch(e){ return Promise.resolve(null); }
+      try{ h=dataHash(collectSaveData()); }catch(e){ return Promise.resolve(null); }
       var lastH='';try{lastH=localStorage.getItem(acctKey('sci-sync-hash-v1'))||'';}catch(e){}
-      var localChanged=!!(h&&h!==lastH);
+      var _needPush=false;try{_needPush=localStorage.getItem(acctKey('sci-sync-needpush-v1'))==='1';}catch(eNP2){}
+      var localChanged=(!!(h&&h!==lastH))||_needPush;
       var lastSync0=__lastSyncTs()===0;
       return get(c).then(function(ex){
         if(!ex||!ex.content){
@@ -15374,14 +15377,14 @@ function __pullInner(silent){
             return null;
           }
           var _h0='';
-          try{ _h0=dataHash(collectSaveData({plain:true})); }catch(eH0){}
+          try{ _h0=dataHash(collectSaveData()); }catch(eH0){}
           return pull(true).then(function(r){
             var _h1='';
-            try{ _h1=dataHash(collectSaveData({plain:true})); }catch(eH1){}
+            try{ _h1=dataHash(collectSaveData()); }catch(eH1){}
             if(!isOneWay()&&_h1&&_h0&&_h1!==_h0&&!window.__firstSyncPushed){
               window.__firstSyncPushed=true;
               say('首次同步：本机数据已合并，自动上传一次…');
-              return push(true).then(function(){ window.__firstSyncPushed=true; return r; },function(){ return r; });
+              return push(true).then(function(){ window.__firstSyncPushed=true; try{localStorage.removeItem(acctKey('sci-sync-needpush-v1'));}catch(eNP0){} return r; },function(){ try{localStorage.setItem(acctKey('sci-sync-needpush-v1'),'1');}catch(eNP1){} return r; });
             }
             return r;
           });
