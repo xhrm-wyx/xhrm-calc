@@ -11,6 +11,9 @@
 const ALLOWED = ['https://xhrm-calc.pages.dev','https://xhrm-wyx.github.io'];
 const RL = new Map();               // 简易进程内限流：ip -> {n, t}
 const RL_LIMIT = 60, RL_WINDOW = 60 * 1000;
+const FAILS = new Map();            // id -> {n, t, until}
+const FAIL_LIMIT = 5, FAIL_WINDOW = 15 * 60 * 1000;
+const RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
 
 function cors(origin){
   const ok = ALLOWED.includes(origin) || /^http:\/\/(127\.0\.0\.1|localhost):\d+$/.test(origin || '');
@@ -33,6 +36,38 @@ const HEX64 = /^[a-f0-9]{64}$/i;
 async function sha256hex(s){
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(String(s)));
   return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+async function authHash(auth, env){
+  if(env && env.SYNC_PEPPER){
+    try{
+      const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(String(env.SYNC_PEPPER)), {name:'HMAC',hash:'SHA-256'}, false, ['sign']);
+      const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(auth));
+      return [...new Uint8Array(sig)].map(b => b.toString(16).padStart(2,'0')).join('');
+    }catch(e){}
+  }
+  return sha256hex(auth);
+}
+function matchesAuth(rec, auth, env){
+  return sha256hex(auth).then(function(legacy){
+    if(rec.ahh === legacy) return 'legacy';
+    return authHash(auth, env).then(function(h){ return rec.ahh === h ? 'hmac' : false; });
+  });
+}
+function locked(id){
+  const f = FAILS.get(id);
+  if(!f) return 0;
+  const now = Date.now();
+  if(f.until && now < f.until) return Math.ceil((f.until - now) / 1000);
+  if(now - f.t > FAIL_WINDOW){ FAILS.delete(id); return 0; }
+  return 0;
+}
+function noteFail(id){
+  const now = Date.now();
+  const f = FAILS.get(id) || { n: 0, t: now };
+  if(now - f.t > FAIL_WINDOW){ f.n = 0; f.t = now; }
+  f.n++;
+  if(f.n >= FAIL_LIMIT) f.until = now + FAIL_WINDOW;
+  FAILS.set(id, f);
 }
 function limited(ip){
   const now = Date.now();
@@ -61,10 +96,22 @@ export async function onRequest(context){
     const id = (url.searchParams.get('id') || '').toLowerCase();
     if(!HEX64.test(id)) return json({ error: 'bad id' }, 400, origin);
     if(!HEX64.test(auth)) return json({ error: 'no auth' }, 401, origin);
-    const rec = await env.SCI_KV.get('b:' + id, 'json');
+    const wait = locked(id);
+    if(wait) return json({ error: 'locked', retryAfter: wait }, 429, origin, { 'Retry-After': String(wait) });
+    const key = 'b:' + id;
+    const rec = await env.SCI_KV.get(key, 'json');
     if(!rec) return json({ error: 'empty' }, 404, origin);
-    if(rec.ahh !== await sha256hex(auth)) return json({ error: 'auth' }, 403, origin);
-    return json({ blob: rec.blob, ts: rec.ts }, 200, origin);
+    /* 保留期已过：真正删除 */
+    if(rec.deletedAt && Date.now() - Number(rec.deletedAt) > RETENTION_MS){
+      await env.SCI_KV.delete(key);
+      return json({ error: 'empty' }, 404, origin);
+    }
+    const m = await matchesAuth(rec, auth, env);
+    if(!m){ noteFail(id); return json({ error: 'auth' }, 403, origin); }
+    if(m === 'legacy' && env.SYNC_PEPPER){
+      try{ rec.ahh = await authHash(auth, env); await env.SCI_KV.put(key, JSON.stringify(rec)); }catch(e){}
+    }
+    return json({ blob: rec.blob, ts: rec.ts, deleted: !!rec.deletedAt, deletedAt: rec.deletedAt || null }, 200, origin);
   }
 
   if(request.method === 'PUT'){
@@ -78,13 +125,16 @@ export async function onRequest(context){
     if(!blob || blob.length > 2 * 1024 * 1024) return json({ error: 'bad blob' }, 400, origin);
 
     const key = 'b:' + id;
+    const waitP = locked(id);
+    if(waitP) return json({ error: 'locked', retryAfter: waitP }, 429, origin, { 'Retry-After': String(waitP) });
     const cur = await env.SCI_KV.get(key, 'json');
-    const ahh = await sha256hex(auth);
+    const ahh = await authHash(auth, env);
     if(cur){
-      if(cur.ahh !== ahh) return json({ error: 'auth' }, 403, origin);
+      const m2 = await matchesAuth(cur, auth, env);
+      if(!m2){ noteFail(id); return json({ error: 'auth' }, 403, origin); }
       /* 已存在记录却未携带 baseTs：说明客户端没见过当前版本，强制先读 */
-      if(baseTs === null) return json({ error: 'conflict', ts: cur.ts, need: 'read-first' }, 409, origin);
-      if(Number(cur.ts) !== Number(baseTs)) return json({ error: 'conflict', ts: cur.ts }, 409, origin);
+      if(baseTs === null && !cur.deletedAt) return json({ error: 'conflict', ts: cur.ts, need: 'read-first' }, 409, origin);
+      if(baseTs !== null && Number(cur.ts) !== Number(baseTs) && !cur.deletedAt) return json({ error: 'conflict', ts: cur.ts }, 409, origin);
     }
     /* 每账号最小写入间隔：同一记录里带 ts，客户端必须先读后写，能有效挡住连发 */
     const now = Date.now();
@@ -104,19 +154,25 @@ export async function onRequest(context){
     }
     const rec = { ahh: ahh, blob: blob, ts: now, wr: wr, wc: wc };
     await env.SCI_KV.put(key, JSON.stringify(rec));
-    return json({ ok: true, ts: rec.ts, wc: wc }, 200, origin);
+    return json({ ok: true, ts: rec.ts }, 200, origin);
   }
 
   if(request.method === 'DELETE'){
     const id = (url.searchParams.get('id') || '').toLowerCase();
     if(!HEX64.test(id)) return json({ error: 'bad id' }, 400, origin);
     if(!HEX64.test(auth)) return json({ error: 'no auth' }, 401, origin);
+    const waitD = locked(id);
+    if(waitD) return json({ error: 'locked', retryAfter: waitD }, 429, origin, { 'Retry-After': String(waitD) });
     const key = 'b:' + id;
     const rec = await env.SCI_KV.get(key, 'json');
     if(!rec) return json({ ok: true, missing: true }, 200, origin);
-    if(rec.ahh !== await sha256hex(auth)) return json({ error: 'auth' }, 403, origin);
-    await env.SCI_KV.delete(key);
-    return json({ ok: true }, 200, origin);
+    const m3 = await matchesAuth(rec, auth, env);
+    if(!m3){ noteFail(id); return json({ error: 'auth' }, 403, origin); }
+    /* 软删除：保留 30 天，期间同账号读取仍可看到 deleted 标记并可覆盖恢复 */
+    rec.deletedAt = Date.now();
+    rec.ahh = await authHash(auth, env);
+    await env.SCI_KV.put(key, JSON.stringify(rec));
+    return json({ ok: true, soft: true, deletedAt: rec.deletedAt, retainDays: 30 }, 200, origin);
   }
 
   return json({ error: 'method' }, 405, origin);

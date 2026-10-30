@@ -19,7 +19,7 @@
 <meta property="og:title" content="理科计算器 · 验证器">
 <meta property="og:description" content="单文件离线理科计算器：计算、绘图、公式库、TOTP、加密云同步。">
 <meta property="og:url" content="https://xhrm-wyx.github.io/xhrm-calc/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-tI8AKcTUXzDwAk3BgFGo4MXMFWHecZbqGDUF9WJ7AjM=' 'sha256-NNg/AG8luSVb9mVrn4ehzlOh0Cf/9mtXuNFtLfRNFHI=' 'sha256-0sLNWyoQQ+Pn0HpCa9rRjGcfHouCs/dHwNIEfvQvqv0=' 'sha256-DCDr1evCwyx5IqSKxIqwrYPi8xURc9TG94yCjGqVDag=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ=' 'sha256-SrX9ysbSDwpNRX5trgRjjK5Jgux2ze07V1jbLPQdSfs=' 'sha256-jRcxlcG/Zeh5uCVWNv1BeM+mAjOXgTe0aBjW8bQ1Nrk='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-tI8AKcTUXzDwAk3BgFGo4MXMFWHecZbqGDUF9WJ7AjM=' 'sha256-46cAobS7KcIQay9jLeJuD0WPDrDpUs/hIKUeX1GBobw=' 'sha256-0sLNWyoQQ+Pn0HpCa9rRjGcfHouCs/dHwNIEfvQvqv0=' 'sha256-DCDr1evCwyx5IqSKxIqwrYPi8xURc9TG94yCjGqVDag=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ=' 'sha256-SrX9ysbSDwpNRX5trgRjjK5Jgux2ze07V1jbLPQdSfs=' 'sha256-jRcxlcG/Zeh5uCVWNv1BeM+mAjOXgTe0aBjW8bQ1Nrk='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
 <title>理科计算器 · 验证器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -15240,7 +15240,7 @@ function cfGet(){
       if(r.status===429)throw new Error('同步服务繁忙，请稍后');
       if(!r.ok)throw new Error('读取失败 HTTP '+r.status);
       return r.json();
-    }).then(function(j){ return j?{content:j.blob,sha:null,_ts:j.ts}:null; });
+    }).then(function(j){ return j?{content:j.blob,sha:null,_ts:j.ts,_deleted:!!j.deleted,_deletedAt:j.deletedAt||null}:null; });
   });
 }
 function cfPut(content,baseTs){
@@ -15404,6 +15404,7 @@ function __pullInner(silent){
         try{localStorage.setItem(acctKey('sci-sync-cloud-v1'),String(_ts));}catch(e){}
         try{if(ex._ts)localStorage.setItem(acctKey('sci-sync-ts-v1'),String(ex._ts));}catch(e){}
         markSynced(blob.savedAt||blob.updatedAt||Date.now());
+        if(ex._deleted){ try{ say('云端备份处于删除保留期（30 天），已用本机数据恢复并撤销删除',true); push(true).catch(function(){}); }catch(eRV){} }
         try{updateSyncInfo();}catch(eSI){}
         say('已恢复 '+new Date(_ts).toLocaleString(),true);
         return data;
