@@ -19,7 +19,7 @@
 <meta property="og:title" content="理科计算器 · 验证器">
 <meta property="og:description" content="单文件离线理科计算器：计算、绘图、公式库、TOTP、加密云同步。">
 <meta property="og:url" content="https://xhrm-wyx.github.io/xhrm-calc/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-WTh1lyqwPgWCHJiR8hHk1IT4Aw5+2ZeNZWQXvoJ1MK8=' 'sha256-QslXuymXqHRKCeFovs6w/2XaDiA6SlGAc3QNNaY8n5M=' 'sha256-0sLNWyoQQ+Pn0HpCa9rRjGcfHouCs/dHwNIEfvQvqv0=' 'sha256-DCDr1evCwyx5IqSKxIqwrYPi8xURc9TG94yCjGqVDag=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ=' 'sha256-SrX9ysbSDwpNRX5trgRjjK5Jgux2ze07V1jbLPQdSfs=' 'sha256-jRcxlcG/Zeh5uCVWNv1BeM+mAjOXgTe0aBjW8bQ1Nrk='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-tI8AKcTUXzDwAk3BgFGo4MXMFWHecZbqGDUF9WJ7AjM=' 'sha256-NNg/AG8luSVb9mVrn4ehzlOh0Cf/9mtXuNFtLfRNFHI=' 'sha256-0sLNWyoQQ+Pn0HpCa9rRjGcfHouCs/dHwNIEfvQvqv0=' 'sha256-DCDr1evCwyx5IqSKxIqwrYPi8xURc9TG94yCjGqVDag=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ=' 'sha256-SrX9ysbSDwpNRX5trgRjjK5Jgux2ze07V1jbLPQdSfs=' 'sha256-jRcxlcG/Zeh5uCVWNv1BeM+mAjOXgTe0aBjW8bQ1Nrk='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
 <title>理科计算器 · 验证器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -480,6 +480,13 @@ html[data-theme="eye"] .app-bar .icon-btn.logged-in{background:linear-gradient(1
 html[data-theme="night"] .app-bar .icon-btn.logged-in:hover,
 html[data-theme="day"] .app-bar .icon-btn.logged-in:hover,
 html[data-theme="eye"] .app-bar .icon-btn.logged-in:hover{background:linear-gradient(135deg,var(--accent-hover),var(--accent));}
+
+/* 账号头像：实心圆底 + 高对比字形，深色模式尤其明显 */
+#accountBtn{border-radius:50%;background:var(--accent);color:#fff;box-shadow:0 2px 10px var(--accent-glow);}
+#accountBtn:hover{filter:brightness(1.06);}
+html[data-theme="night"] #accountBtn{background:#7dbcff;color:#07121f;box-shadow:0 0 0 2px rgba(125,188,255,.35),0 3px 14px rgba(0,0,0,.45);}
+html[data-theme="night"] .acct-avatar{background:#7dbcff;color:#07121f;box-shadow:0 0 0 2px rgba(255,255,255,.35);}
+html[data-theme="day"] .acct-avatar{background:var(--accent);color:#fff;}
 </style>
 </head>
 <body>
@@ -13467,6 +13474,45 @@ function importAccountCode(code,password){
   });
 }
 /* 只用「用户名 + 密码」从另一站导入账号：本机已有则直接登录；本机没有则到另一站核对同一组账号密码，通过后同步账号与数据 */
+function deriveSyncHex(pw,u){
+  return pbkdf2Bits(pw+'|sci-sync-v1|'+u,new Uint8Array(16),120000).then(function(bits){
+    var b=new Uint8Array(bits),s='';
+    for(var i=0;i<b.length;i++)s+=('0'+b[i].toString(16)).slice(-2);
+    return s;
+  });
+}
+function adoptAccountFromCloud(u,pw){
+  var c=null;
+  try{ c=window.__getCfg?window.__getCfg():null; }catch(eCFG){}
+  if(c&&c.provider&&c.provider!=='cf'&&(!c.owner||!c.repo||!c.token))return Promise.reject(new Error('未配置同步，无法从云端导入'));
+  return deriveSyncHex(pw,u).then(function(hex){
+    return window.__cfIdsFor(hex).then(function(k){
+      return fetch('https://xhrm-calc.pages.dev/api/sync?id='+k.id,{cache:'no-store',headers:{Authorization:'Bearer '+k.ah}}).then(function(r){
+        if(r.status===404)throw new Error('云端没有该账号的数据');
+        if(r.status===429)throw new Error('同步服务繁忙，请稍后');
+        if(!r.ok)throw new Error('读取失败 HTTP '+r.status);
+        return r.json();
+      }).then(function(j){
+        if(!j||!j.blob)throw new Error('云端没有该账号的数据');
+        return window.__unpackBlob(j.blob).then(function(txt){
+          var blob=JSON.parse(txt);
+          if(!blob.accountSalt)throw new Error('云端数据缺少账号信息');
+          return decryptBackup(blob,pw).then(function(data){
+            return pbkdf2Bits(pw+VERIFY_TAG,b64ToBuf(blob.accountSalt),PBKDF2_ITER).then(function(v){
+              var rec={username:u,salt:blob.accountSalt,verifier:bufToB64(v),iterations:PBKDF2_ITER,createdAt:Date.now()};
+              saveUserToStorage(rec);
+              try{
+                var ul=JSON.parse(localStorage.getItem(fKey('sci-users-v1'))||'[]');
+                if(!ul.some(function(x){return x.username===u;})){ul.push({username:u,createdAt:rec.createdAt});localStorage.setItem(fKey('sci-users-v1'),JSON.stringify(ul));}
+              }catch(eULx){}
+              return loginUser(u,pw).then(function(){ return data; });
+            });
+          });
+        });
+      });
+    });
+  });
+}
 function importAccountByPassword(username,password){
   return new Promise(function(resolve,reject){
     var u=String(username||'').trim();
@@ -13475,19 +13521,27 @@ function importAccountByPassword(username,password){
     if(!pw)return reject(new Error('请输入该账号的密码'));
     var local=loadUserByName(u);
     if(local){ loginUser(u,pw).then(function(){resolve('local');}).catch(reject); return; }
-    var role=siteRole();
-    setAccountStatus('正在到'+role.other+'核对账号…','');
-    tryRemoteAccount(u,pw).then(function(ok){
-      if(ok){ resolve('remote'); return; }
-      var why='';
-      if(window.__probeFail==='blocked')why='浏览器拦截了跨站核对窗口';
-      else if(window.__probeFail==='timeout')why=role.other+'没有响应（跨站窗口被拦截或网络不通）';
-      else why=role.other+'没有可同步的该账号（可能没在同一浏览器打开过，或密码不一致）';
-      var go=false;
-      try{ go=confirm(why+'。\n\n是否在本站用同一组账号密码建立登录？\n另一站的记录可再用「导出数据 (JSON)」导入。'); }catch(e){ go=false; }
-      if(!go)return reject(new Error('已取消。请确认用户名和密码，或点「＋ 注册新账号」。'));
-      registerUser(u,pw).then(function(){ resolve('created'); }).catch(reject);
-    }).catch(function(e){ reject(e); });
+    setAccountStatus('正在从云端核对账号…','');
+    adoptAccountFromCloud(u,pw).then(function(data){
+      try{ if(data)applyData(data); }catch(eAD){}
+      try{ updateAccountBtn(); }catch(eUB){}
+      try{ afterLoginSuccess(); }catch(eAL){}
+      resolve('cloud');
+    }).catch(function(errCloud){
+      var reason=errCloud&&errCloud.message||'云端没有该账号的数据';
+      setAccountStatus(reason+'，尝试同浏览器跨站核对…','warn');
+      var role=siteRole();
+      return tryRemoteAccount(u,pw).then(function(ok){
+        if(ok){ resolve('remote'); return; }
+        var why=reason;
+        if(window.__probeFail==='blocked')why='浏览器拦截了跨站核对窗口';
+        else if(window.__probeFail==='timeout')why=role.other+'没有响应（跨站窗口被拦截或网络不通）';
+        var go=false;
+        try{ go=confirm(why+'。\n\n是否在本站用同一组账号密码建立登录？\n（另一站的数据可再用「导出数据 (JSON)」导入）'); }catch(e){ go=false; }
+        if(!go)return reject(new Error('已取消。请确认用户名和密码，或点「＋ 注册新账号」。'));
+        registerUser(u,pw).then(function(){ resolve('created'); }).catch(reject);
+      });
+    }).catch(function(e2){ reject(e2); });
   });
 }
 function warmSyncKey(pw,username){
@@ -13685,10 +13739,7 @@ document.addEventListener('click',function(e){
     if(box)box.style.display=(box.style.display==='none'?'flex':'none');
     return;
   }
-  if(t.id==='accExportCode'){
-    setAccountStatus('已改为用「用户名 + 密码」直接导入：到另一站打开后点右上角账号按钮，输入同一组账号密码即可，不再需要凭据码。','warn');
-    return;
-  }
+
   if(t.id==='accImportDo'){
     var iuEl=document.getElementById('accImportUser');
     var pEl=document.getElementById('accImportPass');
@@ -15142,6 +15193,7 @@ function unpackBlob(content){
   }
   return Promise.resolve(unb64(s));
 }
+window.__unpackBlob=unpackBlob;
 function cfHex(buf){var b=new Uint8Array(buf),s='';for(var i=0;i<b.length;i++)s+=('0'+b[i].toString(16)).slice(-2);return s;}
 function cfSha256(str){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(str)).then(cfHex);}
 function cfSyncKeyHex(){
