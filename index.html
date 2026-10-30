@@ -19,7 +19,7 @@
 <meta property="og:title" content="理科计算器 · 验证器">
 <meta property="og:description" content="单文件离线理科计算器：计算、绘图、公式库、TOTP、加密云同步。">
 <meta property="og:url" content="https://xhrm-wyx.github.io/xhrm-calc/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-VYQCyGSIbvhQLkxKKeqs4hbCCL5EpIyaFjou68pTnfM=' 'sha256-QslXuymXqHRKCeFovs6w/2XaDiA6SlGAc3QNNaY8n5M=' 'sha256-0sLNWyoQQ+Pn0HpCa9rRjGcfHouCs/dHwNIEfvQvqv0=' 'sha256-DCDr1evCwyx5IqSKxIqwrYPi8xURc9TG94yCjGqVDag=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ=' 'sha256-SrX9ysbSDwpNRX5trgRjjK5Jgux2ze07V1jbLPQdSfs=' 'sha256-jRcxlcG/Zeh5uCVWNv1BeM+mAjOXgTe0aBjW8bQ1Nrk='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-auzzn/9H8mpseX91ynbWMu3vcWhK+VIRNcul5Iql5aI=' 'sha256-JB7kgguKalMFnYfNELFE7kjV7f4Ap+kFbSA/jMhElT0=' 'sha256-WTh1lyqwPgWCHJiR8hHk1IT4Aw5+2ZeNZWQXvoJ1MK8=' 'sha256-QslXuymXqHRKCeFovs6w/2XaDiA6SlGAc3QNNaY8n5M=' 'sha256-0sLNWyoQQ+Pn0HpCa9rRjGcfHouCs/dHwNIEfvQvqv0=' 'sha256-DCDr1evCwyx5IqSKxIqwrYPi8xURc9TG94yCjGqVDag=' 'sha256-ZJF+jalzuEK4qsMjMimSmwV5YEvD76y/apUCggS2Py4=' 'sha256-RoKk946XO2ObzPIyS+Vor6dvdYQQl8ssGSNQaCZ3lEw=' 'sha256-Fm0vTr0MFmyhbmEzvPZzr0Am0Gqbm1v0t00ub3gQXWo=' 'sha256-neKgCCw+ErLDqZbjWK9wN0qZasfZ0WnVRhb3ANp/ggE=' 'sha256-8YGo+NwvqDamZebd3i9Dic5LebWpaC4tzp77s0p7vgI=' 'sha256-pLVWiwd9RLEqeorUGQHgIAGY4ZzK+R2PllfbLG7gGhY=' 'sha256-C9FTIl9Alu7ukRWRk0ofsW+ZzOL2//cEgAw+B9xYCmQ=' 'sha256-SrX9ysbSDwpNRX5trgRjjK5Jgux2ze07V1jbLPQdSfs=' 'sha256-jRcxlcG/Zeh5uCVWNv1BeM+mAjOXgTe0aBjW8bQ1Nrk='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://text.pollinations.ai https://open.er-api.com https://gitee.com https://xhrm-calc.pages.dev; font-src data:; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'; worker-src 'self'; manifest-src 'self' data:">
 <title>理科计算器 · 验证器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -193,6 +193,7 @@ input.bad{border-color:var(--err);}
 .btn:disabled{opacity:.55;cursor:not-allowed;transform:none!important;}
 .input-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;position:relative;z-index:1;}
 .inp{display:flex;flex-direction:column;gap:4px;flex:1;min-width:70px;}
+#accImportBox{display:flex;flex-direction:column;gap:10px;}
 .inp span{font-size:12px;color:var(--muted);font-weight:600;text-shadow:var(--text-shadow);}
 .keypad{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:12px;position:relative;z-index:1;}
 .keypad button{padding:10px 0;background:var(--ctrl-bg);border:1px solid var(--glass-border);border-radius:11px;color:var(--text-strong);cursor:pointer;font-size:13.5px;font-family:inherit;font-weight:600;transition:background .15s,transform .12s,border-color .15s;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:inset 0 1px 0 var(--glass-highlight);text-shadow:var(--text-shadow);}
@@ -302,7 +303,13 @@ html[data-theme="day"] .res-main .md-table th,html[data-theme="eye"] .res-main .
 .account-box{background:var(--glass-card);border:1px solid var(--glass-border);border-radius:22px;padding:20px;max-width:400px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 30px 100px rgba(0,0,0,.7),inset 0 1px 0 var(--glass-highlight);animation:accountIn .4s cubic-bezier(.34,1.56,.64,1);}
 @keyframes accountIn{0%{opacity:0;transform:scale(.9) translateY(20px);}100%{opacity:1;transform:none;}}
 .account-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.account-title{font-size:16px;font-weight:700;color:var(--text-strong);letter-spacing:.3px;text-shadow:var(--text-shadow);}
+.account-title{font-size:16px;font-weight:700;color:var(--text-strong);letter-spacing:.3px;text-shadow:var(--text-shadow);display:flex;align-items:center;gap:9px;}
+.acct-avatar{width:27px;height:27px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;background:linear-gradient(135deg,var(--accent),var(--accent-hover));color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.45),0 3px 12px var(--accent-glow);}
+html[data-theme="night"] .acct-avatar,html[data-theme="eye"] .acct-avatar{box-shadow:0 0 0 1px rgba(255,255,255,.6),0 0 16px var(--accent-glow);}
+html[data-theme="day"] .acct-avatar{box-shadow:0 0 0 1px rgba(255,255,255,.85),0 3px 12px rgba(60,90,140,.35);}
+.acct-avatar svg{width:15px;height:15px;display:block;}
+.icon-btn svg{width:1.2em;height:1.2em;display:block;pointer-events:none;}
+html[data-theme="night"] .icon-btn svg{stroke-width:2.2;}
 .account-body{display:flex;flex-direction:column;gap:12px;}
 .account-info{background:var(--input-bg);border-radius:12px;padding:12px 14px;border:1px solid var(--glass-border);}
 .account-info-row{display:flex;justify-content:space-between;gap:10px;font-size:13px;line-height:1.8;}
@@ -466,6 +473,13 @@ html[data-theme="night"] .app-bar .icon-btn{
   color:#f2f7ff;
 }
 html[data-theme="night"] .app-bar .icon-btn:hover{background:rgba(255,255,255,.18);}
+/* 已登录：账号按钮保持高亮底色，任何主题下都能一眼看出登录状态 */
+html[data-theme="night"] .app-bar .icon-btn.logged-in,
+html[data-theme="day"] .app-bar .icon-btn.logged-in,
+html[data-theme="eye"] .app-bar .icon-btn.logged-in{background:linear-gradient(135deg,var(--accent),var(--accent-hover));color:#fff;box-shadow:0 0 0 2px var(--accent-soft),0 0 20px var(--accent-glow);}
+html[data-theme="night"] .app-bar .icon-btn.logged-in:hover,
+html[data-theme="day"] .app-bar .icon-btn.logged-in:hover,
+html[data-theme="eye"] .app-bar .icon-btn.logged-in:hover{background:linear-gradient(135deg,var(--accent-hover),var(--accent));}
 </style>
 </head>
 <body>
@@ -578,7 +592,7 @@ html[data-theme="night"] .app-bar .icon-btn:hover{background:rgba(255,255,255,.1
 <div class="account-modal" id="accountModal">
   <div class="account-box">
     <div class="account-header">
-      <div class="account-title" id="accountTitle">👤 账号</div>
+      <div class="account-title" id="accountTitle"><span class="acct-avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.7"/><path d="M4.9 20.2c.8-3.9 3.7-6.2 7.1-6.2s6.3 2.3 7.1 6.2"/></svg></span><span>账号</span></div>
       <button type="button" class="icon-btn" id="accountClose" style="width:32px;height:32px;font-size:16px;">×</button>
     </div>
     <div class="account-body" id="accountBody"></div>
@@ -775,7 +789,7 @@ html[data-theme="night"] .app-bar .icon-btn:hover{background:rgba(255,255,255,.1
 <div class="app-shell">
   <header class="app-bar">
     <div class="title">理科计算器</div>
-    <button type="button" class="icon-btn" id="accountBtn" title="账号">👤</button>
+    <button type="button" class="icon-btn" id="accountBtn" title="账号" aria-label="账号"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.2" r="3.7"/><path d="M4.9 20.2c.8-3.9 3.7-6.2 7.1-6.2s6.3 2.3 7.1 6.2"/></svg></button>
     <button type="button" class="icon-btn" id="modeToggleBtn" title="完整/简易版">✨</button>
     <button type="button" class="icon-btn" id="themeCycleBtn" title="切换主题">🌙</button>
     <button type="button" class="icon-btn" id="settingsBtn" title="设置">⚙️</button>
@@ -13351,12 +13365,13 @@ function verifyPasswordOnly(username,password){
 /* 跨站账号探针：B 站找不到账号时，用弹窗向 A 站验证并取回数据 */
 function probeOtherSite(user,pass){
   return new Promise(function(resolve){
+    window.__probeFail='';
     var target=window.__probeUrl||otherSiteUrl();
     var origin;try{origin=new URL(target).origin;}catch(e){resolve(null);return;}
     var nonce='n'+Math.random().toString(36).slice(2,10)+Date.now().toString(36);
     var w=null;
     try{ w=window.open(target+'#acctprobe='+nonce,'sci-probe','width=460,height=340,menubar=no,toolbar=no,location=no,status=no'); }catch(e){}
-    if(!w){ resolve(null); return; }
+    if(!w){ window.__probeFail='blocked'; resolve(null); return; }
     var done=false,ready=false;
     function finish(v){
       if(done)return;done=true;
@@ -13376,7 +13391,7 @@ function probeOtherSite(user,pass){
     }
     addEventListener('message',onMsg);
     setTimeout(function(){ if(!ready)send(); },2500);
-    setTimeout(function(){ finish(null); },15000);
+    setTimeout(function(){ if(!done&&!window.__probeFail)window.__probeFail='timeout'; finish(null); },9000);
   });
 }
 function tryRemoteAccount(user,pass){
@@ -13387,6 +13402,7 @@ function tryRemoteAccount(user,pass){
     return pbkdf2Bits(pass+VERIFY_TAG, b64ToBuf(salt), it).then(function(v){
       var rec={username:user,salt:salt,verifier:bufToB64(v),iterations:it,createdAt:Date.now()};
       saveUserToStorage(rec);
+      try{var _ulx3=JSON.parse(localStorage.getItem(fKey('sci-users-v1'))||'[]');if(!_ulx3.some(function(x){return x.username===user;})){_ulx3.push({username:user,createdAt:rec.createdAt});localStorage.setItem(fKey('sci-users-v1'),JSON.stringify(_ulx3));}}catch(eUL3){}
       return loginUser(user,pass);
     }).then(function(){
       try{ if(res.payload&&typeof res.payload==='object')applyData(res.payload); }catch(e){}
@@ -13450,6 +13466,30 @@ function importAccountCode(code,password){
     }catch(e){ reject(e); }
   });
 }
+/* 只用「用户名 + 密码」从另一站导入账号：本机已有则直接登录；本机没有则到另一站核对同一组账号密码，通过后同步账号与数据 */
+function importAccountByPassword(username,password){
+  return new Promise(function(resolve,reject){
+    var u=String(username||'').trim();
+    var pw=String(password||'');
+    if(!u)return reject(new Error('请输入另一站的用户名'));
+    if(!pw)return reject(new Error('请输入该账号的密码'));
+    var local=loadUserByName(u);
+    if(local){ loginUser(u,pw).then(function(){resolve('local');}).catch(reject); return; }
+    var role=siteRole();
+    setAccountStatus('正在到'+role.other+'核对账号…','');
+    tryRemoteAccount(u,pw).then(function(ok){
+      if(ok){ resolve('remote'); return; }
+      var why='';
+      if(window.__probeFail==='blocked')why='浏览器拦截了跨站核对窗口';
+      else if(window.__probeFail==='timeout')why=role.other+'没有响应（跨站窗口被拦截或网络不通）';
+      else why=role.other+'没有可同步的该账号（可能没在同一浏览器打开过，或密码不一致）';
+      var go=false;
+      try{ go=confirm(why+'。\n\n是否在本站用同一组账号密码建立登录？\n另一站的记录可再用「导出数据 (JSON)」导入。'); }catch(e){ go=false; }
+      if(!go)return reject(new Error('已取消。请确认用户名和密码，或点「＋ 注册新账号」。'));
+      registerUser(u,pw).then(function(){ resolve('created'); }).catch(reject);
+    }).catch(function(e){ reject(e); });
+  });
+}
 function warmSyncKey(pw,username){
   try{
     if(!pw||!username)return;
@@ -13509,9 +13549,9 @@ function renderAccountPanel(){
   var title=document.getElementById('accountTitle');
   if(!body)return;
   if(currentUser&&(sessionKey||currentPassword)&&(!pendingEncryptedData||isUnlocked)){
-    if(title)title.textContent='👤 账号';
+    setAccountTitle('账号');
     body.innerHTML='<div class="account-info">'+'<div class="account-info-row"><span class="k">账号</span><span class="v">'+escapeHtml(currentUser.username)+'</span></div>'+'<div class="account-info-row"><span class="k">注册时间</span><span class="v">'+formatTime(currentUser.createdAt)+'</span></div>'+'<div class="account-info-row"><span class="k">数据保护</span><span class="v">已用你的密码加密，别人拿到文件也打不开</span></div>'+'</div>'+'<div class="account-note">保存网页时会用此账号密码加密数据；下次打开加密文件需要输入相同的账号密码才能查看历史记录。</div>'+'<button type="button" class="btn" id="accChangePw" style="width:100%;margin-bottom:8px;">🔑 修改密码</button>'+
-    '<button type="button" class="btn" id="accSync" style="width:100%;margin-bottom:8px;">☁ 云同步</button>'+'<button type="button" class="btn" id="accExportCode" style="width:100%;margin-bottom:8px;">⇄ 导出登录凭据（去另一站登录）</button>'+'<button type="button" class="btn danger" id="accLogout" style="width:100%;margin-bottom:8px;">登出（本机会话）</button>'+'<button type="button" class="btn danger" id="accWipe" style="width:100%;">注销本机账号</button>';
+    '<button type="button" class="btn" id="accSync" style="width:100%;margin-bottom:8px;">☁ 云同步</button>'+'<button type="button" class="btn danger" id="accLogout" style="width:100%;margin-bottom:8px;">登出（本机会话）</button>'+'<button type="button" class="btn danger" id="accWipe" style="width:100%;">注销本机账号</button>';
     var cpBtn=document.getElementById('accChangePw');
     if(cpBtn)cpBtn.addEventListener('click',function(){var cm=document.getElementById('changePwModal');if(cm)cm.classList.add('show');var st=document.getElementById('cpStatus');if(st)st.textContent='';var o=document.getElementById('cpOld');if(o)o.value='';var n1=document.getElementById('cpNew');if(n1)n1.value='';var n2=document.getElementById('cpNew2');if(n2)n2.value='';});
     var lo=document.getElementById('accLogout');
@@ -13521,7 +13561,7 @@ function renderAccountPanel(){
     return;
   }
   if(pendingEncryptedData&&!isUnlocked){
-    if(title)title.textContent='🔒 解锁加密文件';
+    setAccountTitle('解锁加密文件','lock');
     var fileUser=pendingEncryptedData.username||'';
     var localUser=loadUserFromStorage();
     var hintUser=fileUser||(localUser?localUser.username:'');
@@ -13537,18 +13577,18 @@ function renderAccountPanel(){
   var u=loadUserFromStorage();
   if(!u){var _alx=[];try{_alx=JSON.parse(localStorage.getItem(fKey('sci-users-v1'))||'[]');}catch(e9){}if(_alx.length){u={username:_alx[0].username};}}
   if(!u){
-    if(title)title.textContent='✨ 注册账号';
-    body.innerHTML='<div class="account-note">还没有账号。注册后可使用加密保存功能；不注册也不影响所有计算功能。</div>'+'<label class="inp"><span>账号名（2 位以上）</span><input type="text" id="accUser" data-secret="1" autocomplete="off" spellcheck="false" placeholder="用户名"></label>'+'<label class="inp"><span>密码（6–128 位）</span><input type="password" id="accPass" data-secret="1" autocomplete="new-password" placeholder="请牢记，忘记无法恢复"></label>'+'<label class="inp"><span>确认密码</span><input type="password" id="accPass2" data-secret="1" autocomplete="new-password" placeholder="再输入一次"></label>'+'<button type="button" class="btn primary" id="accRegister" style="width:100%;">注册</button>'+'<button type="button" class="btn" id="accImportToggle" style="width:100%;margin-top:8px;">⇄ 从另一站导入账号</button>'+'<div id="accImportBox" style="display:none;margin-top:8px;"><label class="inp"><span>凭据码</span><textarea id="accImportCode" rows="2" autocomplete="off" spellcheck="false" placeholder="sci-acct-v1.…" style="width:100%;font-family:monospace;font-size:11.5px;"></textarea></label><label class="inp"><span>该账号的密码</span><input type="password" id="accImportPass" autocomplete="new-password" placeholder="输入原账号密码"></label><button type="button" class="btn primary" id="accImportDo" style="width:100%;">导入并登录</button><div class="account-note" style="font-size:11.5px;">凭据码只含账号名、盐与迭代次数，不含密码。</div></div>';
+    setAccountTitle('注册账号');
+    body.innerHTML='<div class="account-note">还没有账号。注册后可使用加密保存功能；不注册也不影响所有计算功能。</div>'+'<label class="inp"><span>账号名（2 位以上）</span><input type="text" id="accUser" data-secret="1" autocomplete="off" spellcheck="false" placeholder="用户名"></label>'+'<label class="inp"><span>密码（6–128 位）</span><input type="password" id="accPass" data-secret="1" autocomplete="new-password" placeholder="请牢记，忘记无法恢复"></label>'+'<label class="inp"><span>确认密码</span><input type="password" id="accPass2" data-secret="1" autocomplete="new-password" placeholder="再输入一次"></label>'+'<button type="button" class="btn primary" id="accRegister" style="width:100%;">注册</button>'+'<button type="button" class="btn" id="accImportToggle" style="width:100%;margin-top:8px;">⇄ 从另一站导入账号</button>'+'<div id="accImportBox" style="display:none;margin-top:8px;"><label class="inp"><span>另一站的用户名</span><input type="text" id="accImportUser" autocomplete="off" spellcheck="false" placeholder="在另一站注册的用户名"></label><label class="inp"><span>该账号的密码</span><input type="password" id="accImportPass" autocomplete="new-password" placeholder="输入该账号密码"></label><button type="button" class="btn primary" id="accImportDo" style="width:100%;">导入并登录</button><div class="account-note" style="font-size:11.5px;">只需用户名和密码：本站会到另一站核对同一组账号密码，核对通过即导入账号并同步数据；密码只在浏览器两个页面之间传递，不经过网络。</div></div>';
     var rb=document.getElementById('accRegister');
     if(rb)rb.addEventListener('click',function(){var uname=document.getElementById('accUser').value.trim();var p1=document.getElementById('accPass').value;var p2=document.getElementById('accPass2').value;if(p1!==p2){setAccountStatus('两次密码不一致','err');return;}setAccountStatus('正在生成密钥…','');registerUser(uname,p1).then(function(){setAccountStatus('✅ 注册成功（密码只在这次打开期间临时记住，不会上传）','ok');updateAccountBtn();closeAccountModal();}).catch(function(err){setAccountStatus(err.message,'err');});});
     return;
   }
-  if(title)title.textContent='👤 登录';
+  setAccountTitle('登录');
   var ulx2=[];try{ulx2=JSON.parse(localStorage.getItem(fKey('sci-users-v1'))||'[]');}catch(e7){}
   var others=ulx2.filter(function(x){return x.username!==u.username;});
   var ulHtml='';
   if(others.length){ulHtml='<div class="account-note" style="margin-bottom:6px;">本机账号（点击切换登录）：</div>'+others.map(function(x){return '<button type="button" class="btn sm" data-u="'+escapeHtml(x.username)+'" style="width:100%;margin-bottom:4px;text-align:left;">👤 '+escapeHtml(x.username)+'</button>';}).join('')+'<div style="height:8px;"></div>';}
-  body.innerHTML=ulHtml+'<label class="inp"><span>账号名</span><input type="text" id="accUser" autocomplete="off" spellcheck="false" value="'+escapeHtml(u.username)+'"></label>'+'<label class="inp"><span>密码</span><input type="password" id="accPass" autocomplete="new-password" placeholder="请输入密码"></label>'+'<button type="button" class="btn primary" id="accLogin" style="width:100%;">登录</button>'+'<button type="button" class="btn" id="accImportToggle" style="width:100%;margin-top:8px;">⇄ 从另一站导入账号</button>'+'<div id="accImportBox" style="display:none;margin-top:8px;">'+'<label class="inp"><span>凭据码</span><textarea id="accImportCode" rows="2" autocomplete="off" spellcheck="false" placeholder="sci-acct-v1.…" style="width:100%;font-family:monospace;font-size:11.5px;"></textarea></label>'+'<label class="inp"><span>该账号的密码</span><input type="password" id="accImportPass" autocomplete="new-password" placeholder="输入原账号密码"></label>'+'<button type="button" class="btn primary" id="accImportDo" style="width:100%;">导入并登录</button>'+'<div class="account-note" style="font-size:11.5px;">凭据码只含账号名、盐与迭代次数，不含密码。</div>'+'</div>'+'<button type="button" class="btn" id="accGoReg" style="width:100%;margin:8px 0;">＋ 注册新账号</button>'+'<div id="accRegBox" style="display:none;margin:8px 0;"><label class="inp"><span>账号名</span><input type="text" id="accRegUser" autocomplete="off" spellcheck="false" placeholder="用户名"></label><label class="inp"><span>密码（6–128 位）</span><input type="password" id="accRegPass" autocomplete="new-password" placeholder="6–128 位"></label><button type="button" class="btn primary" id="accDoReg" style="width:100%;">注册并登录</button></div>'+'<button type="button" class="btn danger" id="accWipe" style="width:100%;">注销本机账号</button>';
+  body.innerHTML=ulHtml+'<label class="inp"><span>账号名</span><input type="text" id="accUser" autocomplete="off" spellcheck="false" value="'+escapeHtml(u.username)+'"></label>'+'<label class="inp"><span>密码</span><input type="password" id="accPass" autocomplete="new-password" placeholder="请输入密码"></label>'+'<button type="button" class="btn primary" id="accLogin" style="width:100%;">登录</button>'+'<button type="button" class="btn" id="accImportToggle" style="width:100%;margin-top:8px;">⇄ 从另一站导入账号</button>'+'<div id="accImportBox" style="display:none;margin-top:8px;">'+'<label class="inp"><span>另一站的用户名</span><input type="text" id="accImportUser" autocomplete="off" spellcheck="false" placeholder="在另一站注册的用户名"></label><label class="inp"><span>该账号的密码</span><input type="password" id="accImportPass" autocomplete="new-password" placeholder="输入该账号密码"></label><button type="button" class="btn primary" id="accImportDo" style="width:100%;">导入并登录</button><div class="account-note" style="font-size:11.5px;">只需用户名和密码：本站会到另一站核对同一组账号密码，核对通过即导入账号并同步数据；密码只在浏览器两个页面之间传递，不经过网络。</div>'+'</div>'+'<button type="button" class="btn" id="accGoReg" style="width:100%;margin:8px 0;">＋ 注册新账号</button>'+'<div id="accRegBox" style="display:none;margin:8px 0;"><label class="inp"><span>账号名</span><input type="text" id="accRegUser" autocomplete="off" spellcheck="false" placeholder="用户名"></label><label class="inp"><span>密码（6–128 位）</span><input type="password" id="accRegPass" autocomplete="new-password" placeholder="6–128 位"></label><button type="button" class="btn primary" id="accDoReg" style="width:100%;">注册并登录</button></div>'+'<button type="button" class="btn danger" id="accWipe" style="width:100%;">注销本机账号</button>';
   var ubts=body.querySelectorAll('[data-u]');for(var ui2=0;ui2<ubts.length;ui2++){(function(bt2){bt2.addEventListener('click',function(){var uf=document.getElementById('accUser');if(uf)uf.value=bt2.getAttribute('data-u');var pf2=document.getElementById('accPass');if(pf2)pf2.value='';if(pf2)pf2.focus();});})(ubts[ui2]);}
   var _gr=document.getElementById('accGoReg');if(_gr)_gr.addEventListener('click',function(){var b=document.getElementById('accRegBox');if(b)b.style.display=(b.style.display==='none'?'block':'none');});
   var _dr=document.getElementById('accDoReg');if(_dr)_dr.addEventListener('click',function(){var un=document.getElementById('accRegUser').value.trim();var pw=document.getElementById('accRegPass').value;if(!un||!pw){setAccountStatus('请输入账号名和密码','err');return;}setAccountStatus('正在生成密钥…','');registerUser(un,pw).then(function(){setAccountStatus('✅ 注册成功','ok');updateAccountBtn();closeAccountModal();}).catch(function(e){setAccountStatus(e.message,'err');});});
@@ -13579,7 +13619,13 @@ function renderAccountPanel(){
   var wb=document.getElementById('accWipe');
   if(wb)wb.addEventListener('click',function(){if(!confirm('注销本机账号？\n\n该账号在本机的数据（计算记录、函数、验证码账号、设置等）将一并清除且不可恢复；已保存的加密文件仍可用原账号密码打开。'))return;var _accI=document.getElementById('accUser');var _un=(currentUser&&currentUser.username)||(_accI?_accI.value.trim():'');removeUserFromStorage(_un);logoutUser();setAccountStatus('本机账号已注销','warn');updateAccountBtn();renderAccountPanel();});
 }
-function updateAccountBtn(){var btn=document.getElementById('accountBtn');if(!btn)return;if(currentUser&&(sessionKey||currentPassword)&&(!pendingEncryptedData||isUnlocked)){btn.textContent='🔓';btn.title='已登录：'+currentUser.username;btn.classList.add('logged-in');}else if(pendingEncryptedData&&!isUnlocked){btn.textContent='🔒';btn.title='文件已加密 · 点击登录解锁';btn.classList.remove('logged-in');}else{btn.textContent='👤';btn.title=loadUserFromStorage()?'未登录 · 点击登录':'未注册 · 点击注册';btn.classList.remove('logged-in');}}
+var ACC_ICON={
+  person:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.2" r="3.7"/><path d="M4.9 20.2c.8-3.9 3.7-6.2 7.1-6.2s6.3 2.3 7.1 6.2"/></svg>',
+  lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.6" y="10.2" width="14.8" height="9.6" rx="2.6"/><path d="M8.2 10.2V7.9a3.8 3.8 0 0 1 7.6 0v2.3"/></svg>',
+  unlock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.6" y="10.2" width="14.8" height="9.6" rx="2.6"/><path d="M8.2 10.2V7.9a3.8 3.8 0 0 1 7.3-1.4"/></svg>'
+};
+function setAccountTitle(txt,kind){var el=document.getElementById('accountTitle');if(!el)return;el.innerHTML='<span class="acct-avatar" aria-hidden="true">'+(ACC_ICON[kind]||ACC_ICON.person)+'</span><span>'+escapeHtml(txt)+'</span>';}
+function updateAccountBtn(){var btn=document.getElementById('accountBtn');if(!btn)return;if(currentUser&&(sessionKey||currentPassword)&&(!pendingEncryptedData||isUnlocked)){btn.innerHTML=ACC_ICON.unlock;btn.title='已登录：'+currentUser.username;btn.setAttribute('aria-label','已登录：'+currentUser.username);btn.classList.add('logged-in');}else if(pendingEncryptedData&&!isUnlocked){btn.innerHTML=ACC_ICON.lock;btn.title='文件已加密 · 点击登录解锁';btn.setAttribute('aria-label','文件已加密 · 点击登录解锁');btn.classList.remove('logged-in');}else{var _log2=!!loadUserFromStorage();btn.innerHTML=ACC_ICON.person;btn.title=_log2?'未登录 · 点击登录':'未注册 · 点击注册';btn.setAttribute('aria-label',_log2?'未登录 · 点击登录':'未注册 · 点击注册');btn.classList.remove('logged-in');}}
 function b64uEncode(str){
   var bytes=new TextEncoder().encode(str),bin='';
   for(var i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);
@@ -13636,28 +13682,23 @@ document.addEventListener('click',function(e){
   if(t.id==='ucExport'){ try{ window.exportCanvasPNG('ucCanvas','单位圆'); }catch(e){ alert('导出失败：'+e.message); } return; }
   if(t.id==='accImportToggle'){
     var box=document.getElementById('accImportBox');
-    if(box)box.style.display=(box.style.display==='none'?'block':'none');
+    if(box)box.style.display=(box.style.display==='none'?'flex':'none');
     return;
   }
   if(t.id==='accExportCode'){
-    var code=exportAccountCode();
-    if(!code){ setAccountStatus('请先登录账号','err'); return; }
-    try{
-      if(navigator.clipboard&&navigator.clipboard.writeText){
-        navigator.clipboard.writeText(code).then(function(){ setAccountStatus('凭据码已复制，去另一站「从另一站导入账号」粘贴','ok'); },function(){ prompt('复制凭据码，到另一站导入：',code); });
-      }else{ prompt('复制凭据码，到另一站导入：',code); }
-    }catch(eX){ prompt('复制凭据码，到另一站导入：',code); }
+    setAccountStatus('已改为用「用户名 + 密码」直接导入：到另一站打开后点右上角账号按钮，输入同一组账号密码即可，不再需要凭据码。','warn');
     return;
   }
   if(t.id==='accImportDo'){
-    var cEl=document.getElementById('accImportCode');
+    var iuEl=document.getElementById('accImportUser');
     var pEl=document.getElementById('accImportPass');
-    var code2=cEl?cEl.value.trim():'';
+    var iu2=iuEl?iuEl.value.trim():'';
     var pass2=pEl?pEl.value:'';
-    if(!code2||!pass2){ setAccountStatus('请填写凭据码与密码','err'); return; }
+    if(!iu2||!pass2){ setAccountStatus('请输入另一站的用户名和密码','err'); return; }
+    var _ivErr=validateUsername(iu2);if(_ivErr&&_ivErr.indexOf('已存在')<0){ setAccountStatus(_ivErr,'err'); return; }
     setAccountStatus('正在导入账号…','');
-    importAccountCode(code2,pass2).then(function(){
-      setAccountStatus('✅ 账号已导入并登录','ok');
+    importAccountByPassword(iu2,pass2).then(function(how){
+      setAccountStatus(how==='remote'?'✅ 已从另一站导入账号并登录':(how==='created'?'✅ 已在本站用同一组账号密码建立登录':'✅ 已登录'),'ok');
       try{ closeAccountModal(); }catch(eC){}
       try{ updateAccountBtn(); }catch(eU){}
       try{ afterLoginSuccess(); }catch(eA){}

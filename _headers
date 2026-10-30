@@ -5,7 +5,8 @@
   Referrer-Policy: no-referrer
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
   Strict-Transport-Security: max-age=31536000; includeSubDomains
-  Cross-Origin-Opener-Policy: same-origin
+  # 不设置 Cross-Origin-Opener-Policy：同源 COOP 会切断 window.opener，
+  # 使「用一个站的用户名+密码导入另一个站账号」的跨站核对窗口失效。
   Cross-Origin-Resource-Policy: same-origin
   X-Permitted-Cross-Domain-Policies: none
 
