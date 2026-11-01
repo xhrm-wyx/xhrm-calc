@@ -1,6 +1,7 @@
 ﻿<!DOCTYPE html>
 <html lang="zh-CN" data-theme="night" data-mode="lite" class="exp-off">
 <head>
+<meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -653,7 +654,7 @@ html[data-theme="day"] .acct-avatar{background:var(--accent);color:#fff;}
        <button type="button" class="icon-btn" id="aboutClose" style="width:32px;height:32px;font-size:16px;">×</button>
      </div>
      <div class="save-options-body" style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
-       <div><b>版本 v3.4.0</b> · 单文件离线可用（仅供自用，勿转发）</div>
+       <div><b>版本 v3.5.0</b> · 单文件离线可用（仅供自用，勿转发）</div>
        <div style="border:1px solid rgba(255,120,120,.45);background:rgba(255,80,80,.08);border-radius:10px;padding:10px 12px;color:#ffb4b4;line-height:1.75;margin:4px 0;">
          ⚠️ <b>只打开你自己保存的 HTML 文件。</b>不要打开别人发来的 HTML（<b>加密的也一样</b>）——HTML 是可执行程序，可能携带恶意代码，加密只保护内容不保护执行。<br>
          要分享数据，请用「保存网页 → 导出数据 (JSON)」，让对方导入 JSON，而不是转发 HTML 文件。
@@ -12733,7 +12734,8 @@ function bindCalcTool(toolId){if(bindNewTool(toolId))return;if(toolId==='tax'){v
 function relReverseShow(){var inp=document.getElementById('relReverseInput');var out=document.getElementById('relResult');var term=(inp?inp.value:'').trim();if(!term){out.innerHTML='<div class="err">请输入称呼</div>';return;}var hits=relReverse(term);if(!hits.length){out.innerHTML='<div class="err">未收录该称呼：'+escapeHtml(term)+'</div>';return;}var hh='<div class="res-main">「'+escapeHtml(term)+'」可能的关系：</div>';hits.forEach(function(x){hh+='<div class="res-approx">'+escapeHtml(x.rel)+' → 我称呼 '+escapeHtml(x.me)+'；对方称呼我 '+escapeHtml(x.back)+'</div>';});out.innerHTML=hh;addLog('称呼','反向查「'+term+'」命中 '+hits.length+' 条');}
 function relShowPhrase(phrase){var out=document.getElementById('relResult');var m=REL_MAP[phrase];if(!m){out.innerHTML='<div class="err">暂未收录：'+escapeHtml(phrase)+'<br><span style="font-size:12px;font-weight:500;">可试试更常见的组合（如 爸爸的哥哥、妻子的妈妈）</span></div>';return;}out.innerHTML='<div class="res-main">我称呼：'+m[0]+'</div><div class="res-approx">对方称呼我：'+m[1]+'</div>';addLog('称呼',phrase+' → '+m[0]+'；对方称我 '+m[1]);}function relCalc(){var rrb=document.getElementById('relReverseBtn');if(rrb&&!rrb.__b){rrb.__b=true;rrb.addEventListener('click',relReverseShow);}if(!relChain.length){
     var man=document.getElementById('relManual');if(man&&man.value.trim()){relShowPhrase(man.value.trim());}else{document.getElementById('relResult').innerHTML='<div class="err">请先点按键或输入关系</div>';}return;}relShowPhrase(relChain.map(function(r){return REL_TRANS[r];}).join('的'));}var relKeys=document.getElementById('relKeys');if(relKeys){relKeys.addEventListener('click',function(e){var el=e.target;while(el&&el!==relKeys&&el.nodeType===1&&(!el.getAttribute||el.getAttribute('data-rel')===null))el=el.parentNode;if(!el||el===relKeys||el.nodeType!==1)return;var r=el.getAttribute('data-rel');if(!r)return;if(relChain.length<6)relChain.push(r);relRender();});}var clearB=document.getElementById('relClear');if(clearB)clearB.addEventListener('click',function(){relChain=[];relRender();});var delB=document.getElementById('relDel');if(delB)delB.addEventListener('click',function(){relChain.pop();relRender();});var calcB=document.getElementById('relCalc');if(calcB)calcB.addEventListener('click',relCalc);var rrb0=document.getElementById('relReverseBtn');if(rrb0&&!rrb0.__b){rrb0.__b=true;rrb0.addEventListener('click',relReverseShow);}var manIn=document.getElementById('relManual');if(manIn){manIn.addEventListener('change',function(){if(manIn.value.trim())relShowPhrase(manIn.value.trim());});manIn.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.isComposing&&e.keyCode!==229&&manIn.value.trim())relShowPhrase(manIn.value.trim());});}relRender();}else if(toolId==='chinese'){var btn=document.getElementById('chineseBtn');if(btn)btn.addEventListener('click',function(){try{var num=document.getElementById('chineseNum').value.trim();if(!num||!/^-?\d+(\.\d+)?([eE][+-]?\d+)?$/.test(num))throw new Error('请输入有效数字');document.getElementById('chineseResult').innerHTML='<div class="res-main">'+toChineseCapital(num)+'</div><div class="res-approx">普通读法：'+toChineseRead(num)+'</div>';}catch(e){document.getElementById('chineseResult').innerHTML='<div class="err">'+escapeHtml(e.message)+'</div>';}});}else if(toolId==='bmi'){var btn=document.getElementById('bmiBtn');if(btn)btn.addEventListener('click',function(){var h=parseFloat(document.getElementById('bmiHeight').value)/100;var w=parseFloat(document.getElementById('bmiWeight').value);var out=document.getElementById('bmiResult');if(!h||!w){out.innerHTML='<div class="err">请填写完整</div>';return;}var bmi=w/(h*h);var label='';if(bmi<18.5)label='偏瘦';else if(bmi<24)label='正常';else if(bmi<28)label='偏胖';else label='肥胖';out.innerHTML='<div class="res-main">BMI：'+fmtNum(bmi)+'</div><div class="res-approx">'+label+'</div>';addLog('BMI',fmtNum(bmi)+' '+label);});}}
-function cnExpand(n){var s=String(n);if(/[eE]/.test(s)){var m=s.match(/^(-?)(\d+)(?:\.(\d+))?[eE]([+-]?\d+)$/);if(m){var dig=m[2]+(m[3]||''),exp=parseInt(m[4],10)-(m[3]||'').length;if(exp>=0){s=m[1]+dig+new Array(exp+1).join('0');}else{var ip=dig.length+exp;if(ip<=0)s=m[1]+'0.'+new Array(1-ip).join('0')+dig;else s=m[1]+dig.slice(0,ip)+'.'+dig.slice(ip);}}}return s;}function toChineseRead(num){var s=cnExpand(num);var neg=s.charAt(0)==='-';if(neg)s=s.slice(1);var pt=s.indexOf('.');var intS=pt<0?s:s.slice(0,pt);var fracS=pt<0?'':s.slice(pt+1);if(intS==='0'&&(/^0*$/.test(fracS)||!fracS))return (neg?'负':'')+'零';var d2=['零','一','二','三','四','五','六','七','八','九'];var u2=['','十','百','千'];var bu2=['','万','亿','兆','京','垓','秭','穰','沟','涧','正','载'];var groups=[];for(var i=intS.length;i>0;i-=4)groups.push(intS.slice(Math.max(0,i-4),i));var outs=[];for(var gi=0;gi<groups.length;gi++){var g=groups[gi],o='',zf=false;for(var j=0;j<g.length;j++){var v=+g[g.length-1-j];if(v===0){if(o!=='')zf=true;}else{if(zf&&o!=='')o='零'+o;o=d2[v]+u2[j]+o;zf=false;}}outs.push(o);}var r='',needZero=false;for(var hi=outs.length-1;hi>=0;hi--){if(outs[hi]===''){if(r!=='')needZero=true;continue;}if(r!==''&&(needZero||(groups[hi].length===4&&groups[hi].charAt(0)==='0')))r+='零';r+=outs[hi]+(bu2[hi]||'');needZero=false;}if(r.indexOf('一十')===0)r=r.slice(1);if(r==='')r='零';if(fracS&&!/^0*$/.test(fracS)){var dj=['零','一','二','三','四','五','六','七','八','九'];var _fr='',_end=fracS.length;while(_end>0&&fracS.charAt(_end-1)==='0')_end--;for(var _fi=0;_fi<_end;_fi++)_fr+=dj[+fracS.charAt(_fi)];r+='点'+_fr;}return (neg?'负':'')+r;}
+function cnExpand(n){var s=String(n);if(/[eE]/.test(s)){var m=s.match(/^(-?)(\d+)(?:\.(\d+))?[eE]([+-]?\d+)$/);if(m){var dig=m[2]+(m[3]||''),exp=parseInt(m[4],10)-(m[3]||'').length;if(exp>=0){s=m[1]+dig+new Array(exp+1).join('0');}else{var ip=dig.length+exp;if(ip<=0)s=m[1]+'0.'+new Array(1-ip).join('0')+dig;else s=m[1]+dig.slice(0,ip)+'.'+dig.slice(ip);}}}return s;}
+function toChineseRead(num){var s=cnExpand(num);var neg=s.charAt(0)==='-';if(neg)s=s.slice(1);var pt=s.indexOf('.');var intS=pt<0?s:s.slice(0,pt);var fracS=pt<0?'':s.slice(pt+1);if(intS==='0'&&(/^0*$/.test(fracS)||!fracS))return (neg?'负':'')+'零';var d2=['零','一','二','三','四','五','六','七','八','九'];var u2=['','十','百','千'];var bu2=['','万','亿','兆','京','垓','秭','穰','沟','涧','正','载'];var groups=[];for(var i=intS.length;i>0;i-=4)groups.push(intS.slice(Math.max(0,i-4),i));var outs=[];for(var gi=0;gi<groups.length;gi++){var g=groups[gi],o='',zf=false;for(var j=0;j<g.length;j++){var v=+g[g.length-1-j];if(v===0){if(o!=='')zf=true;}else{if(zf&&o!=='')o='零'+o;o=d2[v]+u2[j]+o;zf=false;}}outs.push(o);}var r='',needZero=false;for(var hi=outs.length-1;hi>=0;hi--){if(outs[hi]===''){if(r!=='')needZero=true;continue;}if(r!==''&&(needZero||(groups[hi].length===4&&groups[hi].charAt(0)==='0')))r+='零';r+=outs[hi]+(bu2[hi]||'');needZero=false;}if(r.indexOf('一十')===0)r=r.slice(1);if(r==='')r='零';if(fracS&&!/^0*$/.test(fracS)){var dj=['零','一','二','三','四','五','六','七','八','九'];var _fr='',_end=fracS.length;while(_end>0&&fracS.charAt(_end-1)==='0')_end--;for(var _fi=0;_fi<_end;_fi++)_fr+=dj[+fracS.charAt(_fi)];r+='点'+_fr;}return (neg?'负':'')+r;}
 function toChineseCapital(num){var s=cnExpand(num);var neg=s.charAt(0)==='-';if(neg)s=s.slice(1);var pt=s.indexOf('.');var intS=pt<0?s:s.slice(0,pt);var fracS=pt<0?'':s.slice(pt+1);if(fracS.length>2){var _cc=Math.round(parseFloat('0.'+fracS)*100);var _iv=parseInt(intS||'0',10)||0;if(_cc>=100){_iv+=1;_cc=0;}intS=String(_iv);fracS=_cc===0?'':('0'+_cc).slice(-2);}if(intS.length>48)throw new Error('金额超出大写转换范围（需小于 10^48）');var digits=['零','壹','贰','叁','肆','伍','陆','柒','捌','玖'];var units=['','拾','佰','仟'];var bigUnits=['','万','亿','兆','京','垓','秭','穰','沟','涧','正','载'];if(intS==='0'&&(/^0*$/.test(fracS)||!fracS))return '零元整';var groups=[];for(var i=intS.length;i>0;i-=4)groups.push(intS.substring(Math.max(0,i-4),i));var outs=[];for(var gi2=0;gi2<groups.length;gi2++){var g2=groups[gi2],gs2='',zf2=false;for(var j2=0;j2<g2.length;j2++){var v2=+g2[g2.length-1-j2];if(v2===0){if(gs2!=='')zf2=true;}else{if(zf2&&gs2!=='')gs2='零'+gs2;gs2=digits[v2]+units[j2]+gs2;zf2=false;}}outs.push(gs2);}var result='',needZero=false;for(var hi2=outs.length-1;hi2>=0;hi2--){if(outs[hi2]===''){if(result!=='')needZero=true;continue;}if(result!==''&&(needZero||(groups[hi2].length===4&&groups[hi2].charAt(0)==='0')))result+='零';result+=outs[hi2]+(bigUnits[hi2]||'');needZero=false;}if(result==='')result='零元';else result+='元';if(/^0*$/.test(fracS)||!fracS)result+='整';else{var decPart=parseInt((fracS+'00').slice(0,2),10);var jiao=Math.floor(decPart/10);var fen=decPart%10;if(jiao>0)result+=digits[jiao]+'角';else if(fen>0&&intS!=='0')result+='零';if(fen>0)result+=digits[fen]+'分';}return (neg?'负':'')+result;}
 var B32="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 function base32ToBytes(str){str=String(str).toUpperCase().replace(/[\s=-]/g,'');if(!str)throw new Error('密钥不能为空');var bits=0,value=0,bytes=[];for(var i=0;i<str.length;i++){var idx=B32.indexOf(str[i]);if(idx<0)throw new Error('密钥包含非法字符：'+str[i]);value=(value<<5)|idx;bits+=5;if(bits>=8){bytes.push((value>>>(bits-8))&0xff);bits-=8;}}if(bytes.length===0)throw new Error('密钥无效');return new Uint8Array(bytes);}
@@ -13377,7 +13379,7 @@ function probeOtherSite(user,pass){
     var origin;try{origin=new URL(target).origin;}catch(e){resolve(null);return;}
     var nonce='n'+Math.random().toString(36).slice(2,10)+Date.now().toString(36);
     var w=null;
-    try{ w=window.open(target+'#acctprobe='+nonce,'sci-probe','width=460,height=340,menubar=no,toolbar=no,location=no,status=no'); }catch(e){}
+    try{ w=window.open(target+'#acctprobe='+nonce+'&o='+encodeURIComponent(String(location.origin||'')),'sci-probe','width=460,height=340,menubar=no,toolbar=no,location=no,status=no'); }catch(e){}
     if(!w){ window.__probeFail='blocked'; resolve(null); return; }
     var done=false,ready=false;
     function finish(v){
@@ -13421,13 +13423,16 @@ function tryRemoteAccount(user,pass){
 function handleAcctProbeHash(){
   var h=location.hash||'';
   if(h.indexOf('#acctprobe=')!==0)return false;
-  var nonce=h.slice(11);
+  var _hq=h.slice(11);var _qi=_hq.indexOf('&o=');
+  var nonce=(_qi>=0)?_hq.slice(0,_qi):_hq;
+  var openerOrigin=(_qi>=0)?(function(){try{return decodeURIComponent(_hq.slice(_qi+3));}catch(e){return '';}})():'';
   var allowed=['https://xhrm-calc.pages.dev','https://xhrm-wyx.github.io'];
-  function reply(obj,origin){ try{ if(window.opener)window.opener.postMessage(obj,origin||'*'); }catch(e){} }
+  if(allowed.indexOf(openerOrigin)<0){ try{document.title='来源不被信任';}catch(eT){} return false; }
+  function reply(obj,origin){ try{ if(window.opener&&origin&&origin!=='*')window.opener.postMessage(obj,origin); }catch(e){} }
   try{ document.title='验证中…'; }catch(e){}
-  reply({type:'sci-acct-probe-ready',nonce:nonce},'*');
+  reply({type:'sci-acct-probe-ready',nonce:nonce},openerOrigin);
   addEventListener('message',function(ev){
-    var okOrigin=allowed.indexOf(ev.origin)>=0||/^http:\/\/(127\.0\.0\.1|localhost):\d+$/.test(ev.origin||'');
+    var okOrigin=(!!openerOrigin)&&(ev.origin===openerOrigin)&&(allowed.indexOf(ev.origin)>=0);
     if(!okOrigin)return;
     var d=ev.data;
     if(!d||d.type!=='sci-acct-probe-auth'||d.nonce!==nonce)return;
@@ -13544,19 +13549,87 @@ function importAccountByPassword(username,password){
     }).catch(function(e2){ reject(e2); });
   });
 }
+/* [SEC-FIX-1] 同步密钥 v2：每用户随机盐（服务端下发，降级为 username 派生稳定盐）+ 310000 迭代
+   旧 v1 为「硬编码全零盐 + 120000」，全站共用，可被纯离线彩虹表/爆破推导，已废弃。 */
+function _hexToBuf(h){try{var n=(h.length>>1),a=new Uint8Array(n);for(var i=0;i<n;i++)a[i]=parseInt(h.substr(i*2,2),16);return a;}catch(e){return new Uint8Array(16);}}
+function _sha256Hex(str){
+  if(typeof cfSha256==='function')return cfSha256(String(str));
+  return crypto.subtle.digest('SHA-256',new TextEncoder().encode(String(str))).then(function(d){
+    var b=new Uint8Array(d),s='';for(var i=0;i<b.length;i++)s+=('0'+b[i].toString(16)).slice(-2);return s;});
+}
+function _syncIds(hex){ return Promise.all([_sha256Hex('id|'+hex),_sha256Hex('ah|'+hex)]); }
+/* [SEC-FIX-1b] 一次性迁移：把 v1（全零盐）旧记录搬到 v2（随机盐）新 id 下。
+   旧记录先保留 30 天再清，避免误删导致数据丢失。 */
+function _migrateSyncV1ToV2(){
+  try{
+    var v1=window.__syncKeyHexV1,v2=window.__syncKeyHex;
+    if(!v1||!v2||v1===v2)return Promise.resolve(false);
+    if(localStorage.getItem('sci-sync-migrated-v2')==='1')return Promise.resolve(false);
+    return _syncIds(v1).then(function(a){
+      return fetch('/api/sync?id='+encodeURIComponent(a[0]),{cache:'no-store',headers:{'Authorization':'Bearer '+a[1]}})
+        .then(function(r){return r.ok?r.json():null;}).catch(function(){return null;})
+        .then(function(oldRec){
+          if(!oldRec||!oldRec.blob)return false;
+          return _syncIds(v2).then(function(b2){
+            return fetch('/api/sync',{method:'PUT',headers:{'Content-Type':'application/json','Authorization':'Bearer '+b2[1]},
+              body:JSON.stringify({id:b2[0],blob:oldRec.blob})}).then(function(r){
+              if(!r.ok)return false;
+              try{localStorage.setItem('sci-sync-migrated-v2','1');localStorage.setItem('sci-sync-v1-keep-until',String(Date.now()+2592000000));}catch(eLS){}
+              var _keep=0;try{_keep=Number(localStorage.getItem('sci-sync-v1-keep-until')||0);}catch(eK){}
+              if(Date.now()<_keep)return true;                     /* 30 天保留期内不动旧记录 */
+              return fetch('/api/sync?id='+encodeURIComponent(a[0]),{method:'DELETE',headers:{'Authorization':'Bearer '+a[1]}})
+                .then(function(){return true;}).catch(function(){return true;});
+            });
+          });
+        });
+    }).catch(function(){return false;});
+  }catch(e){ return Promise.resolve(false); }
+}
+window.__migrateSyncV1ToV2=_migrateSyncV1ToV2;
 function warmSyncKey(pw,username){
   try{
     if(!pw||!username)return;
-    pbkdf2Bits(pw+'|sci-sync-v1|'+username,new Uint8Array(16),120000).then(function(bits){
+    var _saltP=(function(){
+      try{
+        return fetch('/api/sync/salt?u='+encodeURIComponent(username),{cache:'no-store'})
+          .then(function(r){return r.ok?r.json():null;}).catch(function(){return null;})
+          .then(function(j){
+            var sb=(j&&typeof j.salt==='string')?j.salt:'';
+            return (/^[A-Za-z0-9+/]{16,64}={0,2}$/.test(sb))?{b64:sb}:null;
+          });
+      }catch(e){ return Promise.resolve(null); }
+    })();
+    _saltP.then(function(sv){
+      if(sv)return sv;
+      return _sha256Hex('sci-sync-salt-v2|'+username).then(function(h){return {hex:h.slice(0,32)};});
+    }).then(function(sv){
+      var saltBuf = sv.b64 ? b64ToBuf(sv.b64) : _hexToBuf(sv.hex);
+      var saltTag = sv.b64 ? ('b64:'+sv.b64) : ('hex:'+sv.hex);
+      return pbkdf2Bits(pw+'|sci-sync-v2|'+username+'|'+saltTag, saltBuf, PBKDF2_ITER);
+    }).then(function(bits){
       var b=new Uint8Array(bits),s='';
       for(var i=0;i<b.length;i++)s+=('0'+b[i].toString(16)).slice(-2);
       window.__syncKeyHex=s;
+      /* 仅保留 v1 派生值用于一次性迁移旧记录，迁移完成后不再使用 */
+      pbkdf2Bits(pw+'|sci-sync-v1|'+username,new Uint8Array(16),120000).then(function(lb){
+        var lb2=new Uint8Array(lb),t='';for(var j=0;j<lb2.length;j++)t+=('0'+lb2[j].toString(16)).slice(-2);
+        window.__syncKeyHexV1=t;
+        try{ _migrateSyncV1ToV2(); }catch(eM){}
+      }).catch(function(){});
       try{
         var _lu=localStorage.getItem('sci-sync-lastuser-v1')||'';
         if(_lu&&_lu!==username){ if(window.__setOneWay)window.__setOneWay(false); }
         localStorage.setItem('sci-sync-lastuser-v1',username);
       }catch(eLU){}
-    }).catch(function(){});
+    }).catch(function(){
+      /* 兜底：v1，保证极端环境下同步功能不中断 */
+      try{
+        pbkdf2Bits(pw+'|sci-sync-v1|'+username,new Uint8Array(16),120000).then(function(bits){
+          var b=new Uint8Array(bits),s='';for(var i=0;i<b.length;i++)s+=('0'+b[i].toString(16)).slice(-2);
+          if(!window.__syncKeyHex)window.__syncKeyHex=s;
+        }).catch(function(){});
+      }catch(e2){}
+    });
   }catch(e){}
 }
 function loginUser(username,password){var u=loadUserByName(String(username||'').trim());if(!u)return Promise.reject(new Error('本机没有该账号，请先注册'));if(!checkCryptoSupport())return Promise.reject(new Error('当前环境不支持加密'));var salt=b64ToBuf(u.salt);return pbkdf2Bits(password+VERIFY_TAG,salt,u.iterations||PBKDF2_ITER).then(function(verifier){var _tagged=bufToB64(verifier);if(_tagged!==u.verifier){return pbkdf2Bits(password,salt,u.iterations||PBKDF2_ITER).then(function(v0){if(bufToB64(v0)!==u.verifier)throw new Error('密码错误');try{u.verifier=_tagged;saveUserToStorage(u);}catch(eV){}});}}).then(function(){currentUser=u;currentPassword=password;pendingEncryptedData=null;noPersist=false;window.__pwLocked=false;window.__fileSession=false;window.__encryptedBlob=null;window.__sessionReady=deriveSessionKey(password,u.salt,u.iterations).then(function(k){sessionKey=k;try{warmSyncKey(currentPassword,currentUser&&currentUser.username);}catch(eW){}currentPassword=null;}).catch(function(){});try{if(typeof renderList==='function')renderList();}catch(eL){}reloadAcctData();return (window.__sessionReady||Promise.resolve()).then(function(){return u;});});}
@@ -15136,8 +15209,8 @@ function autoConfigureSync(){
   var token=tel?String(tel.value||'').trim():'';
   if(!token){ say('请先填写访问令牌',false); return; }
   say('正在读取 Gitee 账号…');
-  var q='?access_token='+encodeURIComponent(token);
-  fetch('https://gitee.com/api/v5/user'+q,{cache:'no-store'}).then(function(r){
+  var q='';
+  fetch('https://gitee.com/api/v5/user'+q,{cache:'no-store',headers:{'Authorization':'token '+token}}).then(function(r){
     if(!r.ok)throw new Error('令牌无效或权限不足（HTTP '+r.status+'）');
     return r.json();
   }).then(function(u){
@@ -15148,7 +15221,7 @@ function autoConfigureSync(){
     return fetch('https://gitee.com/api/v5/repos/'+encodeURIComponent(login)+'/'+encodeURIComponent(repo)+q,{cache:'no-store'}).then(function(r){
       if(r.ok)return r.json();
       if(r.status!==404)throw new Error('查询仓库失败（HTTP '+r.status+'）');
-      return fetch('https://gitee.com/api/v5/user/repos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:repo,private:true,auto_init:true,description:'sci-calc sync',access_token:token})}).then(function(rr){
+      return fetch('https://gitee.com/api/v5/user/repos',{method:'POST',headers:{'Content-Type':'application/json'},headers:{'Content-Type':'application/json','Authorization':'token '+token},body:JSON.stringify({name:repo,private:true,auto_init:true,description:'sci-calc sync'})}).then(function(rr){
         if(!rr.ok)throw new Error('创建仓库失败（HTTP '+rr.status+'，可能已存在同名仓库）');
         return rr.json();
       });
@@ -15265,8 +15338,8 @@ function api(c){return 'https://gitee.com/api/v5/repos/'+encodeURIComponent(c.ow
     if(i>0){owner=repo.slice(0,i).trim();repo=repo.slice(i+1).trim();}
     var _tok=String(c.token||'').trim();var _prov=String(c.provider||'').trim()||((owner&&repo&&_tok)?'gitee':'cf');return {provider:_prov,owner:owner,repo:repo,branch:String(c.branch||'master').trim()||'master',path:(String(c.path||'').trim()==='sci-sync/user.json'?'':String(c.path||'').trim())||defPath(),token:_tok,auto:(c.auto===undefined?(_prov==='cf'):!!c.auto)};
   }
-  function get(c){if(c&&c.provider==='cf')return cfGet();return fetch(api(c)+'?ref='+encodeURIComponent(c.branch)+'&access_token='+encodeURIComponent(c.token),{cache:'no-store'}).then(function(r){if(r.status===404)return null;if(!r.ok)throw new Error('读取失败 HTTP '+r.status);return r.json();});}
-  function put(c,content,sha,baseTs){if(c&&c.provider==='cf')return cfPut(content,baseTs);var p=new URLSearchParams();p.set('access_token',c.token);p.set('content',content);p.set('message','sync '+new Date().toISOString());p.set('branch',c.branch);if(sha)p.set('sha',sha);var method=sha?'PUT':'POST';return fetch(api(c),{method:method,headers:{'Content-Type':'application/x-www-form-urlencoded'},body:p.toString()}).then(function(r){if(r.status===409){var _ce=new Error('conflict');_ce.code='conflict';throw _ce;}if(!r.ok)return r.text().then(function(t){throw new Error('上传失败 HTTP '+r.status+' '+String(t).slice(0,120));});return r.json();});}
+  function get(c){if(c&&c.provider==='cf')return cfGet();return fetch(api(c)+'?ref='+encodeURIComponent(c.branch),{cache:'no-store',headers:{'Authorization':'token '+c.token}}).then(function(r){if(r.status===404)return null;if(!r.ok)throw new Error('读取失败 HTTP '+r.status);return r.json();});}
+  function put(c,content,sha,baseTs){if(c&&c.provider==='cf')return cfPut(content,baseTs);var p=new URLSearchParams();p.set('content',content);p.set('message','sync '+new Date().toISOString());p.set('branch',c.branch);if(sha)p.set('sha',sha);var method=sha?'PUT':'POST';return fetch(api(c),{method:method,headers:{'Content-Type':'application/x-www-form-urlencoded','Authorization':'token '+c.token},body:p.toString()}).then(function(r){if(r.status===409){var _ce=new Error('conflict');_ce.code='conflict';throw _ce;}if(!r.ok)return r.text().then(function(t){throw new Error('上传失败 HTTP '+r.status+' '+String(t).slice(0,120));});return r.json();});}
   function __buildSyncContent(){
   var _pl=collectSaveData();try{delete _pl.syncCfg;}catch(eSP){}_pl.devices=listDevices();autoPayload(_pl);
   return __encForSave(_pl).then(function(blob){
