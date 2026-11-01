@@ -13591,11 +13591,21 @@ function warmSyncKey(pw,username){
     if(!pw||!username)return;
     var _saltP=(function(){
       try{
-        return fetch('/api/sync/salt?u='+encodeURIComponent(username),{cache:'no-store'})
-          .then(function(r){return r.ok?r.json():null;}).catch(function(){return null;})
+        var _ck='sci-sync-salt-v2:'+username;
+        var _c=localStorage.getItem(_ck);
+        if(_c&&/^[A-Za-z0-9+/]{16,64}={0,2}$/.test(_c))return Promise.resolve({b64:_c});
+        /* 绝对地址：让 CF 与 GH Pages 拿到同一份服务端盐，保证同一账号在两站 id 一致 */
+        var _ctrl=(typeof AbortController==='function')?new AbortController():null;
+        var _to=_ctrl?setTimeout(function(){try{_ctrl.abort();}catch(eA){}},4000):null;
+        return fetch('https://xhrm-calc.pages.dev/api/sync/salt?u='+encodeURIComponent(username),
+            {cache:'no-store',mode:'cors',signal:_ctrl?_ctrl.signal:undefined})
+          .then(function(r){ if(_to)clearTimeout(_to); return r.ok?r.json():null;})
+          .catch(function(){ if(_to)clearTimeout(_to); return null;})
           .then(function(j){
             var sb=(j&&typeof j.salt==='string')?j.salt:'';
-            return (/^[A-Za-z0-9+/]{16,64}={0,2}$/.test(sb))?{b64:sb}:null;
+            if(!/^[A-Za-z0-9+/]{16,64}={0,2}$/.test(sb))return null;
+            try{localStorage.setItem(_ck,sb);}catch(eLS2){}
+            return {b64:sb};
           });
       }catch(e){ return Promise.resolve(null); }
     })();
@@ -13786,6 +13796,7 @@ function sendToOtherSite(){
     if(b.length>60000){ alert('数据量较大（'+Math.round(txt.length/1024)+' KB），不适合用链接传输。请改用「导出数据 (JSON)」在另一站导入。'); return; }
     var u=otherSiteUrl()+'#xfer='+b;
     var w=window.open(u,'_blank');
+      try{ if(w){ try{w.opener=null;}catch(eOp){} } }catch(eOp2){}
     if(!w){ alert('新窗口被拦截。请允许弹窗，或改用「导出数据 (JSON)」。'); return; }
   }catch(e){ alert('发送失败：'+(e&&e.message||e)); }
 }
