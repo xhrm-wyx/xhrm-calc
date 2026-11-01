@@ -92,6 +92,23 @@ export async function onRequest(context){
   const auth = (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '').trim().toLowerCase();
   if(op === 'ping') return json({ ok: true, t: Date.now(), kv: true }, 200, origin);
 
+  /* [SEC-FIX] 每用户随机盐：让同步密钥无法被纯离线推导（客户端 v3.5.0 起使用）。
+     设计上同 Bitwarden：盐本身可公开，靠 PBKDF2 310k 迭代 + 本接口的 IP 限流来防滥用。
+     首次请求即生成并存入 KV，之后恒定不变，保证 CF 与 GitHub Pages 两站拿到同一份盐。 */
+  if(op === 'salt'){
+    const u = String(url.searchParams.get('u') || '').slice(0, 64);
+    if(!u) return json({ error: 'bad u' }, 400, origin);
+    const sKey = 's:' + u;
+    let salt = await env.SCI_KV.get(sKey);
+    if(!salt){
+      const b = new Uint8Array(16);
+      crypto.getRandomValues(b);
+      salt = btoa(String.fromCharCode.apply(null, b));
+      await env.SCI_KV.put(sKey, salt);
+    }
+    return json({ salt: salt }, 200, origin);
+  }
+
   if(request.method === 'GET'){
     const id = (url.searchParams.get('id') || '').toLowerCase();
     if(!HEX64.test(id)) return json({ error: 'bad id' }, 400, origin);
