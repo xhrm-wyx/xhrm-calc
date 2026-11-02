@@ -9,9 +9,12 @@
  *  - baseTs 用于乐观并发：与当前 ts 不一致返回 409
  */
 const ALLOWED = ['https://xhrm-calc.pages.dev','https://xhrm-wyx.github.io'];
-const RL = new Map();               // 简易进程内限流：ip -> {n, t}
+/* [SEC-FIX v3.5.2] 限流 / 失败锁定改为 KV 持久化。
+   Cloudflare Workers 是多 isolate 无状态环境，模块级 Map 不跨请求共享，
+   进程内计数会让 IP 限流与 per-id 失败锁定形同虚设
+   （线上实测：同一 id 连续 8 次伪造令牌全部 403，FAIL_LIMIT=5 的 429 从未触发）。
+   KV 为最终一致，阈值取宽松值即可覆盖口令/令牌猜测；需强一致可换 Durable Objects。 */
 const RL_LIMIT = 60, RL_WINDOW = 60 * 1000;
-const FAILS = new Map();            // id -> {n, t, until}
 const FAIL_LIMIT = 5, FAIL_WINDOW = 15 * 60 * 1000;
 const RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
 
@@ -53,27 +56,31 @@ function matchesAuth(rec, auth, env){
     return authHash(auth, env).then(function(h){ return rec.ahh === h ? 'hmac' : false; });
   });
 }
-function locked(id){
-  const f = FAILS.get(id);
+async function locked(id, env){
+  const f = await env.SCI_KV.get('f:' + id, 'json');
   if(!f) return 0;
   const now = Date.now();
   if(f.until && now < f.until) return Math.ceil((f.until - now) / 1000);
-  if(now - f.t > FAIL_WINDOW){ FAILS.delete(id); return 0; }
-  return 0;
+  return 0;   // 窗口过期记录由 KV expirationTtl 自动清理
 }
-function noteFail(id){
+async function noteFail(id, env){
   const now = Date.now();
-  const f = FAILS.get(id) || { n: 0, t: now };
-  if(now - f.t > FAIL_WINDOW){ f.n = 0; f.t = now; }
+  const k = 'f:' + id;
+  let f = await env.SCI_KV.get(k, 'json') || { n: 0, t: now };
+  if(now - f.t > FAIL_WINDOW) f = { n: 0, t: now };
   f.n++;
   if(f.n >= FAIL_LIMIT) f.until = now + FAIL_WINDOW;
-  FAILS.set(id, f);
+  await env.SCI_KV.put(k, JSON.stringify(f),
+    { expirationTtl: Math.ceil(FAIL_WINDOW / 1000) + 60 });
 }
-function limited(ip){
+async function limited(ip, env){
   const now = Date.now();
-  const cur = RL.get(ip);
-  if(!cur || now - cur.t > RL_WINDOW){ RL.set(ip, { n: 1, t: now }); return false; }
+  const k = 'r:' + ip;
+  let cur = await env.SCI_KV.get(k, 'json');
+  if(!cur || now - cur.t > RL_WINDOW) cur = { n: 0, t: now };
   cur.n++;
+  await env.SCI_KV.put(k, JSON.stringify(cur),
+    { expirationTtl: Math.ceil(RL_WINDOW / 1000) + 60 });
   return cur.n > RL_LIMIT;
 }
 
@@ -83,10 +90,9 @@ export async function onRequest(context){
   const url = new URL(request.url);
   if(request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors(origin) });
 
-  const ip = request.headers.get('CF-Connecting-IP') || 'anon';
-  if(limited(ip)) return json({ error: 'rate' }, 429, origin, { 'Retry-After': '60' });
-
   if(!env || !env.SCI_KV) return json({ error: 'kv-not-bound' }, 500, origin);
+  const ip = request.headers.get('CF-Connecting-IP') || 'anon';
+  if(await limited(ip, env)) return json({ error: 'rate' }, 429, origin, { 'Retry-After': '60' });
 
   const op = url.searchParams.get('op') || '';
   const auth = (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '').trim().toLowerCase();
@@ -113,7 +119,7 @@ export async function onRequest(context){
     const id = (url.searchParams.get('id') || '').toLowerCase();
     if(!HEX64.test(id)) return json({ error: 'bad id' }, 400, origin);
     if(!HEX64.test(auth)) return json({ error: 'no auth' }, 401, origin);
-    const wait = locked(id);
+    const wait = await locked(id, env);
     if(wait) return json({ error: 'locked', retryAfter: wait }, 429, origin, { 'Retry-After': String(wait) });
     const key = 'b:' + id;
     const rec = await env.SCI_KV.get(key, 'json');
@@ -124,7 +130,7 @@ export async function onRequest(context){
       return json({ error: 'empty' }, 404, origin);
     }
     const m = await matchesAuth(rec, auth, env);
-    if(!m){ noteFail(id); return json({ error: 'auth' }, 403, origin); }
+    if(!m){ await noteFail(id, env); return json({ error: 'auth' }, 403, origin); }
     if(m === 'legacy' && env.SYNC_PEPPER){
       try{ rec.ahh = await authHash(auth, env); await env.SCI_KV.put(key, JSON.stringify(rec)); }catch(e){}
     }
@@ -142,13 +148,13 @@ export async function onRequest(context){
     if(!blob || blob.length > 2 * 1024 * 1024) return json({ error: 'bad blob' }, 400, origin);
 
     const key = 'b:' + id;
-    const waitP = locked(id);
+    const waitP = await locked(id, env);
     if(waitP) return json({ error: 'locked', retryAfter: waitP }, 429, origin, { 'Retry-After': String(waitP) });
     const cur = await env.SCI_KV.get(key, 'json');
     const ahh = await authHash(auth, env);
     if(cur){
       const m2 = await matchesAuth(cur, auth, env);
-      if(!m2){ noteFail(id); return json({ error: 'auth' }, 403, origin); }
+      if(!m2){ await noteFail(id, env); return json({ error: 'auth' }, 403, origin); }
       /* 已存在记录却未携带 baseTs：说明客户端没见过当前版本，强制先读 */
       if(baseTs === null && !cur.deletedAt) return json({ error: 'conflict', ts: cur.ts, need: 'read-first' }, 409, origin);
       if(baseTs !== null && Number(cur.ts) !== Number(baseTs) && !cur.deletedAt) return json({ error: 'conflict', ts: cur.ts }, 409, origin);
@@ -178,13 +184,13 @@ export async function onRequest(context){
     const id = (url.searchParams.get('id') || '').toLowerCase();
     if(!HEX64.test(id)) return json({ error: 'bad id' }, 400, origin);
     if(!HEX64.test(auth)) return json({ error: 'no auth' }, 401, origin);
-    const waitD = locked(id);
+    const waitD = await locked(id, env);
     if(waitD) return json({ error: 'locked', retryAfter: waitD }, 429, origin, { 'Retry-After': String(waitD) });
     const key = 'b:' + id;
     const rec = await env.SCI_KV.get(key, 'json');
     if(!rec) return json({ ok: true, missing: true }, 200, origin);
     const m3 = await matchesAuth(rec, auth, env);
-    if(!m3){ noteFail(id); return json({ error: 'auth' }, 403, origin); }
+    if(!m3){ await noteFail(id, env); return json({ error: 'auth' }, 403, origin); }
     /* 软删除：保留 30 天，期间同账号读取仍可看到 deleted 标记并可覆盖恢复 */
     rec.deletedAt = Date.now();
     rec.ahh = await authHash(auth, env);
