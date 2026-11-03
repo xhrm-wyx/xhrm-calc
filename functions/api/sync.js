@@ -56,21 +56,27 @@ function matchesAuth(rec, auth, env){
     return authHash(auth, env).then(function(h){ return rec.ahh === h ? 'hmac' : false; });
   });
 }
+/* [SEC-FIX v3.5.3] 失败计数改为「每个事件写独立 KV key + list 计数」。
+   原实现是 get -> n++ -> put 的 read-modify-write，CF Workers 多 isolate 并发时
+   相互覆盖：2026-11-03 线上实测 10 并发伪造令牌全部 403，FAIL_LIMIT=5 的锁定
+   被从第 6 次推迟到第 14 次（额外 8 次猜测窗口）。
+   新实现每个失败请求写一个带随机后缀的 key（写入互不覆盖），locked() 用
+   KV.list 对同一 prefix 计数，天然无竞态；每个 key 带 expirationTtl，
+   因此 list 结果本身就是滑动窗口内的事件数，无需窗口复位逻辑。
+   边界：KV.list 每日免费额度较小（1000 次），高流量站点应改用 Durable Objects
+   或 Workers Rate Limiting API 做原子计数。IP 限流 limited() 仍为宽松第二道防线，
+   同源竞态残留，见评估报告。 */
 async function locked(id, env){
-  const f = await env.SCI_KV.get('f:' + id, 'json');
-  if(!f) return 0;
-  const now = Date.now();
-  if(f.until && now < f.until) return Math.ceil((f.until - now) / 1000);
-  return 0;   // 窗口过期记录由 KV expirationTtl 自动清理
+  const l = await env.SCI_KV.list({ prefix: 'f:' + id + ':' });
+  const n = (l && l.keys) ? l.keys.length : 0;
+  if(n < FAIL_LIMIT) return 0;
+  return Math.ceil(FAIL_WINDOW / 1000);
 }
 async function noteFail(id, env){
-  const now = Date.now();
-  const k = 'f:' + id;
-  let f = await env.SCI_KV.get(k, 'json') || { n: 0, t: now };
-  if(now - f.t > FAIL_WINDOW) f = { n: 0, t: now };
-  f.n++;
-  if(f.n >= FAIL_LIMIT) f.until = now + FAIL_WINDOW;
-  await env.SCI_KV.put(k, JSON.stringify(f),
+  const nonce = (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function')
+    ? crypto.randomUUID()
+    : (Date.now().toString(36) + '-' + Math.random().toString(36).slice(2));
+  await env.SCI_KV.put('f:' + id + ':' + nonce, '1',
     { expirationTtl: Math.ceil(FAIL_WINDOW / 1000) + 60 });
 }
 async function limited(ip, env){
