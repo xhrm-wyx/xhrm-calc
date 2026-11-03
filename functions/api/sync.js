@@ -56,27 +56,39 @@ function matchesAuth(rec, auth, env){
     return authHash(auth, env).then(function(h){ return rec.ahh === h ? 'hmac' : false; });
   });
 }
-/* [SEC-FIX v3.5.3] 失败计数改为「每个事件写独立 KV key + list 计数」。
-   原实现是 get -> n++ -> put 的 read-modify-write，CF Workers 多 isolate 并发时
-   相互覆盖：2026-11-03 线上实测 10 并发伪造令牌全部 403，FAIL_LIMIT=5 的锁定
-   被从第 6 次推迟到第 14 次（额外 8 次猜测窗口）。
-   新实现每个失败请求写一个带随机后缀的 key（写入互不覆盖），locked() 用
-   KV.list 对同一 prefix 计数，天然无竞态；每个 key 带 expirationTtl，
-   因此 list 结果本身就是滑动窗口内的事件数，无需窗口复位逻辑。
-   边界：KV.list 每日免费额度较小（1000 次），高流量站点应改用 Durable Objects
-   或 Workers Rate Limiting API 做原子计数。IP 限流 limited() 仍为宽松第二道防线，
-   同源竞态残留，见评估报告。 */
+/* [SEC-FIX v3.5.4] 失败锁定改为「单 key 快速计数 + 独立 key list 兜底」双通道。
+   v3.5.3 只用 KV.list 数独立 key 个数：虽消除了并发竞态，但 KV.list 是最终一致、
+   跨节点传播约 60s——2026-11-03 线上实测串行第 6 次也不即时 429，需等约 60s 才锁，
+   反而比 v3.5.2（get→put 单 key）退步。根因：单 key 的 get/put 强一致（读己之写），
+   list 不是。本版双通道：
+    - 快速通道 c:<id>：单 key 计数器，get/put 强一致 → 串行即时锁定；
+      （并发下读改写会少算，但只影响快速判定，精确性由 list 兜底）
+    - 精确通道 f:<id>:<nonce>：每个失败事件写独立 key（写入互不覆盖，天然无竞态），
+      locked 用 KV.list 数个数兜底，覆盖并发场景。
+   locked 先查快速通道（即时），不足再查 list（最终一致，约 60s 内收敛）。
+   仍需真正强一致原子计数时，应换 Durable Objects / Workers Rate Limiting API。 */
 async function locked(id, env){
+  const now = Date.now();
+  const cnt = await env.SCI_KV.get('c:' + id, 'json');
+  if(cnt && cnt.n >= FAIL_LIMIT && now - cnt.t <= FAIL_WINDOW){
+    return Math.ceil(FAIL_WINDOW / 1000);
+  }
   const l = await env.SCI_KV.list({ prefix: 'f:' + id + ':' });
   const n = (l && l.keys) ? l.keys.length : 0;
-  if(n < FAIL_LIMIT) return 0;
-  return Math.ceil(FAIL_WINDOW / 1000);
+  if(n >= FAIL_LIMIT) return Math.ceil(FAIL_WINDOW / 1000);
+  return 0;
 }
 async function noteFail(id, env){
   const nonce = (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function')
     ? crypto.randomUUID()
     : (Date.now().toString(36) + '-' + Math.random().toString(36).slice(2));
   await env.SCI_KV.put('f:' + id + ':' + nonce, '1',
+    { expirationTtl: Math.ceil(FAIL_WINDOW / 1000) + 60 });
+  const now = Date.now();
+  let c = await env.SCI_KV.get('c:' + id, 'json');
+  if(!c || now - c.t > FAIL_WINDOW) c = { n: 0, t: now };
+  c.n++;
+  await env.SCI_KV.put('c:' + id, JSON.stringify(c),
     { expirationTtl: Math.ceil(FAIL_WINDOW / 1000) + 60 });
 }
 async function limited(ip, env){
