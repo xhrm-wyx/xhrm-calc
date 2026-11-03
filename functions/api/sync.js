@@ -18,8 +18,14 @@ const RL_LIMIT = 60, RL_WINDOW = 60 * 1000;
 const FAIL_LIMIT = 5, FAIL_WINDOW = 15 * 60 * 1000;
 const RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
 
+let ALLOW_LOCAL = false;
+/* [SEC-FIX v3.5.5] CORS 不再无条件反射 localhost/127.0.0.1 任意端口（中低危：本机恶意
+   页面/本地服务可借此跨域访问 /api/sync）。改为生产默认关闭，仅当 env.ALLOW_LOCAL==='1'
+   （本地 Wrangler 调试）时才放行 localhost。ALLOW_LOCAL 是模块级变量，同一部署内
+   env 固定不变，onRequest 每次入口赋值，无实际竞态。 */
 function cors(origin){
-  const ok = ALLOWED.includes(origin) || /^http:\/\/(127\.0\.0\.1|localhost):\d+$/.test(origin || '');
+  const ok = ALLOWED.includes(origin)
+    || (ALLOW_LOCAL && /^http:\/\/(127\.0\.0\.1|localhost):\d+$/.test(origin || ''));
   return {
     'Access-Control-Allow-Origin': ok ? origin : ALLOWED[0],
     'Access-Control-Allow-Methods': 'GET,PUT,DELETE,OPTIONS',
@@ -104,6 +110,7 @@ async function limited(ip, env){
 
 export async function onRequest(context){
   const { request, env } = context;
+  ALLOW_LOCAL = (env && env.ALLOW_LOCAL === '1');
   const origin = request.headers.get('Origin') || '';
   const url = new URL(request.url);
   if(request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors(origin) });
@@ -120,7 +127,9 @@ export async function onRequest(context){
      设计上同 Bitwarden：盐本身可公开，靠 PBKDF2 310k 迭代 + 本接口的 IP 限流来防滥用。
      首次请求即生成并存入 KV，之后恒定不变，保证 CF 与 GitHub Pages 两站拿到同一份盐。 */
   if(op === 'salt'){
-    const u = String(url.searchParams.get('u') || '').slice(0, 64);
+    /* [SEC-FIX v3.5.5] 过滤控制字符（0x00-0x1F、0x7F），防异常 KV key 注入；
+       不限制字符集以免误伤中文用户名，仍截断到 64 字符。 */
+    const u = String(url.searchParams.get('u') || '').replace(/[\x00-\x1f\x7f]/g, '').slice(0, 64);
     if(!u) return json({ error: 'bad u' }, 400, origin);
     const sKey = 's:' + u;
     let salt = await env.SCI_KV.get(sKey);
