@@ -654,7 +654,7 @@ html[data-theme="day"] .acct-avatar{background:var(--accent);color:#fff;}
        <button type="button" class="icon-btn" id="aboutClose" style="width:32px;height:32px;font-size:16px;">×</button>
      </div>
      <div class="save-options-body" style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
-       <div><b>版本 v3.6.1</b> · 单文件离线可用（仅供自用，勿转发）</div>
+       <div><b>版本 v3.6.2</b> · 单文件离线可用（仅供自用，勿转发）</div>
        <div style="border:1px solid rgba(255,120,120,.45);background:rgba(255,80,80,.08);border-radius:10px;padding:10px 12px;color:#ffb4b4;line-height:1.75;margin:4px 0;">
          ⚠️ <b>只打开你自己保存的 HTML 文件。</b>不要打开别人发来的 HTML（<b>加密的也一样</b>）——HTML 是可执行程序，可能携带恶意代码，加密只保护内容不保护执行。<br>
          要分享数据，请用「保存网页 → 导出数据 (JSON)」，让对方导入 JSON，而不是转发 HTML 文件。
@@ -681,6 +681,7 @@ html[data-theme="day"] .acct-avatar{background:var(--accent);color:#fff;}
          <li>安全：验证码备份恢复、修改密码、恢复数据校验</li>
          <li>v3.6.0：口令派生强度提升到 PBKDF2-SHA256 600000 次（原 310000）。新注册账号与修改密码后自动采用新强度；旧账号、旧备份仍可正常登录与解密</li>
          <li>v3.6.1：旧账号（31 万次）登录后会提示改一次密码完成强度升级，可点「以后再说」暂停 7 天</li>
+         <li>v3.6.2：修复同步迁移后旧弱派生记录未清理的问题，迁移成功后立即软删 v1 旧记录</li>
        </ul>
        <div style="opacity:.75;font-size:11.5px;margin-top:4px;">快捷键：输入框按 Enter 计算；函数图支持滚轮缩放 / 拖拽平移；双击主题按钮切换高对比。</div>
      </div>
