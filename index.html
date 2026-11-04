@@ -654,7 +654,7 @@ html[data-theme="day"] .acct-avatar{background:var(--accent);color:#fff;}
        <button type="button" class="icon-btn" id="aboutClose" style="width:32px;height:32px;font-size:16px;">×</button>
      </div>
      <div class="save-options-body" style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
-       <div><b>版本 v3.6.2</b> · 单文件离线可用（仅供自用，勿转发）</div>
+       <div><b>版本 v3.6.3</b> · 单文件离线可用（仅供自用，勿转发）</div>
        <div style="border:1px solid rgba(255,120,120,.45);background:rgba(255,80,80,.08);border-radius:10px;padding:10px 12px;color:#ffb4b4;line-height:1.75;margin:4px 0;">
          ⚠️ <b>只打开你自己保存的 HTML 文件。</b>不要打开别人发来的 HTML（<b>加密的也一样</b>）——HTML 是可执行程序，可能携带恶意代码，加密只保护内容不保护执行。<br>
          要分享数据，请用「保存网页 → 导出数据 (JSON)」，让对方导入 JSON，而不是转发 HTML 文件。
@@ -13561,7 +13561,7 @@ function _syncSaltForUser(u){
   try{ var c=localStorage.getItem(ck); if(c&&/^[A-Za-z0-9+/]{16,64}={0,2}$/.test(c))return Promise.resolve({b64:c}); }catch(e){}
   var ctrl=(typeof AbortController==='function')?new AbortController():null;
   var to=ctrl?setTimeout(function(){try{ctrl.abort();}catch(e){}},4000):null;
-  return fetch('https://xhrm-calc.pages.dev/api/sync/salt?u='+encodeURIComponent(u),{cache:'no-store',mode:'cors',signal:ctrl?ctrl.signal:undefined})
+  return fetch('https://xhrm-calc.pages.dev/api/sync?op=salt&u='+encodeURIComponent(u),{cache:'no-store',mode:'cors',signal:ctrl?ctrl.signal:undefined})
     .then(function(r){ if(to)clearTimeout(to); return r.ok?r.json():null; })
     .catch(function(){ if(to)clearTimeout(to); return null; })
     .then(function(j){ var sb=(j&&typeof j.salt==='string')?j.salt:''; if(!/^[A-Za-z0-9+/]{16,64}={0,2}$/.test(sb))return null; try{localStorage.setItem(ck,sb);}catch(e){} return {b64:sb}; });
@@ -13577,15 +13577,35 @@ function _syncFallbackSalt(u,pw,legacy){
     return _sha256Hex('sci-sync-salt-v2|'+u+'|'+pwh).then(function(h){return {hex:h.slice(0,32)};});
   });
 }
+function _syncKeyFromSalt(u,pw,sv){
+  var saltBuf=sv.b64?b64ToBuf(sv.b64):_hexToBuf(sv.hex);
+  var saltTag=sv.b64?('b64:'+sv.b64):('hex:'+sv.hex);
+  return pbkdf2Bits(pw+'|sci-sync-v2|'+u+'|'+saltTag,saltBuf,PBKDF2_ITER)
+    .then(function(bits){ var b=new Uint8Array(bits),s=''; for(var i=0;i<b.length;i++)s+=('0'+b[i].toString(16)).slice(-2); return s; });
+}
+function _syncModeGet(u){ try{return localStorage.getItem('sci-sync-mode:'+u)||'';}catch(e){return '';} }
+function _syncModeSet(u,m){ try{localStorage.setItem('sci-sync-mode:'+u,m);}catch(e){} }
+/* [SEC-FIX v3.6.3] 服务端随机盐此前从未真正生效：客户端一直请求 /api/sync/salt（Pages 404），
+   所有历史记录都在「降级盐」派生的 id 下。若只修 URL，随机盐一生效老用户 id 全变，
+   既有云端记录会"凭空消失"。故按账号记录一次派生模式：
+     首次使用 → 用降级盐算 id 并 GET 探测；有记录固定 legacy（数据不动），无记录固定 srv。
+   模式写入 localStorage，避免每次登录多跑一次 600k PBKDF2 探测。 */
 function deriveSyncV2Hex(u,pw,legacy){
   return _syncSaltForUser(u).then(function(sv){
-    if(sv)return sv;
-    return _syncFallbackSalt(u,pw,legacy);
-  }).then(function(sv){
-    var saltBuf=sv.b64?b64ToBuf(sv.b64):_hexToBuf(sv.hex);
-    var saltTag=sv.b64?('b64:'+sv.b64):('hex:'+sv.hex);
-    return pbkdf2Bits(pw+'|sci-sync-v2|'+u+'|'+saltTag,saltBuf,PBKDF2_ITER);
-  }).then(function(bits){ var b=new Uint8Array(bits),s=''; for(var i=0;i<b.length;i++)s+=('0'+b[i].toString(16)).slice(-2); return s; });
+    if(!sv||legacy)return _syncFallbackSalt(u,pw,legacy).then(function(fb){ return _syncKeyFromSalt(u,pw,fb); });
+    var mode=_syncModeGet(u);
+    if(mode==='srv')return _syncKeyFromSalt(u,pw,sv);
+    if(mode==='legacy')return _syncFallbackSalt(u,pw,false).then(function(fb){ return _syncKeyFromSalt(u,pw,fb); });
+    return _syncFallbackSalt(u,pw,false).then(function(fb){
+      return _syncKeyFromSalt(u,pw,fb).then(function(fbHex){
+        return _cloudGetByHex(fbHex).then(function(j){
+          var has=!!(j&&j.blob);
+          _syncModeSet(u,has?'legacy':'srv');
+          return has?fbHex:_syncKeyFromSalt(u,pw,sv);
+        },function(){ return fbHex; });   /* 探测失败：保守留在 legacy，不写模式，下次再探 */
+      });
+    });
+  });
 }
 function _cloudGetByHex(hex){
   return window.__cfIdsFor(hex).then(function(k){
@@ -13698,36 +13718,10 @@ window.__migrateSyncV1ToV2=_migrateSyncV1ToV2;
 function warmSyncKey(pw,username){
   try{
     if(!pw||!username)return;
-    var _saltP=(function(){
-      try{
-        var _ck='sci-sync-salt-v2:'+username;
-        var _c=localStorage.getItem(_ck);
-        if(_c&&/^[A-Za-z0-9+/]{16,64}={0,2}$/.test(_c))return Promise.resolve({b64:_c});
-        /* 绝对地址：让 CF 与 GH Pages 拿到同一份服务端盐，保证同一账号在两站 id 一致 */
-        var _ctrl=(typeof AbortController==='function')?new AbortController():null;
-        var _to=_ctrl?setTimeout(function(){try{_ctrl.abort();}catch(eA){}},4000):null;
-        return fetch('https://xhrm-calc.pages.dev/api/sync/salt?u='+encodeURIComponent(username),
-            {cache:'no-store',mode:'cors',signal:_ctrl?_ctrl.signal:undefined})
-          .then(function(r){ if(_to)clearTimeout(_to); return r.ok?r.json():null;})
-          .catch(function(){ if(_to)clearTimeout(_to); return null;})
-          .then(function(j){
-            var sb=(j&&typeof j.salt==='string')?j.salt:'';
-            if(!/^[A-Za-z0-9+/]{16,64}={0,2}$/.test(sb))return null;
-            try{localStorage.setItem(_ck,sb);}catch(eLS2){}
-            return {b64:sb};
-          });
-      }catch(e){ return Promise.resolve(null); }
-    })();
-    _saltP.then(function(sv){
-      if(sv)return sv;
-      return _syncFallbackSalt(username,pw);
-    }).then(function(sv){
-      var saltBuf = sv.b64 ? b64ToBuf(sv.b64) : _hexToBuf(sv.hex);
-      var saltTag = sv.b64 ? ('b64:'+sv.b64) : ('hex:'+sv.hex);
-      return pbkdf2Bits(pw+'|sci-sync-v2|'+username+'|'+saltTag, saltBuf, PBKDF2_ITER);
-    }).then(function(bits){
-      var b=new Uint8Array(bits),s='';
-      for(var i=0;i<b.length;i++)s+=('0'+b[i].toString(16)).slice(-2);
+    /* [SEC-FIX v3.6.3] 不再自带一份取盐逻辑：此前这里与 _syncSaltForUser 各写了一份
+       相同的错路径（/api/sync/salt），改一处漏一处。统一走 deriveSyncV2Hex，
+       派生模式（legacy/随机盐）由它按账号决定。 */
+    deriveSyncV2Hex(username,pw).then(function(s){
       window.__syncKeyHex=s;
       /* 仅保留 v1 派生值用于一次性迁移旧记录，迁移完成后不再使用 */
       pbkdf2Bits(pw+'|sci-sync-v1|'+username,new Uint8Array(16),120000).then(function(lb){
@@ -13751,6 +13745,7 @@ function warmSyncKey(pw,username){
     });
   }catch(e){}
 }
+
 function loginUser(username,password){var u=loadUserByName(String(username||'').trim());if(!u)return Promise.reject(new Error('本机没有该账号，请先注册'));if(!checkCryptoSupport())return Promise.reject(new Error('当前环境不支持加密'));var salt=b64ToBuf(u.salt);return pbkdf2Bits(password+VERIFY_TAG,salt,u.iterations||PBKDF2_ITER).then(function(verifier){var _tagged=bufToB64(verifier);if(_tagged!==u.verifier){return pbkdf2Bits(password,salt,u.iterations||PBKDF2_ITER).then(function(v0){if(bufToB64(v0)!==u.verifier)throw new Error('密码错误');try{u.verifier=_tagged;saveUserToStorage(u);}catch(eV){}});}}).then(function(){currentUser=u;currentPassword=password;pendingEncryptedData=null;noPersist=false;window.__pwLocked=false;window.__fileSession=false;window.__encryptedBlob=null;window.__sessionReady=deriveSessionKey(password,u.salt,u.iterations).then(function(k){sessionKey=k;try{setTimeout(function(){try{maybeSuggestKdfUpgrade();}catch(eK){}},900);}catch(e0){}try{warmSyncKey(currentPassword,currentUser&&currentUser.username);}catch(eW){}currentPassword=null;try{totpAfterSessionReady();}catch(eT){}}).catch(function(){});try{if(typeof renderList==='function')renderList();}catch(eL){}reloadAcctData();return (window.__sessionReady||Promise.resolve()).then(function(){return u;});});}
 function sameNameNeedsConfirm(name,pw){
   var old=null;
